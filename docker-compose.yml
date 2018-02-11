@@ -1,0 +1,59 @@
+version: '3'
+services:
+  # message queue configuration
+  nsqlookupd:
+    image: nsqio/nsq
+    command: /nsqlookupd
+    logging:
+      driver: none
+    ports:
+      - "4160"
+      - "4161"
+  nsqadmin:
+    image: nsqio/nsq
+    command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
+    depends_on:
+      - nsqlookupd
+    ports:
+      - "4171"
+  # docproc environment
+  docproc.fileinput:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-docproc.fileinput
+    image: docproc/fileinput
+    command: /docproc.startup.sh
+    depends_on:
+      - nsqlookupd
+  docproc.preproc:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-docproc.preproc
+    image: docproc/preproc
+    command: /docproc.startup.sh
+    depends_on:
+      - nsqlookupd
+  docproc.renderer:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-docproc.renderer
+    image: docproc/renderer
+    command: /docproc.startup.sh
+    depends_on:
+      - nsqlookupd
+  docproc.postproc:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-docproc.postproc
+    image: docproc/postproc
+    command: /docproc.startup.sh
+    depends_on:
+      - nsqlookupd
+  docproc.output:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-docproc.output
+    image: docproc/output
+    command: /docproc.startup.sh
+    depends_on:
+      - nsqlookupd

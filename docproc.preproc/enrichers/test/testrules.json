@@ -1,0 +1,40 @@
+[
+    {
+        "Path": "NET",
+        "Operator": "less than",
+        "Value": 0,
+        "TargetPath": "DOCTYPE",
+        "TargetValue": "CREDIT_NOTE"
+    },
+    {
+        "Path": "NET",
+        "Operator": "gte",
+        "Value": 0,
+        "TargetPath": "DOCTYPE",
+        "TargetValue": "INVOICE"
+    },
+    {
+        "Path": "CUSTNO",
+        "Operator": "exists",
+        "TargetPath": "filename",
+        "TargetValue": "fn-${CUSTNO}.html"
+    },
+    {
+        "Path": "CUSTNO",
+        "Operator": "exists",
+        "TargetPath": "multi-var",
+        "TargetValue": "${CUSTNO}.${NET}-${DOCTYPE}"
+    },
+    {
+        "Path": "FIRSTNAME",
+        "Operator": "exists",
+        "TargetPath": "fullname",
+        "TargetValue": "${FIRSTNAME} ${LASTNAME}"
+    },
+    {
+        "Path": "FIRSTNAME",
+        "Operator": "not exists",
+        "TargetPath": "fullname",
+        "TargetValue": "Mr/Mrs ${LASTNAME}"
+    }
+]

@@ -1,0 +1,91 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "0.1.0",
+    "command": "go",
+    "isShellCommand": true,
+    "showOutput": "always",
+    "echoCommand": true,
+    "tasks": [
+        {
+            "taskName": "test common",
+            "suppressTaskName": true,
+            "isTestCommand": true,
+            "args": [
+                "test",
+                "./common/config",
+                "./common/http/json",
+                "./common/http/soap",
+                "./common/log",
+                "./common/path",
+                "./common/queue",
+                "./common/rules",
+                "./common/service"
+            ]
+        },
+        {
+            "taskName": "test docproc.fileinput",
+            "suppressTaskName": true,
+            "isTestCommand": true,
+            "args": [
+                "test",
+                "./docproc.fileinput/input"
+            ]
+        },
+        {
+            "taskName": "build docproc.fileinput",
+            "suppressTaskName": true,
+            "args": [
+                "build",
+                "-v",
+                "./docproc.fileinput"
+            ]
+        },
+        {
+            "taskName": "test docproc.preproc",
+            "suppressTaskName": true,
+            "isTestCommand": true,
+            "args": [
+                "test",
+                "./docproc.preproc/enrichers",
+                "./docproc.preproc/transformers"
+            ]
+        },
+        {
+            "taskName": "build docproc.preproc",
+            "suppressTaskName": true,
+            "args": [
+                "build",
+                "-v",
+                "./docproc.preproc"
+            ]
+        },
+        {
+            "taskName": "build docproc.postproc",
+            "suppressTaskName": true,
+            "args": [
+                "build",
+                "-v",
+                "./docproc.postproc"
+            ]
+        },
+        {
+            "taskName": "build docproc.output",
+            "suppressTaskName": true,
+            "args": [
+                "build",
+                "-v",
+                "./docproc.output"
+            ]
+        },
+        {
+            "taskName": "build docproc.renderer",
+            "suppressTaskName": true,
+            "args": [
+                "build",
+                "-v",
+                "./docproc.renderer"
+            ]
+        }
+    ]
+}

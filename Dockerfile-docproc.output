@@ -1,0 +1,14 @@
+FROM docproc/base
+
+WORKDIR /app
+RUN mkdir /app/output
+
+COPY ./scripts/docproc.startup.sh /bin/docproc.startup.sh
+RUN sed -i -e 's/\$APP\$/\/app\/docproc.output/g' /bin/docproc.startup.sh
+RUN chmod a+x /bin/docproc.startup.sh
+
+# Test data
+COPY ./examples/docproc-output.conf /app
+COPY ./examples/rules/output /app/rules/output
+
+ENTRYPOINT /bin/docproc.startup.sh

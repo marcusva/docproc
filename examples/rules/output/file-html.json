@@ -1,0 +1,6 @@
+[
+    {
+        "Path": "CUSTNO",
+        "Operator": "exists"
+    }
+]
