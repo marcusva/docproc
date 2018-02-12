@@ -77,10 +77,10 @@ func (cfg *Config) Array(section, key string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	result := []string{}
 	values := strings.Split(val, ",")
-	for _, v := range values {
-		result = append(result, strings.TrimSpace(v))
+	result := make([]string, len(values))
+	for idx, v := range values {
+		result[idx] = strings.TrimSpace(v)
 	}
 	return result, nil
 }
