@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"sync"
 )
 
 const (
@@ -39,6 +40,7 @@ var (
 	fpLogfile  *os.File
 	showCaller bool
 	threshold  Level
+	mux        = sync.Mutex{}
 )
 
 func init() {
@@ -50,7 +52,16 @@ func init() {
 
 // Logger gets the logger being used.
 func Logger() *log.Logger {
+	mux.Lock()
+	defer mux.Unlock()
 	return logger
+}
+
+// CurrentLevel returns the current log level for the logger.
+func CurrentLevel() Level {
+	mux.Lock()
+	defer mux.Unlock()
+	return threshold
 }
 
 // GetLogLevel gets a matching LogLevel value from the passed string. Returns
@@ -87,6 +98,8 @@ func InitFile(logfile string, level Level, caller bool) error {
 		return err
 	}
 	Init(logfp, level, caller)
+	mux.Lock()
+	defer mux.Unlock()
 	fpLogfile = logfp
 	return nil
 }
@@ -96,6 +109,8 @@ func InitFile(logfile string, level Level, caller bool) error {
 // This will close the currently open logfile, if the logger has been
 // initialized with InitFile before.
 func Init(out io.Writer, level Level, caller bool) {
+	mux.Lock()
+	defer mux.Unlock()
 	if fpLogfile != nil {
 		fpLogfile.Close()
 		fpLogfile = nil
@@ -139,6 +154,8 @@ func _printstr(prefix string, output string) {
 
 // Debug writes a debug message to the log.
 func Debug(args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelDebug {
 		_printval("DEBUG", args)
 	}
@@ -146,6 +163,8 @@ func Debug(args ...interface{}) {
 
 // Debugf writes a debug message to the log.
 func Debugf(format string, args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelDebug {
 		_printstr("DEBUG", fmt.Sprintf(format, args...))
 	}
@@ -153,6 +172,8 @@ func Debugf(format string, args ...interface{}) {
 
 // Info writes an informational message to the log.
 func Info(args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelInfo {
 		_printval("INFO", args)
 	}
@@ -160,6 +181,8 @@ func Info(args ...interface{}) {
 
 // Infof writes an informational message to the log.
 func Infof(format string, args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelInfo {
 		_printstr("INFO", fmt.Sprintf(format, args...))
 	}
@@ -167,6 +190,8 @@ func Infof(format string, args ...interface{}) {
 
 // Notice writes a notice message to the log.
 func Notice(args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelNotice {
 		_printval("NOTICE", args)
 	}
@@ -174,6 +199,8 @@ func Notice(args ...interface{}) {
 
 // Noticef writes a notice message to the log.
 func Noticef(format string, args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelNotice {
 		_printstr("NOTICE", fmt.Sprintf(format, args...))
 	}
@@ -181,6 +208,8 @@ func Noticef(format string, args ...interface{}) {
 
 // Warning writes a warning message to the log.
 func Warning(args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelWarning {
 		_printval("WARNING", args)
 	}
@@ -188,6 +217,8 @@ func Warning(args ...interface{}) {
 
 // Warningf writes a warning message to the log.
 func Warningf(format string, args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelWarning {
 		_printstr("WARNING", fmt.Sprintf(format, args...))
 	}
@@ -195,6 +226,8 @@ func Warningf(format string, args ...interface{}) {
 
 // Error writes an error message to the log.
 func Error(args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelError {
 		_printval("ERROR", args)
 	}
@@ -202,6 +235,8 @@ func Error(args ...interface{}) {
 
 // Errorf writes an error message to the log.
 func Errorf(format string, args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelError {
 		_printstr("ERROR", fmt.Sprintf(format, args...))
 	}
@@ -209,6 +244,8 @@ func Errorf(format string, args ...interface{}) {
 
 // Critical writes a critical message to the log.
 func Critical(args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelCritical {
 		_printval("CRITICAL", args)
 	}
@@ -216,6 +253,8 @@ func Critical(args ...interface{}) {
 
 // Criticalf writes a critical message to the log.
 func Criticalf(format string, args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelCritical {
 		_printstr("CRITICAL", fmt.Sprintf(format, args...))
 	}
@@ -223,6 +262,8 @@ func Criticalf(format string, args ...interface{}) {
 
 // Alert writes an alert message to the log.
 func Alert(args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelAlert {
 		_printval("ALERT", args)
 	}
@@ -230,6 +271,8 @@ func Alert(args ...interface{}) {
 
 // Alertf rites an alert message to the log.
 func Alertf(format string, args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelAlert {
 		_printstr("ALERT", fmt.Sprintf(format, args...))
 	}
@@ -237,6 +280,8 @@ func Alertf(format string, args ...interface{}) {
 
 // Emergency writes an emergency message to the log.
 func Emergency(args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelEmergency {
 		_printval("EMERGENCY", args)
 	}
@@ -244,6 +289,8 @@ func Emergency(args ...interface{}) {
 
 // Emergencyf writes an emergency message to the log.
 func Emergencyf(format string, args ...interface{}) {
+	mux.Lock()
+	defer mux.Unlock()
 	if threshold >= LevelEmergency {
 		_printstr("EMERGENCY", fmt.Sprintf(format, args...))
 	}
