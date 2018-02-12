@@ -109,33 +109,27 @@ func getArrayValue(subpath string, m map[string]interface{}) interface{} {
 // ExtractValue retrieves the value for the passed path from the map.
 func ExtractValue(path string, m map[string]interface{}) interface{} {
 	segments := strings.Split(path, ".")
-	depth := len(segments)
+	last, rest := segments[len(segments)-1], segments[:len(segments)-1]
 	var ok bool
-	var arrayval interface{}
 	smap := m
-	if depth > 1 {
-		for i := 0; i < (depth - 1); i++ {
-			seg := segments[i]
-			// Check for array access "foo.bar.baz[index]"
-			if seg[len(seg)-1] == ']' {
-				arrayval = getArrayValue(seg, smap)
-				if smap, ok = arrayval.(map[string]interface{}); ok {
-					continue
-				}
+
+	for _, part := range rest {
+		// Check for array access "foo.bar.baz[index]"
+		if part[len(part)-1] == ']' {
+			arrayval := getArrayValue(part, smap)
+			if smap, ok = arrayval.(map[string]interface{}); ok {
+				continue
 			}
-			if smap, ok = smap[seg].(map[string]interface{}); !ok {
-				return nil
-			}
+			return nil // Invalid array access
+		}
+		if smap, ok = smap[part].(map[string]interface{}); !ok {
+			return nil
 		}
 	}
-	seg := segments[depth-1]
-	// Check for array access "foo.bar.baz[index]"
-	if seg[len(seg)-1] == ']' {
-		if arrayval = getArrayValue(seg, smap); arrayval != nil {
-			return arrayval
-		}
+	if last[len(last)-1] == ']' {
+		return getArrayValue(last, smap)
 	}
-	return smap[seg]
+	return smap[last]
 }
 
 // Rule
@@ -159,7 +153,6 @@ func (r *Rule) Test(m map[string]interface{}) (bool, error) {
 		}
 	}
 
-	right := r.Value
 	left := ExtractValue(r.Path, m)
 
 	if r.Operator == "exists" {
@@ -173,6 +166,7 @@ func (r *Rule) Test(m map[string]interface{}) (bool, error) {
 		return false, nil
 	}
 
+	right := r.Value
 	switch right.(type) {
 	case string:
 		return cmpString(fmt.Sprint(left), right.(string), r.Operator)
