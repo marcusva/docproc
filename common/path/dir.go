@@ -20,17 +20,18 @@ func Writable(path string) (bool, error) {
 
 // CreateDir creates a directory at the given path.
 func CreateDir(path string) error {
-	if fi, err := os.Stat(path); err != nil {
-		if os.IsNotExist(err) {
-			// Path does not exist, create the directory
-			err := os.Mkdir(path, os.ModeDir|os.FileMode(0755))
-			if err != nil {
-				return err
-			}
-		} else {
+	fi, err := os.Stat(path)
+	if err != nil {
+		if !os.IsNotExist(err) {
 			return err
 		}
-	} else if !fi.IsDir() {
+		// Path does not exist, create the directory
+		err = os.Mkdir(path, os.ModeDir|os.FileMode(0755))
+		if err != nil {
+			return err
+		}
+	}
+	if !fi.IsDir() {
 		return fmt.Errorf("'%s' is not a directory", path)
 	}
 	return nil
