@@ -12,6 +12,21 @@ func init() {
 	Register("nsq", newNsqRQ, newNsqWQ)
 }
 
+func mapLogLevel(lvl log.Level) nsq.LogLevel {
+	switch lvl {
+	case log.LevelDebug:
+		return nsq.LogLevelDebug
+	case log.LevelInfo, log.LevelNotice:
+		return nsq.LogLevelInfo
+	case log.LevelWarning:
+		return nsq.LogLevelWarning
+	case log.LevelError, log.LevelAlert, log.LevelCritical, log.LevelEmergency:
+		return nsq.LogLevelError
+	default:
+		return nsq.LogLevelInfo
+	}
+}
+
 // nsqWQ provides writable access to a NSQ queue.
 type nsqWQ struct {
 	nsqproducer *nsq.Producer
@@ -65,7 +80,7 @@ func (wq *nsqWQ) Open() error {
 	if err != nil {
 		return err
 	}
-	nsqprod.SetLogger(log.Logger(), nsq.LogLevelError)
+	nsqprod.SetLogger(log.Logger(), mapLogLevel(log.CurrentLevel()))
 
 	err = nsqprod.Ping()
 	if err == nil {
@@ -95,6 +110,7 @@ func (wq *nsqWQ) Publish(msg *Message) error {
 	}
 	err = wq.nsqproducer.Publish(wq.topic, data)
 	if err == nsq.ErrNotConnected {
+		log.Errorf("queue not reachable, error: %v", err)
 		wq.nsqproducer = nil
 	}
 	return err
@@ -135,7 +151,7 @@ func (rq *nsqRQ) Open(consumer Consumer) error {
 	if err != nil {
 		return err
 	}
-	nsqconsumer.SetLogger(log.Logger(), nsq.LogLevelError)
+	nsqconsumer.SetLogger(log.Logger(), mapLogLevel(log.CurrentLevel()))
 
 	rq.consumer = consumer
 	rq.nsqconsumer = nsqconsumer

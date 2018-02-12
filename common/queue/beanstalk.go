@@ -61,7 +61,8 @@ func (wq *beanstalkWQ) IsOpen() bool {
 		return false
 	}
 	if _, err := wq.tube.Stats(); err != nil {
-		log.Errorf("queue not reachable anymore, resetting it; error: %v", err)
+		log.Warningf("queue not reachable anymore, resetting it; error: %v", err)
+		wq.Close()
 		return false
 	}
 	return true
@@ -73,6 +74,9 @@ func (wq *beanstalkWQ) Close() error {
 		return nil
 	}
 	err := wq.tube.Conn.Close()
+	if err != nil {
+		log.Warningf("error on closing the queue: %v", err)
+	}
 	wq.tube.Conn = nil
 	return err
 }
@@ -120,7 +124,7 @@ func (rq *beanstalkRQ) watch() {
 	for rq.tubeset.Conn != nil {
 		id, data, err := rq.tubeset.Reserve(1 * time.Second)
 		if err != nil {
-			log.Debugf("error on querying the queue: %v\n", err)
+			log.Infof("error on querying the queue: %v\n", err)
 			continue
 		}
 		msg, err := MsgFromJSON(data)
@@ -159,6 +163,9 @@ func (rq *beanstalkRQ) Close() error {
 		return nil
 	}
 	err := rq.tubeset.Conn.Close()
+	if err != nil {
+		log.Warningf("error on closing the queue: %v", err)
+	}
 	rq.tubeset.Conn = nil
 	return err
 }

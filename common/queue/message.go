@@ -27,20 +27,21 @@ type Message struct {
 	Content  map[string]interface{} `json:"content"`
 }
 
-// Processor is a simple data processor, which transforms data.
+// Processor implementations are used to perform operations based on a Message.
 type Processor interface {
 	Name() string
 	Process(msg *Message) error
 }
 
-// NewMessage creates a new Message.
+// NewMessage creates a new Message with the passed content.
+// It is guaranteed that the newly created Message's Metadata contain at least
+// a MetaID and MetaCreated field.
 func NewMessage(content map[string]interface{}) *Message {
 	var id string
-	uuid, err := uuid.NewRandom()
-	if err != nil {
+	if uid, err := uuid.NewRandom(); err != nil {
 		id = fmt.Sprint(time.Now().Unix())
 	} else {
-		id = uuid.String()
+		id = uid.String()
 	}
 	metadata := map[string]interface{}{
 		MetaID:      id,
