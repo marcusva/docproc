@@ -6,7 +6,6 @@ import (
 	"github.com/marcusva/docproc/common/queue"
 	"io/ioutil"
 	"os"
-	"time"
 )
 
 const (
@@ -39,9 +38,7 @@ func (handler *FileHandler) checkQueue() error {
 	if !handler.Queue.IsOpen() {
 		log.Warningf("bound queue is currently not available, trying to open it...")
 		if err := handler.Queue.Open(); err != nil {
-			log.Errorf("could not open queue, waiting for 10 seconds...")
-			// TODO: better move this to Process()?
-			time.Sleep(10 * time.Second)
+			log.Errorf("could not open queue: %v", err)
 			return err
 		}
 		return errors.New("bound queue is not open")
@@ -57,34 +54,38 @@ func (handler *FileHandler) Process(filename string) error {
 		return err
 	}
 	fnameproc := filename + suffixProcess
-	if err := os.Rename(filename, fnameproc); err != nil {
-		log.Errorf("Could not rename file %s: %v", filename, err)
+	if err := renameFile(filename, fnameproc); err != nil {
 		return err
 	}
 
 	data, err := ioutil.ReadFile(fnameproc)
 	if err != nil {
-		log.Errorf("Could not read file %s: %v", fnameproc, err)
+		log.Errorf("could not read file %s: %v", fnameproc, err)
+		renameFile(fnameproc, filename+suffixFailed)
 		return err
 	}
 
-	suffix := suffixDone
 	var msgs []*queue.Message
 	if msgs, err = handler.Transform(data); err != nil {
-		log.Errorf("Could not transform input data: %v", err)
-		suffix = suffixFailed
-	} else {
-		// Pass the data into the queue
-		for _, msg := range msgs {
-			if err := handler.Consume(msg); err != nil {
-				log.Errorf("Could not publish message to queue: %v", err)
-				suffix = suffixFailed
-			}
+		log.Errorf("could not transform input data: %v", err)
+		renameFile(fnameproc, filename+suffixFailed)
+		return err
+	}
+
+	// Pass the data into the queue
+	for _, msg := range msgs {
+		if err := handler.Consume(msg); err != nil {
+			log.Errorf("could not publish message to queue: %v", err)
+			renameFile(fnameproc, filename+suffixFailed)
+			return err
 		}
 	}
-	fnamefinal := filename + suffix
-	if err := os.Rename(fnameproc, fnamefinal); err != nil {
-		log.Errorf("Could not rename file %s: %v", filename, err)
+	return renameFile(fnameproc, suffixDone)
+}
+
+func renameFile(curname, target string) error {
+	if err := os.Rename(curname, target); err != nil {
+		log.Errorf("could not rename file %s: %v", curname, err)
 		return err
 	}
 	return nil
