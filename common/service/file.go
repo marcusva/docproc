@@ -35,7 +35,7 @@ type FileWatcher struct {
 	Pattern   string
 	Interval  time.Duration
 	Processor FileProcessor
-	running   bool
+	stop      chan (bool)
 }
 
 // NewFileWatcher creates a new FileWatcher. If the passed directory cannot
@@ -59,7 +59,7 @@ func NewFileWatcher(directory, pattern string, interval time.Duration,
 		Pattern:   pattern,
 		Interval:  interval,
 		Processor: processor,
-		running:   false,
+		stop:      make(chan bool),
 	}, nil
 }
 
@@ -68,34 +68,39 @@ func NewFileWatcher(directory, pattern string, interval time.Duration,
 // FileWatcher's Processor.
 func (w *FileWatcher) Check() {
 	ppath := filepath.Join(w.Directory, w.Pattern)
-	if files, err := filepath.Glob(ppath); err != nil {
+	files, err := filepath.Glob(ppath)
+	if err != nil {
 		log.Errorf("Checking the directory failed: %v", err)
-	} else {
-		for _, fpath := range files {
-			log.Debugf("Processing file '%s'...", fpath)
-			if err := w.Processor.Process(fpath); err != nil {
-				log.Errorf("An error occured on processing %s: %v", fpath, err)
-			}
+		return
+	}
+	for _, fpath := range files {
+		log.Debugf("Processing file '%s'...", fpath)
+		if err := w.Processor.Process(fpath); err != nil {
+			log.Errorf("An error occured on processing %s: %v", fpath, err)
 		}
 	}
+
 }
 
 // Watch causes the FileWatcher to check its directory periodically via the
 // Check function. It will run in an endless loop until Stop is called.
 func (w *FileWatcher) Watch() {
 	log.Infof("Starting FileWatcher...")
-	w.running = true
-	for w.running {
+	for {
 		select {
 		case <-time.After(w.Interval):
+			log.Debugf("checking directory for new files...")
 			w.Check()
+		case <-w.stop:
+			log.Infof("FileWatcher stopped.")
+			return
 		}
 	}
-	log.Infof("FileWatcher stopped.")
+
 }
 
 // Stop stops the FileWatcher's Watch function.
 func (w *FileWatcher) Stop() {
 	log.Infof("Stopping FileWatcher...")
-	w.running = false
+	w.stop <- true
 }
