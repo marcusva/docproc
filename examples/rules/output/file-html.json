@@ -1,6 +1,6 @@
 [
     {
-        "Path": "CUSTNO",
-        "Operator": "exists"
+        "path": "CUSTNO",
+        "op": "exists"
     }
 ]

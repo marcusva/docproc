@@ -28,12 +28,20 @@ const (
 )
 
 func TestNewValueRuleEnricher(t *testing.T) {
-	pinv := map[string]string{"norules": "1234"}
-	_, err := NewValueEnricher(pinv)
-	assert.FailIf(t, err == nil, "NewValueEricher() must fail, if no 'rule' arg is providede")
+	params := map[string]string{"norules": "1234"}
+	_, err := NewValueEnricher(params)
+	assert.FailIf(t, err == nil, "NewValueEricher() must fail, if no 'rule' arg is provided")
 
-	p := map[string]string{"rules": "test/testrules.json"}
-	_, err = NewValueEnricher(p)
+	params = map[string]string{"rules": "test/norules.json"}
+	_, err = NewValueEnricher(params)
+	assert.FailIf(t, err == nil, "NewValueEricher() must fail, if there is no rules file")
+
+	params = map[string]string{"rules": "test/brokenrules.json"}
+	_, err = NewValueEnricher(params)
+	assert.FailIf(t, err == nil, "NewValueEricher() must fail, if the rules are broken")
+
+	params = map[string]string{"rules": "test/testrules.json"}
+	_, err = NewValueEnricher(params)
 	assert.FailOnErr(t, err)
 }
 
@@ -78,4 +86,14 @@ func TestQueueProcessing(t *testing.T) {
 	rval, ok := msg.Content["DOCTYPE"]
 	assert.FailIfNot(t, ok, "no 'DOCTYPE' found")
 	assert.Equal(t, rval, "INVOICE")
+}
+
+func TestInvalidRules(t *testing.T) {
+	p := map[string]string{"rules": "test/invalidrules.json"}
+	ve, err := NewValueEnricher(p)
+	assert.FailOnErr(t, err)
+
+	msg, err := queue.MsgFromJSON([]byte(message))
+	assert.FailOnErr(t, err)
+	assert.Err(t, ve.Process(msg))
 }

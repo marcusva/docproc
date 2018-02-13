@@ -1,40 +1,58 @@
 [
     {
-        "Path": "NET",
-        "Operator": "less than",
-        "Value": 0,
-        "TargetPath": "DOCTYPE",
-        "TargetValue": "CREDIT_NOTE"
+        "path": "NET",
+        "op": "less than",
+        "value": 0,
+        "targetpath": "DOCTYPE",
+        "targetvalue": "CREDIT_NOTE"
     },
     {
-        "Path": "NET",
-        "Operator": "gte",
-        "Value": 0,
-        "TargetPath": "DOCTYPE",
-        "TargetValue": "INVOICE"
+        "path": "NET",
+        "op": "gte",
+        "value": 0,
+        "targetpath": "DOCTYPE",
+        "targetvalue": "INVOICE"
     },
     {
-        "Path": "CUSTNO",
-        "Operator": "exists",
-        "TargetPath": "filename",
-        "TargetValue": "fn-${CUSTNO}.html"
+        "path": "CUSTNO",
+        "op": "exists",
+        "targetpath": "filename",
+        "targetvalue": "fn-${CUSTNO}.html"
     },
     {
-        "Path": "CUSTNO",
-        "Operator": "exists",
-        "TargetPath": "multi-var",
-        "TargetValue": "${CUSTNO}.${NET}-${DOCTYPE}"
+        "path": "CUSTNO",
+        "op": "exists",
+        "targetpath": "multi-var",
+        "targetvalue": "${CUSTNO}.${NET}-${DOCTYPE}"
     },
     {
-        "Path": "FIRSTNAME",
-        "Operator": "exists",
-        "TargetPath": "fullname",
-        "TargetValue": "${FIRSTNAME} ${LASTNAME}"
+        "path": "FIRSTNAME",
+        "op": "exists",
+        "targetpath": "fullname",
+        "targetvalue": "${FIRSTNAME} ${LASTNAME}"
     },
     {
-        "Path": "FIRSTNAME",
-        "Operator": "not exists",
-        "TargetPath": "fullname",
-        "TargetValue": "Mr/Mrs ${LASTNAME}"
+        "path": "FIRSTNAME",
+        "op": "not exists",
+        "targetpath": "fullname",
+        "targetvalue": "Mr/Mrs ${LASTNAME}"
+    },
+    {
+        "path": "CITY",
+        "op": "exists",
+        "targetpath": "address.city",
+        "targetvalue": "${CITY}"
+    },
+    {
+        "path": "STREET",
+        "op": "exists",
+        "targetpath": "address.street",
+        "targetvalue": "${STREET}"
+    },
+    {
+        "path": "ZIP",
+        "op": "exists",
+        "targetpath": "address.zip",
+        "targetvalue": "${ZIP}"
     }
 ]

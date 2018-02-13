@@ -79,7 +79,6 @@ func (w *FileWatcher) Check() {
 			log.Errorf("An error occured on processing %s: %v", fpath, err)
 		}
 	}
-
 }
 
 // Watch causes the FileWatcher to check its directory periodically via the

@@ -1,0 +1,8 @@
+[
+    {
+        "path": "ZIP",
+        "op": "exists",
+        "targetpath": "CITY.NAME",
+        "targetvalue": "VALUE"
+    }
+]

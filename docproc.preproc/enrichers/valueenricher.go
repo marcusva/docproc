@@ -22,9 +22,9 @@ func init() {
 // ValueRule represents a Rule, that carries a key-value pair to be added
 // to a queue.Message, if the Rule evaluates to true.
 type ValueRule struct {
-	*rules.Rule
-	TargetPath  string
-	TargetValue interface{}
+	rules.Rule
+	TargetPath  string      `json:"targetpath"`
+	TargetValue interface{} `json:"targetvalue"`
 }
 
 // ValueEnricher applies multiple ValueRule items to a queue.Message.
@@ -44,6 +44,9 @@ func NewValueEnricher(params map[string]string) (queue.Processor, error) {
 	}
 	var rules []ValueRule
 	if err := json.Unmarshal(data, &rules); err != nil {
+		return nil, err
+	}
+	if err := validateRules(&rules); err != nil {
 		return nil, err
 	}
 	return &ValueEnricher{rules: rules}, nil
@@ -78,26 +81,6 @@ func resolveValue(msg *queue.Message, val interface{}) (interface{}, error) {
 	}
 }
 
-func setValue(values map[string]interface{}, segs []string, newval interface{}) (map[string]interface{}, error) {
-	if len(segs) == 1 {
-		values[segs[0]] = newval
-		return values, nil
-	}
-	tmp, ok := values[segs[0]]
-	if !ok {
-		tmp = make(map[string]interface{})
-	}
-	if _, ok := tmp.(map[string]interface{}); !ok {
-		return nil, fmt.Errorf("subpath '%s' is not a map", segs[0])
-	}
-	ret, err := setValue(tmp.(map[string]interface{}), segs[1:], newval)
-	if err != nil {
-		return nil, err
-	}
-	values[segs[0]] = ret
-	return values, nil
-}
-
 func (e *ValueEnricher) Process(msg *queue.Message) error {
 	for _, rule := range e.rules {
 		log.Debugf("testing '%v %v %v' against %v", rule.Path, rule.Operator, rule.Value, msg.Content)
@@ -105,17 +88,53 @@ func (e *ValueEnricher) Process(msg *queue.Message) error {
 		if err != nil {
 			return err
 		}
-		if ok {
-			segments := strings.Split(rule.TargetPath, ".")
-			newval, err := resolveValue(msg, rule.TargetValue)
-			if err != nil {
-				return err
-			}
-			content, err := setValue(msg.Content, segments, newval)
-			if err != nil {
-				return fmt.Errorf("could not set value for path '%s': %v", rule.TargetPath, err)
-			}
-			msg.Content = content
+		if !ok {
+			continue
+		}
+		newval, err := resolveValue(msg, rule.TargetValue)
+		if err != nil {
+			return err
+		}
+		if err := setValue(msg, rule.TargetPath, newval); err != nil {
+			return fmt.Errorf("could not set value for path '%s': %v", rule.TargetPath, err)
+		}
+	}
+	return nil
+}
+
+func setValue(msg *queue.Message, path string, newval interface{}) error {
+	segments := strings.Split(path, ".")
+	var parent map[string]interface{}
+	last, rest := segments[len(segments)-1], segments[:len(segments)-1]
+
+	parent = msg.Content
+	for _, seg := range rest {
+		sub, ok := parent[seg]
+		if !ok {
+			sub = make(map[string]interface{})
+			parent[seg] = sub
+		} else if _, ismap := sub.(map[string]interface{}); !ismap {
+			return fmt.Errorf("path fragment '%s' is not a map", seg)
+		}
+		parent, _ = sub.(map[string]interface{})
+	}
+	parent[last] = newval
+	return nil
+}
+
+func validateRules(ruleset *[]ValueRule) error {
+	for _, rule := range *ruleset {
+		if rule.Path == "" {
+			return fmt.Errorf("empty source path in rule '%v'", rule)
+		}
+		if !rules.OperatorSupported(rule.Operator) {
+			return fmt.Errorf("unsupported operator in rule '%v'", rule)
+		}
+		if rule.TargetPath == "" {
+			return fmt.Errorf("empty target path in rule '%v'", rule)
+		}
+		if rule.TargetValue == "" {
+			return fmt.Errorf("empty target value in rule '%v'", rule)
 		}
 	}
 	return nil

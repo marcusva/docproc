@@ -1,22 +1,22 @@
 [
     {
-        "Path": "NET",
-        "Operator": "less than",
-        "Value": 0,
-        "TargetPath": "DOCTYPE",
-        "TargetValue": "CREDIT_NOTE"
+        "path": "NET",
+        "op": "less than",
+        "value": 0,
+        "targetpath": "DOCTYPE",
+        "targetvalue": "CREDIT_NOTE"
     },
     {
-        "Path": "NET",
-        "Operator": "gte",
-        "Value": 0,
-        "TargetPath": "DOCTYPE",
-        "TargetValue": "INVOICE"
+        "path": "NET",
+        "op": "gte",
+        "value": 0,
+        "targetpath": "DOCTYPE",
+        "targetvalue": "INVOICE"
     },
     {
-        "Path": "CUSTNO",
-        "Operator": "exists",
-        "TargetPath": "filename",
-        "TargetValue": "fn-${CUSTNO}.html"
+        "path": "CUSTNO",
+        "op": "exists",
+        "targetpath": "filename",
+        "targetvalue": "fn-${CUSTNO}.html"
     }
 ]

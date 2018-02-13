@@ -24,6 +24,7 @@ func (hnd *Handler) Consume(msg *queue.Message) error {
 	log.Infof("Received message '%v'", msg.Metadata[queue.MetaID])
 	for _, proc := range hnd.ProcChain {
 		if err := proc.Process(msg); err != nil {
+			log.Errorf("processing failed in '%s': %v", proc.Name(), err)
 			return fmt.Errorf("processing failed in '%s': %v", proc.Name(), err)
 		}
 	}
