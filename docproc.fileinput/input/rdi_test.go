@@ -8,10 +8,10 @@ import (
 	"testing"
 )
 
-func TestRdiTransformer(t *testing.T) {
+func TestRDITransformer(t *testing.T) {
 	buf, err := ioutil.ReadFile("test/testrdi.gz")
 	assert.FailOnErr(t, err)
-	tf := &RdiTransformer{}
+	tf := &RDITransformer{}
 
 	messages, err := tf.Transform(buf)
 	assert.FailOnErr(t, err)

@@ -52,8 +52,15 @@ func Register(name string, builder FileTransformerBuilder) {
 	wmu.Unlock()
 }
 
-// Create creates a FileWatcher with a specific associated file transformer.
-// TODO: describe params
+// Create creates a FileWatcher with an associated FileTransformer.
+// The parameter map must contain the following entries:
+//
+// * "transformer": a name of an known FileTransformer (see FileTransformers())
+// * "format": the file or data format to be used as metadata information
+// * "folder.in": the directory to watch for new files to be processed
+// * "pattern": the file pattern to use when looking for new files in "folder.in"
+// * "interval": the interval in seconds to use for checking
+//
 func Create(wq queue.WriteQueue, params map[string]string) (*service.FileWatcher, error) {
 	tfname, ok := params["transformer"]
 	if !ok {
@@ -61,7 +68,7 @@ func Create(wq queue.WriteQueue, params map[string]string) (*service.FileWatcher
 	}
 	format, ok := params["format"]
 	if !ok {
-		return nil, fmt.Errorf("parameter 'type' missing")
+		return nil, fmt.Errorf("parameter 'format' missing")
 	}
 	directory, ok := params["folder.in"]
 	if !ok {

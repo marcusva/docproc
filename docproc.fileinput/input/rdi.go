@@ -12,8 +12,8 @@ import (
 )
 
 func init() {
-	Register("RdiTransfomer", func(p map[string]string) (FileTransformer, error) {
-		return &RdiTransformer{}, nil
+	Register("RDITransfomer", func(p map[string]string) (FileTransformer, error) {
+		return &RDITransformer{}, nil
 	})
 }
 
@@ -24,18 +24,19 @@ const (
 	rdiData    = 'D'
 )
 
-// RdiSection represents a simple key-value store for RDI data blocks
-type RdiSection struct {
+// RDISection represents a simple key-value store for RDI data blocks
+type RDISection struct {
 	Name    string
 	Content map[string]string
 }
 
-// RdiDocument represents a set of sections belongig to a RDI document
-type RdiDocument struct {
-	Sections []*RdiSection
+// RDIDocument represents a set of sections belongig to a RDI document
+type RDIDocument struct {
+	Sections []*RDISection
 }
 
-func docAsMap(doc *RdiDocument) map[string]interface{} {
+// docAsMap converts a RDIDocument to a simple map representation.
+func docAsMap(doc *RDIDocument) map[string]interface{} {
 	ret := make(map[string]interface{})
 	sections := make([]interface{}, len(doc.Sections))
 	for idx, sec := range doc.Sections {
@@ -45,21 +46,25 @@ func docAsMap(doc *RdiDocument) map[string]interface{} {
 	return ret
 }
 
-func secAsMap(sec *RdiSection) map[string]interface{} {
+// secAsMap convers a RDISection to a simple map representation.
+func secAsMap(sec *RDISection) map[string]interface{} {
 	ret := make(map[string]interface{})
 	ret["name"] = sec.Name
 	ret["content"] = sec.Content
 	return ret
 }
 
-// RdiTransformer represents a simple SAP RDI to queue.Message transformer.
-type RdiTransformer struct {
+// RDITransformer represents a simple SAP RDI to queue.Message transformer.
+type RDITransformer struct {
 }
 
-// Transform transforms the passed in RDI stream into a JSON array of one or
-// more RdiDocument objects.
-// Only RDI data entries will be processed. Splitting the
-// stream into multiple documents will be done based on the RDI header marker.
+// Transform transforms the passed in RDI stream into a set of queue.Message
+// objects. Splitting the stream into multiple documents - and thus multiple
+// messages - will be done based on the RDI header marker.
+//
+// Only RDI data entries will be processed and end up in the content section
+// of the generated Message objects. RID control or sort entries will be
+// ignored.
 //
 // An SAP RDI Data record consists of
 // - A single D as data record indicator
@@ -70,16 +75,17 @@ type RdiTransformer struct {
 // - 1 character for the succession flag (X or space)
 // - 3 characters for the value length
 // - up to 255 characters for the value contents
-func (tf *RdiTransformer) Transform(data []byte) ([]*queue.Message, error) {
+//
+func (tf *RDITransformer) Transform(data []byte) ([]*queue.Message, error) {
 	gzreader, err := gzip.NewReader(bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
 	defer gzreader.Close()
 
-	var documents []*RdiDocument
-	var curdoc *RdiDocument
-	var cursection *RdiSection
+	var documents []*RDIDocument
+	var curdoc *RDIDocument
+	var cursection *RDISection
 	insection := false
 	offset := 0
 
@@ -95,13 +101,13 @@ func (tf *RdiTransformer) Transform(data []byte) ([]*queue.Message, error) {
 		case line[0] == rdiHeader:
 			// New document
 			insection = false
-			curdoc = &RdiDocument{Sections: []*RdiSection{}}
+			curdoc = &RDIDocument{Sections: []*RDISection{}}
 			documents = append(documents, curdoc)
 		case line[0] == rdiData:
 			// Contents
 			// Section starts at D + Windowname + 2 = 11
 			if !insection {
-				cursection = &RdiSection{
+				cursection = &RDISection{
 					Name:    strings.TrimSpace(line[11:41]),
 					Content: make(map[string]string),
 				}

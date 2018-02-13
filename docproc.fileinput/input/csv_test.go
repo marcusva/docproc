@@ -6,16 +6,16 @@ import (
 	"testing"
 )
 
-func TestCsvTransformer(t *testing.T) {
-	tf, err := NewCsvTransformer(nil)
+func TestCSVTransformer(t *testing.T) {
+	tf, err := NewCSVTransformer(nil)
 	assert.NoErr(t, err)
-	assert.Equal(t, tf.(*CsvTransformer).Delim, ',')
+	assert.Equal(t, tf.(*CSVTransformer).Delim, ',')
 
-	tf, err = NewCsvTransformer(map[string]string{"delim": ";"})
+	tf, err = NewCSVTransformer(map[string]string{"delim": ";"})
 	assert.NoErr(t, err)
-	assert.Equal(t, tf.(*CsvTransformer).Delim, ';')
+	assert.Equal(t, tf.(*CSVTransformer).Delim, ';')
 
-	tf, err = NewCsvTransformer(map[string]string{"delim": "###"})
+	tf, err = NewCSVTransformer(map[string]string{"delim": "###"})
 	assert.Err(t, err)
 }
 
@@ -23,9 +23,9 @@ func TestCsvTransform(t *testing.T) {
 	buf, err := ioutil.ReadFile("test/testrecords.csv")
 	assert.FailOnErr(t, err)
 
-	tf, err := NewCsvTransformer(nil)
+	tf, err := NewCSVTransformer(nil)
 	assert.NoErr(t, err)
-	tf.(*CsvTransformer).Delim = ';'
+	tf.(*CSVTransformer).Delim = ';'
 
 	msgs, err := tf.Transform(buf)
 	assert.NoErr(t, err)

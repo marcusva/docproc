@@ -129,7 +129,7 @@ func start(conf *config.Config) {
 		}
 		fw, err := input.Create(wqueue, params)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Creating the filewatcher failed: %v\n", err)
+			fmt.Fprintf(os.Stderr, "creating the filewatcher failed: %v\n", err)
 			os.Exit(2)
 		}
 		watchers = append(watchers, fw)
