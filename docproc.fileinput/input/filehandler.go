@@ -48,7 +48,7 @@ func (handler *FileHandler) checkQueue() error {
 
 // Process reads all data from the passed file and places new messages with
 // the file contents into the processing queue. On processing, the file
-// will be renamed twice to indicate the processing and when it's done.
+// will be renamed twice to indicate the processing status and when it's done.
 func (handler *FileHandler) Process(filename string) error {
 	if err := handler.checkQueue(); err != nil {
 		return err
@@ -80,7 +80,7 @@ func (handler *FileHandler) Process(filename string) error {
 			return err
 		}
 	}
-	return renameFile(fnameproc, suffixDone)
+	return renameFile(fnameproc, filename+suffixDone)
 }
 
 func renameFile(curname, target string) error {
