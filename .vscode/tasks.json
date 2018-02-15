@@ -14,10 +14,9 @@
             "args": [
                 "test",
                 "./common/config",
-                "./common/http/json",
-                "./common/http/soap",
                 "./common/log",
                 "./common/path",
+                "./common/queue/processors",
                 "./common/queue",
                 "./common/rules",
                 "./common/service"
@@ -42,49 +41,12 @@
             ]
         },
         {
-            "taskName": "test docproc.preproc",
-            "suppressTaskName": true,
-            "isTestCommand": true,
-            "args": [
-                "test",
-                "./docproc.preproc/enrichers",
-                "./docproc.preproc/transformers"
-            ]
-        },
-        {
-            "taskName": "build docproc.preproc",
+            "taskName": "build docproc.command",
             "suppressTaskName": true,
             "args": [
                 "build",
                 "-v",
-                "./docproc.preproc"
-            ]
-        },
-        {
-            "taskName": "build docproc.postproc",
-            "suppressTaskName": true,
-            "args": [
-                "build",
-                "-v",
-                "./docproc.postproc"
-            ]
-        },
-        {
-            "taskName": "build docproc.output",
-            "suppressTaskName": true,
-            "args": [
-                "build",
-                "-v",
-                "./docproc.output"
-            ]
-        },
-        {
-            "taskName": "build docproc.renderer",
-            "suppressTaskName": true,
-            "args": [
-                "build",
-                "-v",
-                "./docproc.renderer"
+                "./docproc.command"
             ]
         }
     ]

@@ -1,4 +1,4 @@
-package transformers
+package processors
 
 import (
 	"github.com/marcusva/docproc/common/queue"
@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	message = `{
+	tplmessage = `{
     "metadata": {
         "batch": 1517607828,
         "created": "2018-02-02T22:43:48.0220047+01:00"
@@ -52,7 +52,7 @@ func TestLnTransformerProcess(t *testing.T) {
 	lnt, err := NewTemplateTransformer(params)
 	assert.FailOnErr(t, err)
 
-	msg, err := queue.MsgFromJSON([]byte(message))
+	msg, err := queue.MsgFromJSON([]byte(tplmessage))
 	assert.FailOnErr(t, err)
 
 	err = lnt.Process(msg)

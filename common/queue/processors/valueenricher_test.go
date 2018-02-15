@@ -1,4 +1,4 @@
-package enrichers
+package processors
 
 import (
 	"github.com/marcusva/docproc/common/queue"
@@ -75,8 +75,8 @@ func TestQueueProcessing(t *testing.T) {
 	ve, err := NewValueEnricher(p)
 	assert.FailOnErr(t, err)
 
-	writer := queue.NewWriter(wq)
-	writer.AddProcessor(ve)
+	writer := queue.NewWriter(wq, nil)
+	writer.Add(ve)
 
 	msg, err := queue.MsgFromJSON([]byte(message))
 	assert.FailOnErr(t, err)

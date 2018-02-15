@@ -18,8 +18,7 @@ func TestWritable(t *testing.T) {
 }
 
 func TestCreateDir(t *testing.T) {
-
-	dir, err := ioutil.TempDir("", "test_create_dir")
+	dir, err := ioutil.TempDir(os.TempDir(), "test_create_dir")
 	assert.FailOnErr(t, err)
 	sub := filepath.Join(dir, "subdir")
 

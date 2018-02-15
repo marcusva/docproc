@@ -5,11 +5,6 @@ import (
 	"sync"
 )
 
-// Consumer is a simple reader function for messages
-type Consumer interface {
-	Consume(*Message) error
-}
-
 // WriteQueue provides write access to a queue
 type WriteQueue interface {
 	Open() error

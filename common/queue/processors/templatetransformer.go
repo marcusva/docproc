@@ -1,4 +1,4 @@
-package transformers
+package processors
 
 import (
 	"bytes"
@@ -8,8 +8,12 @@ import (
 	"text/template"
 )
 
+const (
+	tplName = "TemplateTransformer"
+)
+
 func init() {
-	Register("TemplateTransformer", NewTemplateTransformer)
+	Register(tplName, NewTemplateTransformer)
 }
 
 // TemplateTransformer provides a simple mechanism to add additional data to
@@ -25,7 +29,7 @@ type TemplateTransformer struct {
 // Name returns the name of the TemplateTransformer to be used in configuration
 // files.
 func (tf *TemplateTransformer) Name() string {
-	return "TemplateTransformer"
+	return tplName
 }
 
 // Process takes a queue.Message and executes the configured templates using

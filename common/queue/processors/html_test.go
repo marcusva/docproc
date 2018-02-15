@@ -1,4 +1,4 @@
-package renderers
+package processors
 
 import (
 	"github.com/marcusva/docproc/common/queue"
@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	message = `{
+	htmlmessage = `{
 	"metadata": {
 		"batch": 1517607828,
 		"created": "2018-02-02T22:43:48.0220047+01:00"
@@ -31,14 +31,14 @@ const (
 
 func TestProcess(t *testing.T) {
 	params := map[string]string{
-		"templates":    "test//*.tpl",
+		"templates":    "test/html/*.tpl",
 		"output":       "html",
 		"templateroot": "main",
 	}
 	html, err := NewHTMLRenderer(params)
 	assert.FailOnErr(t, err)
 
-	msg, err := queue.MsgFromJSON([]byte(message))
+	msg, err := queue.MsgFromJSON([]byte(htmlmessage))
 	assert.FailOnErr(t, err)
 
 	err = html.Process(msg)

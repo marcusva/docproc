@@ -1,4 +1,4 @@
-package enrichers
+package processors
 
 import (
 	"encoding/json"
@@ -11,13 +11,17 @@ import (
 	"strings"
 )
 
-var (
-	exprSubst = regexp.MustCompile(`\$\{(.*?)\}`)
+const (
+	valName = "ValueEnricher"
 )
 
 func init() {
-	Register("ValueEnricher", NewValueEnricher)
+	Register(valName, NewValueEnricher)
 }
+
+var (
+	exprSubst = regexp.MustCompile(`\$\{(.*?)\}`)
+)
 
 // ValueRule represents a Rule, that carries a key-value pair to be added
 // to a queue.Message, if the Rule evaluates to true.
@@ -55,7 +59,7 @@ func NewValueEnricher(params map[string]string) (queue.Processor, error) {
 // Name returns the name of the ValueEnricher to be used in configuration
 // files.
 func (e *ValueEnricher) Name() string {
-	return "ValueEnricher"
+	return valName
 }
 
 func resolveValue(msg *queue.Message, val interface{}) (interface{}, error) {

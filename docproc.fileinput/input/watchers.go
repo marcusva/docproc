@@ -108,7 +108,7 @@ func Create(wq queue.WriteQueue, params map[string]string) (*service.FileWatcher
 		return nil, err
 	}
 	handler := NewFileHandler(wq, transformer)
-	handler.AddProcessor(&MetadataProc{Source: "file", Format: format})
+	handler.Add(&MetadataProc{Source: "file", Format: format})
 	return service.NewFileWatcher(directory, pattern, interval, handler)
 }
 

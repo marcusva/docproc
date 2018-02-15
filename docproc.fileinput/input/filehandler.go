@@ -1,7 +1,6 @@
 package input
 
 import (
-	"errors"
 	"github.com/marcusva/docproc/common/log"
 	"github.com/marcusva/docproc/common/queue"
 	"io/ioutil"
@@ -29,30 +28,15 @@ type FileHandler struct {
 // NewFileHandler creates a FileHandler.
 func NewFileHandler(wq queue.WriteQueue, tf FileTransformer) *FileHandler {
 	return &FileHandler{
-		Writer:          queue.NewWriter(wq),
+		Writer:          queue.NewWriter(wq, nil),
 		FileTransformer: tf,
 	}
-}
-
-func (handler *FileHandler) checkQueue() error {
-	if !handler.Queue.IsOpen() {
-		log.Warningf("bound queue is currently not available, trying to open it...")
-		if err := handler.Queue.Open(); err != nil {
-			log.Errorf("could not open queue: %v", err)
-			return err
-		}
-		return errors.New("bound queue is not open")
-	}
-	return nil
 }
 
 // Process reads all data from the passed file and places new messages with
 // the file contents into the processing queue. On processing, the file
 // will be renamed twice to indicate the processing status and when it's done.
 func (handler *FileHandler) Process(filename string) error {
-	if err := handler.checkQueue(); err != nil {
-		return err
-	}
 	fnameproc := filename + suffixProcess
 	if err := renameFile(filename, fnameproc); err != nil {
 		return err

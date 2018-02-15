@@ -9,6 +9,8 @@ import (
 )
 
 func TestRDITransformer(t *testing.T) {
+	t.Skip()
+
 	buf, err := ioutil.ReadFile("test/testrdi.gz")
 	assert.FailOnErr(t, err)
 	tf := &RDITransformer{}

@@ -1,4 +1,4 @@
-package output
+package processors
 
 import (
 	"encoding/json"
@@ -12,8 +12,12 @@ import (
 	"path/filepath"
 )
 
+const (
+	fwName = "FileWriter"
+)
+
 func init() {
-	Register("FileWriter", NewFileWriter)
+	Register(fwName, NewFileWriter)
 }
 
 type FileWriter struct {
@@ -24,7 +28,7 @@ type FileWriter struct {
 }
 
 func (fw *FileWriter) Name() string {
-	return "FileWriter"
+	return fwName
 }
 
 func (fw *FileWriter) Process(msg *queue.Message) error {

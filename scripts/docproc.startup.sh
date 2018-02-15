@@ -7,7 +7,8 @@ if [ $st -ne 0 ]; then
   exit $st
 fi
 sleep 3
-$APP$ &
+
+$APP$ $@ &
 st=$?
 if [ $st -ne 0 ]; then
   echo "Failed to start $APP$"

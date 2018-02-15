@@ -134,6 +134,12 @@ func start(conf *config.Config) {
 		}
 		watchers = append(watchers, fw)
 	}
+	// Open the queue
+	if err := wqueue.Open(); err != nil {
+		fmt.Fprintf(os.Stderr, "could not open message queue: %v\n", err)
+		os.Exit(2)
+	}
+
 	// Start all watchers
 	for _, fw := range watchers {
 		go fw.Watch()

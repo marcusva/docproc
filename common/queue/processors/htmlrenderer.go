@@ -1,4 +1,4 @@
-package renderers
+package processors
 
 import (
 	"bytes"
@@ -8,8 +8,17 @@ import (
 	"html/template"
 )
 
+const (
+	htmlName = "HTMLRenderer"
+)
+
+var (
+	// ContentType represents the rendered result's content type.
+	ContentType = "mime-type"
+)
+
 func init() {
-	Register("HTMLRenderer", NewHTMLRenderer)
+	Register(htmlName, NewHTMLRenderer)
 }
 
 // HTMLRenderer is a template-based renderer.
@@ -20,7 +29,7 @@ type HTMLRenderer struct {
 }
 
 func (html *HTMLRenderer) Name() string {
-	return "HTMLRenderer"
+	return htmlName
 }
 
 func (html *HTMLRenderer) Process(msg *queue.Message) error {

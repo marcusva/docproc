@@ -27,9 +27,7 @@ func CreateDir(path string) error {
 		}
 		// Path does not exist, create the directory
 		err = os.Mkdir(path, os.ModeDir|os.FileMode(0755))
-		if err != nil {
-			return err
-		}
+		return err
 	}
 	if !fi.IsDir() {
 		return fmt.Errorf("'%s' is not a directory", path)

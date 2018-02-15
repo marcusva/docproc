@@ -18,10 +18,9 @@ ADD . $SRC_DIR
 RUN cd $SRC_DIR \
  && /bin/dep ensure \
  && go build $BUILD_FLAGS -v -o /app/docproc.fileinput ./docproc.fileinput \
- && go build $BUILD_FLAGS -v -o /app/docproc.preproc ./docproc.preproc \
- && go build $BUILD_FLAGS -v -o /app/docproc.renderer ./docproc.renderer \
- && go build $BUILD_FLAGS -v -o /app/docproc.postproc ./docproc.postproc \
- && go build $BUILD_FLAGS -v -o /app/docproc.output ./docproc.output
+ && go build $BUILD_FLAGS -v -o /app/docproc.proc ./docproc.proc
+
+RUN (cd $SRC_DIR && go test ./...) || (echo "tests failed" && false)
 
  #### Image creation ####
 FROM golang

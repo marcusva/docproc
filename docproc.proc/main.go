@@ -6,7 +6,7 @@ import (
 	"github.com/marcusva/docproc/common/config"
 	"github.com/marcusva/docproc/common/log"
 	"github.com/marcusva/docproc/common/queue"
-	"github.com/marcusva/docproc/docproc.renderer/renderers"
+	"github.com/marcusva/docproc/common/queue/processors"
 	"os"
 	"os/signal"
 	"strings"
@@ -23,10 +23,10 @@ var (
 )
 
 const (
-	cfgFile  = "docproc-renderer.conf"
+	cfgFile  = "docproc.conf"
 	usageMsg = `usage: %s [-hv] [-c file] [-l file]
 
-A simple document render service
+A simple content processing command.
 
 Options:
 
@@ -47,8 +47,8 @@ func info() {
 	fmt.Fprintln(os.Stdout, "Supported message queue types:")
 	fmt.Fprintln(os.Stdout, "  reading:", strings.Join(queue.ReadTypes(), ", "))
 	fmt.Fprintln(os.Stdout, "  writing:", strings.Join(queue.WriteTypes(), ", "))
-	fmt.Fprintln(os.Stdout, "Renderer configuration:")
-	fmt.Fprintln(os.Stdout, "  renderers:", strings.Join(renderers.Renderers(), ", "))
+	fmt.Fprintln(os.Stdout, "Supported message handlers:")
+	fmt.Fprintln(os.Stdout, "  ", strings.Join(processors.Types(), ", "))
 	os.Exit(0)
 }
 
@@ -89,71 +89,55 @@ func main() {
 		}
 	}
 
-	// Create the message queue to read from
+	// Create the message queue to read from.
 	inqtype := conf.GetOrPanic("in-queue", "type")
 	inparams := map[string]string{
 		"host":  conf.GetOrPanic("in-queue", "host"),
 		"topic": conf.GetOrPanic("in-queue", "topic"),
 	}
-	rq, err := queue.CreateRQ(inqtype, inparams)
+	inqueue, err := queue.CreateRQ(inqtype, inparams)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Could not create inbound message queue: %v\n", err)
 		os.Exit(2)
 	}
+	// Create the message queue to write to, if any.
+	outqueue := getOutQueue("out-queue", conf)
+	// Create the message queue to use for errors, if any.
+	errqueue := getOutQueue("error-queue", conf)
 
-	outqtype := conf.GetOrPanic("out-queue", "type")
-	outparams := map[string]string{
-		"host":  conf.GetOrPanic("out-queue", "host"),
-		"topic": conf.GetOrPanic("out-queue", "topic"),
-	}
-	wq, err := queue.CreateWQ(outqtype, outparams)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Could not create outbound message queue: %v\n", err)
-		os.Exit(2)
-	}
-	writer := queue.NewWriter(wq)
-
-	// Create an error queue, if provided
-	if conf.HasSection("error-queue") {
-		errqtype := conf.GetOrPanic("error-queue", "type")
-		errparams := map[string]string{
-			"host":  conf.GetOrPanic("error-queue", "host"),
-			"topic": conf.GetOrPanic("error-queue", "topic"),
-		}
-		wq, err := queue.CreateWQ(errqtype, errparams)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Could not create error message queue: %v\n", err)
+	var consumer queue.ProcConsumer
+	if outqueue != nil || errqueue != nil {
+		writer := queue.NewWriter(outqueue, errqueue)
+		if err := writer.Open(); err != nil {
+			fmt.Fprintf(os.Stderr, "Could not create outbound message queue(s): %v\n", err)
 			os.Exit(2)
 		}
-		writer.ErrQueue = wq
+		consumer = writer
+	} else {
+		consumer = queue.NewSimpleConsumer()
 	}
 
-	sections, err := conf.Array("renderers", "handlers")
+	// Setup the processors to be executed on new messages
+	sections, err := conf.Array("execute", "handlers")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "could not retrieve renderers: %v\n", err)
+		fmt.Fprintf(os.Stderr, "could not retrieve message handlers: %v\n", err)
 		os.Exit(2)
 	}
-
 	for _, sec := range sections {
 		params, err := conf.AllFor(sec)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "could not retrieve section '%s': %v\n", sec, err)
 			os.Exit(2)
 		}
-		proc, err := renderers.Create(params)
+		proc, err := processors.Create(params)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "could not create renderer: %v\n", err)
+			fmt.Fprintf(os.Stderr, "could not create processor: %v\n", err)
 			os.Exit(2)
 		}
-		writer.AddProcessor(proc)
+		consumer.Add(proc)
 	}
-
-	if err := writer.Open(); err != nil {
-		fmt.Fprintf(os.Stderr, "Could not open outbound message queue: %v\n", err)
-		os.Exit(2)
-	}
-	if err := rq.Open(writer); err != nil {
-		fmt.Fprintf(os.Stderr, "Could not open inbound message queue: %v\n", err)
+	if err := inqueue.Open(consumer); err != nil {
+		fmt.Fprintf(os.Stdout, "could not open inbound message queue: %v\n", err)
 		os.Exit(2)
 	}
 
@@ -165,15 +149,34 @@ func main() {
 	s := <-sigchan
 	log.Infof("Shutdown on signal %s", s.String())
 
-	/* FIXME: graceful shutdown of everything */
-	if err := rq.Close(); err != nil {
-		log.Errorf("Could not close message queue: %v\n", err)
-		os.Exit(2)
+	exitval := 0
+	if writer, ok := consumer.(*queue.Writer); ok {
+		if err := writer.Close(); err != nil {
+			log.Errorf("Could not close outbound message queue(s): %v\n", err)
+			exitval = 2
+		}
 	}
-	if err := writer.Close(); err != nil {
-		log.Errorf("Could not close the writer properly: %v\n", err)
-		os.Exit(2)
+	if err := inqueue.Close(); err != nil {
+		log.Errorf("Could not close inbound message queue: %v\n", err)
+		exitval = 2
 	}
 
-	os.Exit(0)
+	os.Exit(exitval)
+}
+
+func getOutQueue(name string, conf *config.Config) queue.WriteQueue {
+	if !conf.HasSection(name) {
+		return nil
+	}
+	qtype := conf.GetOrPanic(name, "type")
+	params := map[string]string{
+		"host":  conf.GetOrPanic(name, "host"),
+		"topic": conf.GetOrPanic(name, "topic"),
+	}
+	wq, err := queue.CreateWQ(qtype, params)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Could not create outbound message queue: %v\n", err)
+		os.Exit(2)
+	}
+	return wq
 }
