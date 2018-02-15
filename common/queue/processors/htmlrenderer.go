@@ -23,9 +23,9 @@ func init() {
 
 // HTMLRenderer is a template-based renderer.
 type HTMLRenderer struct {
-	OutputID     string
-	TemplateRoot string
-	Templates    *template.Template
+	outputID     string
+	templateRoot string
+	templates    *template.Template
 }
 
 func (html *HTMLRenderer) Name() string {
@@ -34,12 +34,12 @@ func (html *HTMLRenderer) Name() string {
 
 func (html *HTMLRenderer) Process(msg *queue.Message) error {
 	buf := bytes.NewBufferString("")
-	err := html.Templates.ExecuteTemplate(buf, html.TemplateRoot, msg.Content)
+	err := html.templates.ExecuteTemplate(buf, html.templateRoot, msg.Content)
 	if err != nil {
 		log.Errorf("error on executing the templates: %v", err)
 		return err
 	}
-	msg.Content[html.OutputID] = buf.String()
+	msg.Content[html.outputID] = buf.String()
 	msg.Content[ContentType] = "text/html"
 	return nil
 }
@@ -65,8 +65,8 @@ func NewHTMLRenderer(params map[string]string) (queue.Processor, error) {
 		return nil, err
 	}
 	return &HTMLRenderer{
-		OutputID:     output,
-		TemplateRoot: tplroot,
-		Templates:    tmpl,
+		outputID:     output,
+		templateRoot: tplroot,
+		templates:    tmpl,
 	}, nil
 }

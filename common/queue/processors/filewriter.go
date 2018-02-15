@@ -22,8 +22,8 @@ func init() {
 
 type FileWriter struct {
 	identifier string
-	Filename   string
-	Path       string
+	filename   string
+	path       string
 	rules      []rules.Rule
 }
 
@@ -36,9 +36,9 @@ func (fw *FileWriter) Process(msg *queue.Message) error {
 	if !ok {
 		return fmt.Errorf("message '%s' misses identifier '%s'", msg.Metadata[queue.MetaID], fw.identifier)
 	}
-	filename, ok := msg.Content[fw.Filename].(string)
+	filename, ok := msg.Content[fw.filename].(string)
 	if !ok {
-		return fmt.Errorf("message '%s' misses filename '%s'", msg.Metadata[queue.MetaID], fw.Filename)
+		return fmt.Errorf("message '%s' misses filename '%s'", msg.Metadata[queue.MetaID], fw.filename)
 	}
 
 	for _, rule := range fw.rules {
@@ -61,7 +61,7 @@ func (fw *FileWriter) Process(msg *queue.Message) error {
 		log.Debugf("content '%s' is not a string or byte buffer", fw.identifier)
 		return fmt.Errorf("content '%s' is not a string or byte buffer", fw.identifier)
 	}
-	fpath := filepath.Join(fw.Path, filename)
+	fpath := filepath.Join(fw.path, filename)
 	log.Debugf("writing html to '%s'", fpath)
 	return ioutil.WriteFile(fpath, bytebuf, os.FileMode(0644))
 }
@@ -104,8 +104,8 @@ func NewFileWriter(params map[string]string) (queue.Processor, error) {
 	}
 	return &FileWriter{
 		identifier: identifier,
-		Filename:   filename,
+		filename:   filename,
 		rules:      rules,
-		Path:       directory,
+		path:       directory,
 	}, nil
 }

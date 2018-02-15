@@ -21,9 +21,9 @@ func init() {
 // The transformation result will be stored in the message's Content section and
 // can be reached via the transformer's Identifier.
 type TemplateTransformer struct {
-	OutputID     string
-	TemplateRoot string
-	Templates    *template.Template
+	outputID     string
+	templateRoot string
+	templates    *template.Template
 }
 
 // Name returns the name of the TemplateTransformer to be used in configuration
@@ -36,12 +36,12 @@ func (tf *TemplateTransformer) Name() string {
 // the message's Content.
 func (tf *TemplateTransformer) Process(msg *queue.Message) error {
 	buf := bytes.NewBufferString("")
-	err := tf.Templates.ExecuteTemplate(buf, tf.TemplateRoot, msg.Content)
+	err := tf.templates.ExecuteTemplate(buf, tf.templateRoot, msg.Content)
 	if err != nil {
-		log.Errorf("Executing the template '%s' failed for content %v", tf.TemplateRoot, msg.Content)
+		log.Errorf("Executing the template '%s' failed for content %v", tf.templateRoot, msg.Content)
 		return err
 	}
-	msg.Content[tf.OutputID] = buf.String()
+	msg.Content[tf.outputID] = buf.String()
 	return nil
 }
 
@@ -66,8 +66,8 @@ func NewTemplateTransformer(params map[string]string) (queue.Processor, error) {
 	}
 
 	return &TemplateTransformer{
-		OutputID:     output,
-		TemplateRoot: tplroot,
-		Templates:    tmpl,
+		outputID:     output,
+		templateRoot: tplroot,
+		templates:    tmpl,
 	}, nil
 }
