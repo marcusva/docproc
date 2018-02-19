@@ -21,17 +21,22 @@ func init() {
 	Register(htmlName, NewHTMLRenderer)
 }
 
-// HTMLRenderer is a template-based renderer.
+// HTMLRenderer is a template-based renderer for HTML content.
 type HTMLRenderer struct {
-	outputID     string
+	identifier   string
 	templateRoot string
 	templates    *template.Template
 }
 
+// Name returns the name to be used in configuration files.
 func (html *HTMLRenderer) Name() string {
 	return htmlName
 }
 
+// Process processes the passed in message using the configured templates.
+// On sucess, the result will be stored as a key-value pair using the
+// HTMLRenderer's set identifier. Additionally, a "mime-type" : "text/html"
+// key-value pair will be set on the message.
 func (html *HTMLRenderer) Process(msg *queue.Message) error {
 	buf := bytes.NewBufferString("")
 	err := html.templates.ExecuteTemplate(buf, html.templateRoot, msg.Content)
@@ -39,21 +44,21 @@ func (html *HTMLRenderer) Process(msg *queue.Message) error {
 		log.Errorf("error on executing the templates: %v", err)
 		return err
 	}
-	msg.Content[html.outputID] = buf.String()
+	msg.Content[html.identifier] = buf.String()
 	msg.Content[ContentType] = "text/html"
 	return nil
 }
 
 // NewHTMLRenderer creates a simple HTML renderer, which uses go's
-// html template package
+// html template package.
 func NewHTMLRenderer(params map[string]string) (queue.Processor, error) {
 	tplfiles, ok := params["templates"]
 	if !ok {
 		return nil, fmt.Errorf("parameter 'templates' missing")
 	}
-	output, ok := params["output"]
+	output, ok := params["identifier"]
 	if !ok {
-		return nil, fmt.Errorf("parameter 'output' missing")
+		return nil, fmt.Errorf("parameter 'identifier' missing")
 	}
 	tplroot, ok := params["templateroot"]
 	if !ok {
@@ -65,7 +70,7 @@ func NewHTMLRenderer(params map[string]string) (queue.Processor, error) {
 		return nil, err
 	}
 	return &HTMLRenderer{
-		outputID:     output,
+		identifier:   output,
 		templateRoot: tplroot,
 		templates:    tmpl,
 	}, nil

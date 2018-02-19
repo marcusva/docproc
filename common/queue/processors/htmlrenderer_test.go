@@ -29,10 +29,10 @@ const (
 `
 )
 
-func TestProcess(t *testing.T) {
+func TestHTMLRendererProcess(t *testing.T) {
 	params := map[string]string{
 		"templates":    "test/html/*.tpl",
-		"output":       "html",
+		"identifier":   "html",
 		"templateroot": "main",
 	}
 	html, err := NewHTMLRenderer(params)

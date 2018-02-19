@@ -27,10 +27,15 @@ type FileWriter struct {
 	rules      []rules.Rule
 }
 
+// Name returns the name to be used in configuration files.
 func (fw *FileWriter) Name() string {
 	return fwName
 }
 
+// Process processes the message and writes certain content of it to the
+// configured directory. The message needs to have two key-value pairs, one
+// containing the content to write to the file and another one containing the
+// filename to use.
 func (fw *FileWriter) Process(msg *queue.Message) error {
 	buf, ok := msg.Content[fw.identifier]
 	if !ok {
@@ -50,7 +55,6 @@ func (fw *FileWriter) Process(msg *queue.Message) error {
 			return fmt.Errorf("message '%s' does not satisfy the rules", msg.Metadata[queue.MetaID])
 		}
 	}
-	// TODO: convert properly
 	var bytebuf []byte
 	switch buf.(type) {
 	case []byte:
@@ -58,14 +62,15 @@ func (fw *FileWriter) Process(msg *queue.Message) error {
 	case string:
 		bytebuf = []byte(buf.(string))
 	default:
-		log.Debugf("content '%s' is not a string or byte buffer", fw.identifier)
-		return fmt.Errorf("content '%s' is not a string or byte buffer", fw.identifier)
+		log.Infof("content '%s' is not a string or byte buffer, using standard conversion", fw.identifier)
+		bytebuf = []byte(fmt.Sprintf("%v", buf))
 	}
 	fpath := filepath.Join(fw.path, filename)
 	log.Debugf("writing html to '%s'", fpath)
 	return ioutil.WriteFile(fpath, bytebuf, os.FileMode(0644))
 }
 
+// NewFileWriter creates a FileWriter
 func NewFileWriter(params map[string]string) (queue.Processor, error) {
 	identifier, ok := params["identifier"]
 	if !ok {

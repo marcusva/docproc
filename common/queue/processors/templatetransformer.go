@@ -26,8 +26,7 @@ type TemplateTransformer struct {
 	templates    *template.Template
 }
 
-// Name returns the name of the TemplateTransformer to be used in configuration
-// files.
+// Name returns the name to be used in configuration files.
 func (tf *TemplateTransformer) Name() string {
 	return tplName
 }
@@ -52,9 +51,9 @@ func NewTemplateTransformer(params map[string]string) (queue.Processor, error) {
 	if !ok {
 		return nil, fmt.Errorf("parameter 'templates' missing")
 	}
-	output, ok := params["output"]
+	output, ok := params["identifier"]
 	if !ok {
-		return nil, fmt.Errorf("parameter 'output' missing")
+		return nil, fmt.Errorf("parameter 'identifier' missing")
 	}
 	tplroot, ok := params["templateroot"]
 	if !ok {

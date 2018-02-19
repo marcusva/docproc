@@ -41,12 +41,12 @@
             ]
         },
         {
-            "taskName": "build docproc.command",
+            "taskName": "build docproc.proc",
             "suppressTaskName": true,
             "args": [
                 "build",
                 "-v",
-                "./docproc.command"
+                "./docproc.proc"
             ]
         }
     ]

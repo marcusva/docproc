@@ -56,8 +56,7 @@ func NewValueEnricher(params map[string]string) (queue.Processor, error) {
 	return &ValueEnricher{rules: rules}, nil
 }
 
-// Name returns the name of the ValueEnricher to be used in configuration
-// files.
+// Name returns the name to be used in configuration files.
 func (e *ValueEnricher) Name() string {
 	return valName
 }
@@ -85,6 +84,8 @@ func resolveValue(msg *queue.Message, val interface{}) (interface{}, error) {
 	}
 }
 
+// Process processes the passed message and adds or rewrites values of the
+// message's content based on the configured rules.
 func (e *ValueEnricher) Process(msg *queue.Message) error {
 	for _, rule := range e.rules {
 		log.Debugf("testing '%v %v %v' against %v", rule.Path, rule.Operator, rule.Value, msg.Content)

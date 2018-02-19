@@ -28,7 +28,7 @@ const (
 }`
 )
 
-func TestNewLnTransformer(t *testing.T) {
+func TestNewTemplateTransformer(t *testing.T) {
 	params := map[string]string{}
 	_, err := NewTemplateTransformer(params)
 	assert.FailIf(t, err == nil, "NewTemplateTransformer() must fail, if no 'templates' arg is provided")
@@ -38,15 +38,15 @@ func TestNewLnTransformer(t *testing.T) {
 	params["templateroot"] = "main"
 	_, err = NewTemplateTransformer(params)
 	assert.FailIf(t, err == nil, "NewTemplateTransformer() must fail, if no 'output' arg is provided")
-	params["output"] = "_output_"
+	params["identifier"] = "_output_"
 	_, err = NewTemplateTransformer(params)
 	assert.FailOnErr(t, err)
 }
 
-func TestLnTransformerProcess(t *testing.T) {
+func TestTemplateTransformerProcess(t *testing.T) {
 	params := map[string]string{
 		"templates":    "test//*.tpl",
-		"output":       "_xml_",
+		"identifier":   "_xml_",
 		"templateroot": "main",
 	}
 	lnt, err := NewTemplateTransformer(params)
