@@ -17,7 +17,10 @@
   (configurable)
 
 * mail processor
-* http processor for SOAP and REST receivers
+* configurable headers for the HTTPSender
+
+* configurable status codes to accept as default on HTTPSender?
+* configurable http methods on HTTPSender?
 
 * add Kafka as queue implementation
 * add Rabbitmq as queue implementation
