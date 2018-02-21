@@ -13,13 +13,7 @@
             "isTestCommand": true,
             "args": [
                 "test",
-                "./common/config",
-                "./common/log",
-                "./common/path",
-                "./common/queue/processors",
-                "./common/queue",
-                "./common/rules",
-                "./common/service"
+                "./common/...",
             ]
         },
         {
@@ -28,7 +22,7 @@
             "isTestCommand": true,
             "args": [
                 "test",
-                "./docproc.fileinput/input"
+                "./docproc.fileinput/..."
             ]
         },
         {
@@ -36,8 +30,19 @@
             "suppressTaskName": true,
             "args": [
                 "build",
+                "-tags",
+                "beanstalk nats nsq",
                 "-v",
                 "./docproc.fileinput"
+            ]
+        },
+        {
+            "taskName": "test docproc.proc",
+            "suppressTaskName": true,
+            "isTestCommand": true,
+            "args": [
+                "test",
+                "./docproc.proc/..."
             ]
         },
         {
@@ -45,6 +50,8 @@
             "suppressTaskName": true,
             "args": [
                 "build",
+                "-tags",
+                "beanstalk nats nsq",
                 "-v",
                 "./docproc.proc"
             ]
