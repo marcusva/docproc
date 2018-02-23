@@ -7,6 +7,7 @@ modify or add content.
 
 Configuration
 -------------
+
 The ValueEnricher requires the following configuration entries:
 
 .. code-block:: ini
@@ -25,9 +26,10 @@ rules
 
 Defining Rules
 --------------
+
 The rules to be executed are kept in a simple JSON-based list.
 
-.. code-block:: json-object
+.. code-block:: json
 
     [
         {
@@ -47,121 +49,171 @@ The rules to be executed are kept in a simple JSON-based list.
         }
     ]
 
-A rule to be used for the ValueEnricher consists of
+A rule to be used for the ValueEnricher consists of the following fields:
 
-name
-   An optional name describing the rule. This is for maintenance purposes and
-   does not have any effect on the rule, if provided or absent.
+* ``name``, ``path``, ``op``, ``value``
+* ``targetpath`` - *specific to the ValueEnricher*
+* ``targetvalue`` - *specific to the ValueEnricher*
 
-path
-   The message's content element to check. Paths can be nested using a dotted
-   notation.
-   ``"path": "ZIP"`` refers to a content entry named "ZIP" on the topmost level
-   of the message's content. Such an entry would e.g. match the following
-   content::
-
-        ...
-        "content": {
-            ...
-            "CITY": "New York",
-            "ZIP": "10006",
-            ...
-        }
-
-   ``"path": "address.ZIP"`` refers to a content entry named "ZIP" within the
-   "address" element of the message's content::
-
-        ...
-        "content": {
-            ...
-            "address": {
-                "CITY": "New York",
-                "ZIP": "10006",
-                ...
-            },
-        ...
-        }
-
-   "path" can also contain brackets to access arrays, e.g.
-   ``"path": "chargenumbers[2]"``::
-
-        ...
-        "content": {
-            "chargenumbers": [
-                14865,
-                77896,
-                12345
-            ]
-        }
-
-value
-    The value to compare the path's value against. **value** can be omitted, if
-    the comparision operator is ``exists`` or ``not exists``. If it is provided
-    for those operators, it will be ignored.
-
-op
-   The comparision operator to use. If not stated otherwise, the comparision
-   will consider path being the left-hand and value the right-hand argument::
-
-     value-of-path <op> rule-value
-
-   See :ref:`rulesengine` for more details about the supported operators.
-   docproc's rule engine currently understands the following operators:
+See :ref:`rulesengine` for more details about how to configure rules.
+Rules being used by the ValueEnricher contain two additional fields:
 
 targetpath
     Defines the path to use for writing the provided targetvalue. If the given
-    path does not exist, it will be created. Similarily to the "path", the
+    path does not exist, it will be created. Similarily to the ``path``, the
     targetpath can be nested using a dotted notation.
-    NOTE: Accessing arrays is currently not possible.
+
+    *Accessing arrays is currently not possible.*
 
 targetvalue
-    The value to write into targetpath. if value or a part of it is surrounded
-    by ``${}``, that specific part is treated as an existing path to be taken from
-    the message's content.::
+    The value to write into targetpath. The value can contain portions of the
+    existing message's content using a ``${<sourcepath>}`` notation.
 
-        ...
-        "content": {
-            ...
-            "CITY": "New York",
-            "ZIP": "10006",
-            ...
+Defining Target Paths
+---------------------
+
+Target paths to write content to can be defined in the same way as the source
+paths for comparision. A target path can refer to an existing path, causing it
+to be overwritten with the new value on evaluating the rule successfully. The
+target path can also be a completely new path, that will be created, if the
+rule is successful.
+
+Let's add a city name based on the provided shortcut for the following message.
+
+Message:
+    .. code-block:: json
+
+        {
+            "content": {
+                "city_sc": "NY"
+            }
         }
+
+Rule:
+    .. code-block:: json
+
+        {
+            "path": "city_sc",
+            "op": "equals",
+            "value": "NY",
+            "targetpath": "city",
+            "targetvalue": "New York"
+        }
+
+Resulting Message:
+    .. code-block:: json
+
+        {
+            "content": {
+                "city_sc": "NY",
+                "city": "New York"
+            }
+        }
+
+Overwrite the city's shortcut with the city name
+
+Message:
+    .. code-block:: json
+
+        {
+            "content": {
+                "city": "NY"
+            }
+        }
+
+Rule:
+    .. code-block:: json
+
+        {
+            "path": "city",
+            "op": "equals",
+            "value": "NY",
+            "targetpath": "city",
+            "targetvalue": "New York"
+        }
+
+Resulting Message:
+    .. code-block:: json
+
+        {
+            "content": {
+                "city": "New York"
+            }
+        }
+
+Add an address block containing the city name.
+
+Message:
+    .. code-block:: json
+
+        {
+            "content": {
+                "city_sc": "NY"
+            }
+        }
+
+Rule:
+    .. code-block:: json
+
+        {
+            "path": "city_sc",
+            "op": "equals",
+            "value": "NY",
+            "targetpath": "address.city",
+            "targetvalue": "New York"
+        }
+
+Resulting Message:
+    .. code-block:: json
+
+        {
+            "content": {
+                "city_sc": "NY",
+                "address": {
+                    "city": "New York"
+                }
+            }
+        }
+
+Defining Target Values
+----------------------
+
+Target value can be any kind of atomic value types, such as integers, decimal
+numbers, boolean values or strings. More complex values, such as JSON objects,
+maps or arrays are not supported.
+
+Furthermore, target values can copy the values from existing paths, as long as
+those contain atomic value types. To refer to an existing path, use``${}``.
+
+Prefix the ZIP code with state information for New York:
+
+Message:
+    .. code-block:: json
+
+        {
+            "content": {
+                "CITY": "New York",
+                "ZIP": "10006",
+            }
+        }
+
+Rule:
+    .. code-block:: json
 
         {
             "path": "CITY",
             "op": "equals",
             "value": "New York",
-            "targetpath": "PREFIXED_ZIP",
+            "targetpath": "ZIP",
             "targetvalue": "NY-${ZIP}"
-        },
-
-        ...
-        "content": {
-            ...
-            "CITY": "New York",
-            "ZIP": "10006"
-            "PREFIXED_ZIP": "NY-10006",
-            ...
         }
 
-Rules can also be chained, allowing them to evaluate multiple comparision before
-applying the new target value. If we want a prefixed ZIP code only, if a ZIP
-code is provided and if the city is New York, the rule can be written like this::
+Resulting Message:
+    .. code-block:: json
 
-    {
-        "path": "ZIP",
-        "op": "exists",
-        "subrules": [
-            {
-                "path": "CITY"
-                "op": "equals",
-                "value": "New York"
+        {
+            "content": {
+                "CITY": "New York",
+                "ZIP": "NY-10006",
             }
-        ]
-        "path": "CITY",
-        "targetpath": "PREFIXED_ZIP",
-        "targetvalue": "NY-${ZIP}"
-    },
-
-Of course, any subrule can have subrule on its own. Note, that subrules do not
-contain a target path or value, though.
+        }
