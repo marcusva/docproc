@@ -1,3 +1,5 @@
+_build
+dist
 .vscode
 .git*
 Dockerfile*

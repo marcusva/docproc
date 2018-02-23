@@ -17,6 +17,8 @@ type ProcConsumer interface {
 	Add(Processor)
 }
 
+// SimpleConsumer is a Consumer implementation that executes multiple processors
+// in the order, they were added.
 type SimpleConsumer struct {
 	// Processors is the list of Processor instances to be executed.
 	Processors []Processor
