@@ -23,7 +23,7 @@ var (
 )
 
 const (
-	cfgFile  = "docproc.conf"
+	cfgFile  = "docproc-proc.conf"
 	usageMsg = `usage: %s [-hv] [-c file] [-l file]
 
 A simple content processing command.

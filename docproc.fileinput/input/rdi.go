@@ -93,17 +93,17 @@ func (tf *RDITransformer) Transform(data []byte) ([]*queue.Message, error) {
 	for scanner.Scan() {
 		offset++
 		line := strings.TrimSpace(scanner.Text())
-		switch {
-		case line[0] == rdiControl, line[0] == rdiSort:
+		switch line[0] {
+		case rdiControl, rdiSort:
 			// Skip control data and sort records
 			insection = false
 			continue
-		case line[0] == rdiHeader:
+		case rdiHeader:
 			// New document
 			insection = false
 			curdoc = &RDIDocument{Sections: []*RDISection{}}
 			documents = append(documents, curdoc)
-		case line[0] == rdiData:
+		case rdiData:
 			// Contents
 			// Section starts at D + Windowname + 2 = 11
 			if !insection {
