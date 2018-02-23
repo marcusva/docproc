@@ -44,8 +44,7 @@ The rules to be executed are kept in a simple JSON-based list.
             "op": "exists",
             "targetpath": "HAS_ZIP",
             "targetvalue": true
-        },
-    ...
+        }
     ]
 
 A rule to be used for the ValueEnricher consists of
