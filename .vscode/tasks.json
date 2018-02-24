@@ -1,59 +1,102 @@
 {
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
-    "version": "0.1.0",
+    "version": "2.0.0",
     "command": "go",
-    "isShellCommand": true,
-    "showOutput": "always",
     "echoCommand": true,
     "tasks": [
         {
-            "taskName": "test common",
-            "suppressTaskName": true,
-            "isTestCommand": true,
+            "label": "build documentation",
+            "command": "cmd",
+            "args": [
+                "/C",
+                "cd doc & make html"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "test common",
+            "command": "go",
             "args": [
                 "test",
-                "./common/...",
+                "./common/..."
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$go"
             ]
         },
         {
-            "taskName": "test docproc.fileinput",
-            "suppressTaskName": true,
-            "isTestCommand": true,
+            "label": "test docproc.fileinput",
+            "command": "go",
             "args": [
                 "test",
                 "./docproc.fileinput/..."
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$go"
             ]
         },
         {
-            "taskName": "build docproc.fileinput",
-            "suppressTaskName": true,
+            "label": "build docproc.fileinput",
+            "command": "go",
             "args": [
                 "build",
                 "-tags",
                 "beanstalk nats nsq",
                 "-v",
                 "./docproc.fileinput"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$go"
             ]
         },
         {
-            "taskName": "test docproc.proc",
-            "suppressTaskName": true,
-            "isTestCommand": true,
+            "label": "test docproc.proc",
+            "command": "go",
             "args": [
                 "test",
                 "./docproc.proc/..."
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$go"
             ]
         },
         {
-            "taskName": "build docproc.proc",
-            "suppressTaskName": true,
+            "label": "build docproc.proc",
+            "command": "go",
             "args": [
                 "build",
                 "-tags",
                 "beanstalk nats nsq",
                 "-v",
                 "./docproc.proc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$go"
             ]
         }
     ]
