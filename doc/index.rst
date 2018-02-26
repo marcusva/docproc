@@ -22,7 +22,7 @@ or complete processing pipelines as required by your input and output scenarios.
 
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Contents:
 
     quickstart
@@ -31,9 +31,3 @@ or complete processing pipelines as required by your input and output scenarios.
     processors
     rulesengine
     docker
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`

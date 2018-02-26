@@ -138,7 +138,6 @@ which other sections it shall read to configure the appropriate handlers.
 
 The currently supported handlers are explained in :ref:`inputhandlers`.
 
-
 handlers
     A comma-separated list of sections to use for configuring and activating
     input handlers. The entries must match a section within the configuration

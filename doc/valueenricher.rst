@@ -1,3 +1,5 @@
+.. _valueenricher:
+
 ValueEnricher
 =============
 
@@ -80,100 +82,109 @@ rule is successful.
 
 Let's add a city name based on the provided shortcut for the following message.
 
-Message:
-    .. code-block:: json
+**Message:**
 
-        {
-            "content": {
-                "city_sc": "NY"
-            }
+.. code-block:: json
+
+    {
+        "content": {
+            "city_sc": "NY"
         }
+    }
 
-Rule:
-    .. code-block:: json
+**Rule:**
 
-        {
-            "path": "city_sc",
-            "op": "equals",
-            "value": "NY",
-            "targetpath": "city",
-            "targetvalue": "New York"
+.. code-block:: json
+
+    {
+        "path": "city_sc",
+        "op": "equals",
+        "value": "NY",
+        "targetpath": "city",
+        "targetvalue": "New York"
+    }
+
+**Resulting Message:**
+
+.. code-block:: json
+
+    {
+        "content": {
+            "city_sc": "NY",
+            "city": "New York"
         }
-
-Resulting Message:
-    .. code-block:: json
-
-        {
-            "content": {
-                "city_sc": "NY",
-                "city": "New York"
-            }
-        }
+    }
 
 Overwrite the city's shortcut with the city name
 
-Message:
-    .. code-block:: json
+**Message:**
 
-        {
-            "content": {
-                "city": "NY"
-            }
+.. code-block:: json
+
+    {
+        "content": {
+            "city": "NY"
         }
+    }
 
-Rule:
-    .. code-block:: json
+**Rule:**
 
-        {
-            "path": "city",
-            "op": "equals",
-            "value": "NY",
-            "targetpath": "city",
-            "targetvalue": "New York"
+.. code-block:: json
+
+    {
+        "path": "city",
+        "op": "equals",
+        "value": "NY",
+        "targetpath": "city",
+        "targetvalue": "New York"
+    }
+
+**Resulting Message:**
+
+.. code-block:: json
+
+    {
+        "content": {
+            "city": "New York"
         }
-
-Resulting Message:
-    .. code-block:: json
-
-        {
-            "content": {
-                "city": "New York"
-            }
-        }
+    }
 
 Add an address block containing the city name.
 
-Message:
-    .. code-block:: json
+**Message:**
 
-        {
-            "content": {
-                "city_sc": "NY"
+.. code-block:: json
+
+    {
+        "content": {
+            "city_sc": "NY"
+        }
+    }
+
+**Rule:**
+
+.. code-block:: json
+
+    {
+        "path": "city_sc",
+        "op": "equals",
+        "value": "NY",
+        "targetpath": "address.city",
+        "targetvalue": "New York"
+    }
+
+**Resulting Message:**
+
+.. code-block:: json
+
+    {
+        "content": {
+            "city_sc": "NY",
+            "address": {
+                "city": "New York"
             }
         }
-
-Rule:
-    .. code-block:: json
-
-        {
-            "path": "city_sc",
-            "op": "equals",
-            "value": "NY",
-            "targetpath": "address.city",
-            "targetvalue": "New York"
-        }
-
-Resulting Message:
-    .. code-block:: json
-
-        {
-            "content": {
-                "city_sc": "NY",
-                "address": {
-                    "city": "New York"
-                }
-            }
-        }
+    }
 
 Defining Target Values
 ----------------------
@@ -182,38 +193,73 @@ Target value can be any kind of atomic value types, such as integers, decimal
 numbers, boolean values or strings. More complex values, such as JSON objects,
 maps or arrays are not supported.
 
+**Message:**
+
+.. code-block:: json
+
+    {
+        "content": {
+            "CITY": "New York",
+            "ZIP": "10006",
+        }
+    }
+
+**Rule:**
+
+.. code-block:: json
+
+    {
+        "path": "ZIP",
+        "op": "exists",
+        "targetpath": "HAS_ZIP",
+        "targetvalue": true
+    }
+
+.. code-block:: json
+
+    {
+        "content": {
+            "CITY": "New York",
+            "ZIP": "NY-10006",
+            "HAS_ZIP": true
+        }
+    }
+
 Furthermore, target values can copy the values from existing paths, as long as
-those contain atomic value types. To refer to an existing path, use``${}``.
+those contain atomic value types. To refer to an existing path, use ``${}``.
 
 Prefix the ZIP code with state information for New York:
 
-Message:
-    .. code-block:: json
+**Message:**
 
-        {
-            "content": {
-                "CITY": "New York",
-                "ZIP": "10006",
-            }
+.. code-block:: json
+
+    {
+        "content": {
+            "CITY": "New York",
+            "ZIP": "10006",
         }
+    }
 
-Rule:
-    .. code-block:: json
+**Rule:**
 
-        {
-            "path": "CITY",
-            "op": "equals",
-            "value": "New York",
-            "targetpath": "ZIP",
-            "targetvalue": "NY-${ZIP}"
+.. code-block:: json
+
+    {
+        "path": "CITY",
+        "op": "equals",
+        "value": "New York",
+        "targetpath": "ZIP",
+        "targetvalue": "NY-${ZIP}"
+    }
+
+**Resulting Message:**
+
+.. code-block:: json
+
+    {
+        "content": {
+            "CITY": "New York",
+            "ZIP": "NY-10006"
         }
-
-Resulting Message:
-    .. code-block:: json
-
-        {
-            "content": {
-                "CITY": "New York",
-                "ZIP": "NY-10006",
-            }
-        }
+    }

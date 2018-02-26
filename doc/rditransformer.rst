@@ -60,57 +60,59 @@ message order or content layout.
 The resulting message(s) consist of a content section, which contain one or more
 ``sections`` entries named after the data window that contains the fields.
 
-The above example for would produce the following messages.
+The above example would produce the following messages.
 
-Message 1
-    .. code-block:: json
+**Message 1**
 
-        {
-            "metadata": {
-                "format": "rdi",
-                "batch": 1517607828,
-                "created": "2018-02-02T22:43:48.0220047+01:00"
-            },
-            "content": {
-                "sections": [
-                    {
-                        "name": "SECTION_A",
-                        "content": {
-                            "ABCD": "...",
-                            "FIELDX": "...",
-                            "FIELDQ": "...",
-                        }
+.. code-block:: json
+
+    {
+        "metadata": {
+            "format": "rdi",
+            "batch": 1517607828,
+            "created": "2018-02-02T22:43:48.0220047+01:00"
+        },
+        "content": {
+            "sections": [
+                {
+                    "name": "SECTION_A",
+                    "content": {
+                        "ABCD": "...",
+                        "FIELDX": "...",
+                        "FIELDQ": "...",
                     }
-                ]
-            }
+                }
+            ]
         }
+    }
 
-Message 2
-    .. code-block:: json
+**Message 2**
 
-        {
-            "metadata": {
-                "format": "rdi",
-                "batch": 1517607828,
-                "created": "2018-02-02T22:43:48.0220047+01:00"
-            },
-            "content": {
-                "sections": [
-                    {
-                        "name": "SECTION_A",
-                        "content": {
-                            "ABCD": "...",
-                            "FIELDX": "...",
-                            "FIELDQ": "...",
-                        }
-                    },
-                    {
-                        "name": "SECTION_B",
-                        "content": {
-                            "FIELD_99": "...",
-                        }
-                    }              
-                ]
-            }
+.. code-block:: json
+
+    {
+        "metadata": {
+            "format": "rdi",
+            "batch": 1517607828,
+            "created": "2018-02-02T22:43:48.0220047+01:00"
+        },
+        "content": {
+            "sections": [
+                {
+                    "name": "SECTION_A",
+                    "content": {
+                        "ABCD": "...",
+                        "FIELDX": "...",
+                        "FIELDQ": "...",
+                    }
+                },
+                {
+                    "name": "SECTION_B",
+                    "content": {
+                        "FIELD_99": "...",
+                    }
+                }
+            ]
         }
+    }
 

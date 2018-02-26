@@ -32,34 +32,36 @@ The CSV contents
 
 would result in two messages to be created:
 
-Message 1
-    .. code-block:: json
+**Message 1**
 
-        {
-            "metadata": {
-                "format": "csv",
-                "batch": 1517607828,
-                "created": "2018-02-02T22:43:48.0220047+01:00"
-            },
-            "content": {
-                "CUSTNO": "100112",
-                "FIRSTNAME": "John",
-                "LASTNAME": "Doe"
-            }
+.. code-block:: json
+
+    {
+        "metadata": {
+            "format": "csv",
+            "batch": 1517607828,
+            "created": "2018-02-02T22:43:48.0220047+01:00"
+        },
+        "content": {
+            "CUSTNO": "100112",
+            "FIRSTNAME": "John",
+            "LASTNAME": "Doe"
         }
+    }
 
-Message 2
-    .. code-block:: json
+**Message 2**
 
-        {
-            "metadata": {
-                "format": "csv",
-                "batch": 1517607828,
-                "created": "2018-02-02T22:43:48.0220047+01:00"
-            },
-            "content": {
-                "CUSTNO": "194228",
-                "FIRSTNAME": "Manuela",
-                "LASTNAME": "Mustermann"
-            }
+.. code-block:: json
+
+    {
+        "metadata": {
+            "format": "csv",
+            "batch": 1517607828,
+            "created": "2018-02-02T22:43:48.0220047+01:00"
+        },
+        "content": {
+            "CUSTNO": "194228",
+            "FIRSTNAME": "Manuela",
+            "LASTNAME": "Mustermann"
         }
+    }
