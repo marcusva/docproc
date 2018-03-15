@@ -109,7 +109,7 @@ func (q *natsRQ) Open(c Consumer) error {
 	if err := q.open(); err != nil {
 		return err
 	}
-	sub, err := q.conn.Subscribe(q.topic, func(msg *nats.Msg) {
+	sub, err := q.conn.QueueSubscribe(q.topic, "docproc_worker", func(msg *nats.Msg) {
 		m, err2 := MsgFromJSON(msg.Data)
 		if err2 != nil {
 			log.Errorf("could not convert message: %v", err2)
