@@ -142,3 +142,15 @@ func TestLogf(t *testing.T) {
 		buf.Reset()
 	}
 }
+
+func TestLogLevel(t *testing.T) {
+	levels := []Level{
+		LevelDebug, LevelInfo, LevelNotice, LevelWarning,
+		LevelError, LevelAlert, LevelCritical, LevelEmergency,
+	}
+	for _, level := range levels {
+		var buf bytes.Buffer
+		Init(&buf, level, true)
+		assert.Equal(t, level, CurrentLevel())
+	}
+}
