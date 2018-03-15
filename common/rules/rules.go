@@ -167,6 +167,17 @@ func OperatorSupported(op string) bool {
 	}
 }
 
+// Validate checks, if the provided rules contain a path and use supported
+// operators.
+func Validate(rules *[]Rule) error {
+	for _, rule := range *rules {
+		if err := rule.Validate(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // Rule
 type Rule struct {
 	Name     string      `json:"name,omitempty"`
@@ -215,4 +226,21 @@ func (r *Rule) Test(m map[string]interface{}) (bool, error) {
 	default:
 		return false, fmt.Errorf("unsupported value '%v'", left)
 	}
+}
+
+// Validate checks, if the provided rules contain a path and use supported
+// operators.
+func (r *Rule) Validate() error {
+	if r.Path == "" {
+		return fmt.Errorf("empty source path in rule '%v'", r)
+	}
+	if !OperatorSupported(r.Operator) {
+		return fmt.Errorf("unsupported operator in rule '%v'", r)
+	}
+	if r.SubRules != nil && len(r.SubRules) > 0 {
+		if err := Validate(&r.SubRules); err != nil {
+			return err
+		}
+	}
+	return nil
 }

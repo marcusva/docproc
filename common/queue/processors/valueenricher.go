@@ -31,6 +31,21 @@ type ValueRule struct {
 	TargetValue interface{} `json:"targetvalue"`
 }
 
+// Validate checks, if the ValueRule contains a path, supported operator,
+// TargetPath and TargetValue.
+func (rule *ValueRule) Validate() error {
+	if err := rule.Rule.Validate(); err != nil {
+		return err
+	}
+	if rule.TargetPath == "" {
+		return fmt.Errorf("empty target path in rule '%v'", rule)
+	}
+	if rule.TargetValue == "" {
+		return fmt.Errorf("empty target value in rule '%v'", rule)
+	}
+	return nil
+}
+
 // ValueEnricher applies multiple ValueRule items to a queue.Message.
 type ValueEnricher struct {
 	rules []ValueRule
@@ -46,14 +61,16 @@ func NewValueEnricher(params map[string]string) (queue.Processor, error) {
 	if err != nil {
 		return nil, err
 	}
-	var rules []ValueRule
-	if err := json.Unmarshal(data, &rules); err != nil {
+	var ruleset []ValueRule
+	if err := json.Unmarshal(data, &ruleset); err != nil {
 		return nil, err
 	}
-	if err := validateRules(&rules); err != nil {
-		return nil, err
+	for _, rule := range ruleset {
+		if err := rule.Validate(); err != nil {
+			return nil, err
+		}
 	}
-	return &ValueEnricher{rules: rules}, nil
+	return &ValueEnricher{rules: ruleset}, nil
 }
 
 // Name returns the name to be used in configuration files.
@@ -124,23 +141,5 @@ func setValue(msg *queue.Message, path string, newval interface{}) error {
 		parent, _ = sub.(map[string]interface{})
 	}
 	parent[last] = newval
-	return nil
-}
-
-func validateRules(ruleset *[]ValueRule) error {
-	for _, rule := range *ruleset {
-		if rule.Path == "" {
-			return fmt.Errorf("empty source path in rule '%v'", rule)
-		}
-		if !rules.OperatorSupported(rule.Operator) {
-			return fmt.Errorf("unsupported operator in rule '%v'", rule)
-		}
-		if rule.TargetPath == "" {
-			return fmt.Errorf("empty target path in rule '%v'", rule)
-		}
-		if rule.TargetValue == "" {
-			return fmt.Errorf("empty target value in rule '%v'", rule)
-		}
-	}
 	return nil
 }

@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-// Writeable checks, if the passed path is writable It creates a temporary
+// Writable checks, if the passed path is writable It creates a temporary
 // file within the path and tries to delete it afterwards.
 func Writable(path string) (bool, error) {
 	fp, err := ioutil.TempFile(path, "writable")
