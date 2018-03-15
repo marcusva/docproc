@@ -80,17 +80,17 @@ message queue provider. The following entries are required nevertheless.
 
     [in-queue]
     type = nsq
-    host = 127.0.0.1:4160
+    host = 127.0.0.1:4161
     topic = input
 
     [out-queue]
     type = nsq
-    host = 127.0.0.1:4160
+    host = 127.0.0.1:4150
     topic = output
 
     [error-queue]
     type = nsq
-    host = 127.0.0.1:4160
+    host = 127.0.0.1:4150
     topic = error
 
 type

@@ -9,6 +9,9 @@ processing tools, which can enhance, change, transform or send message contents.
 The following pages provide in-depth information about the different processors
 and their usage.
 
+:ref:`contentvalidator`
+    Validates the message contents against a predefined set of rules.
+
 :ref:`valueenricher`
     Enables docproc to add new content to a message or to modify
     existing content of the message.
@@ -31,6 +34,7 @@ and their usage.
     :maxdepth: 1
     :hidden:
 
+    contentvalidator
     valueenricher
     templatetransformer
     htmlrenderer

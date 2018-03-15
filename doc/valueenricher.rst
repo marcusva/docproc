@@ -16,7 +16,7 @@ The ValueEnricher requires the following configuration entries:
 
     [valueenricher-config]
     type  = ValueEnricher
-    rules = /path/to/a/rules/FileWriter
+    rules = /path/to/a/rules/set
 
 type
    To configure a ValueEnricher, use ``ValueEnricher`` as ``type``.

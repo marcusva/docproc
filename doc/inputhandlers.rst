@@ -45,9 +45,19 @@ transformer
     The input transformer to use. See below for a list of currently available
     input transformers.
 
+Input Transformers
+------------------
+
+:ref:`rditransformer`
+    Processes SAP RDI spool files and transforms the contained documents into
+    messages.
+
+:ref:`csvtransformer`
+    Processes CSV files and transforms the contained rows into messages.
+
 .. toctree::
     :maxdepth: 1
-    :caption: Available Input Transformers:
+    :hidden:
 
     rditransformer
     csvtransformer
