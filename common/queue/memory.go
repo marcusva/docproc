@@ -19,6 +19,7 @@ func init() {
 // MemWQ represents a writable queue.
 type memWQ struct {
 	topic string
+	open  bool
 }
 
 // newMemWQ creates a new in-memory queue to write messages to.
@@ -29,6 +30,7 @@ func newMemWQ(params map[string]string) (WriteQueue, error) {
 	}
 	return &memWQ{
 		topic: topic,
+		open:  false,
 	}, nil
 }
 
@@ -36,6 +38,7 @@ func newMemWQ(params map[string]string) (WriteQueue, error) {
 func (wq *memWQ) Open() error {
 	memmu.Lock()
 	defer memmu.Unlock()
+	wq.open = true
 	if memblocks[wq.topic] == nil {
 		memblocks[wq.topic] = make([][]byte, 0)
 	}
@@ -44,23 +47,30 @@ func (wq *memWQ) Open() error {
 
 // IsOpen checks, if the in-memory queue is opened.
 func (wq *memWQ) IsOpen() bool {
-	return true
+	return wq.open
 }
 
-// Close closes the in-memory queue. This is a no-op function.
+// Close closes the in-memory queue.
 func (wq *memWQ) Close() error {
+	memmu.Lock()
+	wq.open = false
+	memmu.Unlock()
 	return nil
 }
 
 // Publish writes a message to the queue.
 func (wq *memWQ) Publish(msg *Message) error {
+	memmu.Lock()
+	defer memmu.Unlock()
+	if wq.open == false {
+		return errors.New("queue not open")
+	}
+
 	data, err := msg.ToJSON()
 	if err != nil {
 		return err
 	}
-	memmu.Lock()
 	memblocks[wq.topic] = append(memblocks[wq.topic], data)
-	memmu.Unlock()
 	return nil
 }
 

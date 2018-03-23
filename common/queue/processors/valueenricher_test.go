@@ -81,6 +81,10 @@ func TestQueueProcessing(t *testing.T) {
 	msg, err := queue.MsgFromJSON([]byte(message))
 	assert.FailOnErr(t, err)
 
+	// Closed queue
+	assert.Err(t, writer.Consume(msg))
+
+	wq.Open()
 	assert.FailOnErr(t, writer.Consume(msg))
 
 	rval, ok := msg.Content["DOCTYPE"]
