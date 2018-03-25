@@ -7,7 +7,8 @@ env:
   - GOARCH=amd64
 sudo: required
 before_install:
-  - sudo apt-get install -y python-sphinx
+  - sudo apt-get install -y python-sphinx python-pip
+  - sudo pip install sphinx_rtd_theme
 script:
   - wget -O dep https://github.com/golang/dep/releases/download/v0.4.1/dep-linux-amd64
   - chmod +x dep
