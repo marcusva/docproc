@@ -1,5 +1,7 @@
 # docproc
 
+[![Build Status](https://travis-ci.org/marcusva/docproc.svg?branch=master)](https://travis-ci.org/marcusva/docproc)
+
 docproc is a simple content processing pipeline, which allows you to take
 arbitrary input data and to transform it to create output data of any kind.
 
