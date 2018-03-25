@@ -24,7 +24,7 @@ message queue system.
 
 Create the base image with the following instructions::
 
-    $ docker build -t docproc/base -f Dockerfile-docproc.base .
+    $ docker build -t docproc/base .
 
 The base image is now registered in your local docker registry as
 ``docproc/base``.
@@ -32,13 +32,13 @@ The base image is now registered in your local docker registry as
 .. note::
     The docproc applications of the base image will be built with nsq
     support only. To change this behaviour, you can tweak the ``BUILD_FLAGS``
-    within ``Dockerfile-docproc.base`` as necessary or override the
-    ``BUILD_FLAGS`` at the command line::
+    within ``Dockerfile`` as necessary or override the ``BUILD_FLAGS`` at the
+    command line::
 
-        $ docker build --build-arg BUILD_FLAGS="-tags beanstalk" -t docproc/base -f Dockerfile-docproc.base .
+        $ docker build --build-arg BUILD_FLAGS="-tags beanstalk" -t docproc/base .
 
-    The nsqd binary will be built and installed nevertheless, if
-    ``Dockerfile-docproc.base`` is not edited, though.
+    The nsqd binary will be built and installed nevertheless, if ``Dockerfile``
+    is not edited, though.
 
 Build docproc Images
 --------------------
