@@ -20,7 +20,7 @@ services:
   docproc.fileinput:
     build:
       context: .
-      dockerfile: ./Dockerfile-docproc.fileinput
+      dockerfile: ./scripts/dockerfiles/Dockerfile-docproc.fileinput
     image: docproc/fileinput
     command: /docproc.startup.sh
     depends_on:
@@ -28,7 +28,7 @@ services:
   docproc.preproc:
     build:
       context: .
-      dockerfile: ./Dockerfile-docproc.preproc
+      dockerfile: ./scripts/dockerfiles/Dockerfile-docproc.preproc
     image: docproc/preproc
     command: /docproc.startup.sh
     depends_on:
@@ -36,7 +36,7 @@ services:
   docproc.renderer:
     build:
       context: .
-      dockerfile: ./Dockerfile-docproc.renderer
+      dockerfile: ./scripts/dockerfiles/Dockerfile-docproc.renderer
     image: docproc/renderer
     command: /docproc.startup.sh
     depends_on:
@@ -44,7 +44,7 @@ services:
   docproc.output:
     build:
       context: .
-      dockerfile: ./Dockerfile-docproc.output
+      dockerfile: ./scripts/dockerfiles/Dockerfile-docproc.output
     image: docproc/output
     command: /docproc.startup.sh
     depends_on:
