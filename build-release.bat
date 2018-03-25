@@ -12,12 +12,14 @@
 
 @RMDIR /S /Q dist
 @RMDIR /S /Q doc\_build
+@RMDIR /S /Q vendor
 
 @MKDIR dist
 @ECHO Creating documentation...
 @CD doc
 @CALL make html
 @CD ..
+@%GOPATH%\bin\dep ensure -v
 @FOR %%P IN (%PLATFORMS%) DO (
     SET SUFFIX=""
     if "%%P" == "windows" (
