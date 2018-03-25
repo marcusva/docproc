@@ -19,3 +19,8 @@ To enable scalability, each of those functional steps can be handled by an
 separate application of docproc. The applications are connected by message
 queues, they read from and write to. This allows you to scale individual parts
 or complete processing pipelines as required by your input and output scenarios.
+
+## Documentation
+
+You can find the documentation at doc/html or online at
+http://docproc.readthedocs.org.
