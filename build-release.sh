@@ -33,7 +33,7 @@ for os in $PLATFORMS; do
     cp -rf doc/_build/html $destdir
     echo "Building application..."
     for app in $APPS; do
-        go build -v -tags "beanstalk nats nsq" -ldflags "$LDFLAGS" -o $destdir/$app$suffix ./$app
+        go build -tags "beanstalk nats nsq" -ldflags "$LDFLAGS" -o $destdir/$app$suffix ./$app
     done
     echo "Copying dist files..."
     for folder in $FOLDERS; do
@@ -43,13 +43,13 @@ for os in $PLATFORMS; do
         cp -f $fname $destdir
     done
     echo "Creating package dist/$distname.zip...."
-    zip -r9 $distname.zip $destdir
+    zip -q -r9 dist/$distname.zip $destdir
     rm -rf $destdir
 done
 echo "All builds done..."
 
 echo "Calculating hashes..."
-for $fname in dist/docproc-*.zip; do
+for $fname in docproc-*.zip; do
     md5sum $fname
 done
 echo "done"
