@@ -22,7 +22,7 @@ dep ensure -v || $GOPATH/bin/dep ensure -v
 
 for os in $PLATFORMS; do
     suffix=""
-    if [ "$os" == "windows" ]; then
+    if [ "$os" = "windows" ]; then
         suffix=".exe"
     fi
     distname=docproc-$VERSION-$os-$ARCH
@@ -49,7 +49,7 @@ done
 echo "All builds done..."
 
 echo "Calculating hashes..."
-for $fname in docproc-*.zip; do
+for $fname in dist/docproc-*.zip; do
     md5sum $fname
 done
 echo "done"
