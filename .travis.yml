@@ -11,8 +11,7 @@ before_install:
   - sudo pip install -U sphinx
   - sudo pip install sphinx_rtd_theme
 script:
-  - wget -O dep https://github.com/golang/dep/releases/download/v0.4.1/dep-linux-amd64
-  - chmod +x dep
-  - ./dep ensure
+  - wget -O $GOPATH/bin/dep https://github.com/golang/dep/releases/download/v0.4.1/dep-linux-amd64
+  - chmod +x $GOPATH/bin/dep
   - go test ./...
   - ./build-release.sh
