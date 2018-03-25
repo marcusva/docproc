@@ -20,6 +20,7 @@ func init() {
 	Register(fwName, NewFileWriter)
 }
 
+// FileWriter writes a portion of a queue.Message to a file.
 type FileWriter struct {
 	identifier string
 	filename   string

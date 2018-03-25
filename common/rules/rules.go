@@ -178,7 +178,8 @@ func Validate(rules *[]Rule) error {
 	return nil
 }
 
-// Rule
+// Rule represents a logical comparision object consisting of a path, operator
+// and value to compare.
 type Rule struct {
 	Name     string      `json:"name,omitempty"`
 	Path     string      `json:"path"`

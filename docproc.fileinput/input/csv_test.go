@@ -15,7 +15,7 @@ func TestCSVTransformer(t *testing.T) {
 	assert.NoErr(t, err)
 	assert.Equal(t, tf.(*CSVTransformer).Delim, ';')
 
-	tf, err = NewCSVTransformer(map[string]string{"delim": "###"})
+	_, err = NewCSVTransformer(map[string]string{"delim": "###"})
 	assert.Err(t, err)
 }
 

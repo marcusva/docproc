@@ -76,7 +76,7 @@ func (w *FileWatcher) Check() {
 	for _, fpath := range files {
 		log.Debugf("Processing file '%s'...", fpath)
 		if err := w.Processor.Process(fpath); err != nil {
-			log.Errorf("An error occured on processing %s: %v", fpath, err)
+			log.Errorf("An error occurred on processing %s: %v", fpath, err)
 		}
 	}
 }

@@ -41,8 +41,6 @@ func (qw *Writer) Open() error {
 	return nil
 }
 
-
-
 // Close closes the bound queues of the Writer.
 func (qw *Writer) Close() error {
 	var err error

@@ -107,7 +107,7 @@ func (cfg *Config) AllFor(section string) (map[string]string, error) {
 // LoadFile loads the configuration from the passed file. Files have to follow
 // the INI file configuration layout.
 //
-//   # Comments can only be declared on a seperate line
+//   # Comments can only be declared on a separate line
 //   # Any line starting with a semicolon (;) or number sign (hash - #)
 //   ; is recognized as a comment
 //   #

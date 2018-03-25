@@ -82,7 +82,7 @@ func NoErr(t *testing.T, err error) {
 	}
 }
 
-// FailOnErr fails the test via t.FailNow(), if the pased error is not nil.
+// FailOnErr fails the test via t.FailNow(), if the passed error is not nil.
 func FailOnErr(t *testing.T, err error) {
 	if err != nil {
 		printErr(t, "", fmt.Sprintf("%v", err))

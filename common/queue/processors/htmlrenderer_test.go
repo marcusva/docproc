@@ -47,3 +47,15 @@ func TestHTMLRendererProcess(t *testing.T) {
 	assert.FailIfNot(t, ok, "html output missing")
 	assert.FailIfNot(t, strings.Contains(data.(string), "<title>Invoice</title>"), "template error")
 }
+
+func TestHTMLRenderName(t *testing.T) {
+	params := map[string]string{
+		"templates":    "test/html/*.tpl",
+		"identifier":   "html",
+		"templateroot": "main",
+	}
+	html, err := NewHTMLRenderer(params)
+	assert.FailOnErr(t, err)
+
+	assert.Equal(t, html.Name(), "HTMLRenderer")
+}

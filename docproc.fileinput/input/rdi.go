@@ -46,7 +46,7 @@ func docAsMap(doc *RDIDocument) map[string]interface{} {
 	return ret
 }
 
-// secAsMap convers a RDISection to a simple map representation.
+// secAsMap converts a RDISection to a simple map representation.
 func secAsMap(sec *RDISection) map[string]interface{} {
 	ret := make(map[string]interface{})
 	ret["name"] = sec.Name

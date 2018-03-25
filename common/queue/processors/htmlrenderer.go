@@ -34,7 +34,7 @@ func (html *HTMLRenderer) Name() string {
 }
 
 // Process processes the passed in message using the configured templates.
-// On sucess, the result will be stored as a key-value pair using the
+// On success, the result will be stored as a key-value pair using the
 // HTMLRenderer's set identifier. Additionally, a "mime-type" : "text/html"
 // key-value pair will be set on the message.
 func (html *HTMLRenderer) Process(msg *queue.Message) error {
