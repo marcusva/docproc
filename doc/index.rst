@@ -26,6 +26,7 @@ or complete processing pipelines as required by your input and output scenarios.
     :caption: Contents:
 
     quickstart
+    installing
     applications
     inputhandlers
     processors
