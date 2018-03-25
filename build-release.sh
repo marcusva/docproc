@@ -16,14 +16,14 @@ rm -rf dist doc/_build vendor
 mkdir dist
 
 echo "Creating documentation..."
-cd doc && make html
+make -C doc html
 
 dep ensure -v || $GOPATH/bin/dep ensure -v
 
 for os in $PLATFORMS; do
-    suffix=
+    suffix=""
     if [ "$os" == "windows" ]; then
-        suffix=.exe
+        suffix=".exe"
     fi
     distname=docproc-$VERSION-$os-$ARCH
     destdir=dist/$distname
