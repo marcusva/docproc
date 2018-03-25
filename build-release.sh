@@ -49,7 +49,7 @@ done
 echo "All builds done..."
 
 echo "Calculating hashes..."
-for $fname in dist/docproc-*.zip; do
+for $fname in `ls dist/docproc-*.zip`; do
     md5sum $fname
 done
 echo "done"
