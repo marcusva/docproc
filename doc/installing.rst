@@ -34,22 +34,22 @@ On Unix and Linux run
 
 .. code-block:: console
 
-    $ tar xzvf docproc-.tar.gz $GOPATH
+    $ tar xzvf docproc-X.Y.Z.tar.gz $GOPATH
     $ cd $GOPATH/github.com/marcusva/docproc
     $ dep ensure
     $ build-release.sh
 
-On Windows run
+On Windows, unpack docproc-|version|.zip into :envvar:`GOPATH`, then run
 
 .. code-block:: batch
 
-    > unzip docproc-.zip %GOPATH%
     > cd %GOPATH%/github.com/marcusva/docproc
     > dep ensure
     > build-release.bat
 
 Those commands will build a set o docproc release distributions in the `dist`
 folder.
+
 
 Installation
 ------------

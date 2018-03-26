@@ -24,9 +24,9 @@ copyright = '2018, Marcus von Appen'
 author = 'Marcus von Appen'
 
 # The short X.Y version
-version = ''
+version = '0.0.2'
 # The full version, including alpha/beta/rc tags
-release = '2018'
+release = '0.0.2'
 
 
 # -- General configuration ---------------------------------------------------
