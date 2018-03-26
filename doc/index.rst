@@ -9,9 +9,9 @@ transformation steps one after each other to achieve the desired result. Its
 design is based on the functional steps to be taken to get useful output out of
 raw data and can be described as follows:
 
-#. consume input
-#. process output based on technical and functional requirements for the desired
-   output
+#. consume input content
+#. process content based on technical and functional requirements for the
+   desired output
 #. output the processed content as necessary, by e.g. sending it to a different
    host, writing it to disk or consuming the result via a queue.
 

@@ -10,9 +10,9 @@ transformation steps one after each other to achieve the desired result. Its
 design is based on the functional steps to be taken to get useful output out of
 raw data and can be described as follows:
 
-1. consume input
-2. process output based on technical and functional requirements for the desired
-   output
+1. consume input content
+2. process content based on technical and functional requirements for the
+   desired output
 3. output the processed content as necessary
 
 ![Simple docproc processing layout](https://github.com/marcusva/docproc/blob/master/doc/images/docproc_simple.png "Simple docproc processing layout")
