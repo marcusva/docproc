@@ -13,6 +13,8 @@ import (
 // Config is a simple configuration store.
 // It consists of unique sections, which contain key-value pairs.
 type Config struct {
+	// Sections contains the individual sections of the configuration with
+	// their key-value pair mappings.
 	Sections map[string]map[string]string
 }
 

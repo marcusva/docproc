@@ -36,15 +36,17 @@ func NewHTTPSender(params map[string]string) (queue.Processor, error) {
 	if !ok {
 		return nil, fmt.Errorf("parameter 'identifier' missing")
 	}
+	var tm uint64
 	timeout, ok := params["timeout"]
 	if !ok {
 		log.Infof("parameter 'timout' not set, using default of '%v'", defaultTimeout.Seconds())
-		return nil, fmt.Errorf("parameter 'input' missing")
-	}
-	tm, err := strconv.Atoi(timeout)
-	if err != nil {
-		log.Errorf("cannot convert 'timeout' to integer: %v", err)
-		return nil, err
+		tm = uint64(defaultTimeout.Seconds())
+	} else {
+		var err error
+		tm, err = strconv.ParseUint(timeout, 10, 64)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return &HTTPSender{
 		address:    address,

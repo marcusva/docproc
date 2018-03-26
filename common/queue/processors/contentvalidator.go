@@ -16,9 +16,10 @@ func init() {
 	Register(validatorName, NewContentValidator)
 }
 
-// ContentValidator checks, if the provided queue.Message validates against
-// its rules.
+// ContentValidator checks, if a queue.Message validates against a certain set
+// of rules.
 type ContentValidator struct {
+	// rules contains the rules to be executed on processing a message.
 	rules []rules.Rule
 }
 
@@ -44,6 +45,10 @@ func (validator *ContentValidator) Process(msg *queue.Message) error {
 }
 
 // NewContentValidator creates a new ContentValidator.
+// The parameter map params must contain the following entries:
+//
+// * "rules": path to a rules file that contains a set of JSON-based rules
+//
 func NewContentValidator(params map[string]string) (queue.Processor, error) {
 	rulefile, ok := params["rules"]
 	if !ok {

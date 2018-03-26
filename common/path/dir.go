@@ -1,3 +1,4 @@
+// Package path contains utility functions for directory and path operations.
 package path
 
 import (

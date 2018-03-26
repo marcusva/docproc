@@ -14,7 +14,7 @@ type FileProcessor interface {
 	Process(filename string) error
 }
 
-// FileProcFunc is a convenience type to avoid having to create a struct to
+// FileProcFunc is a convenience type to avoid having to create a type to
 // implement the FileProcessor interface. It can be used like this:
 //
 // 	NewFileWatcher(..., service.FileProcFunc(func(filename string) error {
@@ -31,11 +31,23 @@ func (fn FileProcFunc) Process(filename string) error {
 // a specific pattern. If one or more files are found, it executes a processing
 // function on each individual file.
 type FileWatcher struct {
+	// Directory is the directory to be watched for new files matching a
+	// certain pattern.
 	Directory string
-	Pattern   string
-	Interval  time.Duration
+
+	// Pattern is the filename pattern to use for identifying new files.
+	// The FileWatcher uses the filepath.Glob() function to find matching
+	// files in the specific directory.
+	Pattern string
+
+	// Interval is the time interval to use for checking the directory.
+	Interval time.Duration
+
+	// Processor receives the found file for further processing.
 	Processor FileProcessor
-	stop      chan (bool)
+
+	// stop is the stop signal channel to break out of the Watch() loop.
+	stop chan (bool)
 }
 
 // NewFileWatcher creates a new FileWatcher. If the passed directory cannot

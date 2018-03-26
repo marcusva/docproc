@@ -29,6 +29,31 @@ const (
 `
 )
 
+func TestHTMLRenderer(t *testing.T) {
+	_, err := NewHTMLRenderer(nil)
+	assert.Err(t, err)
+
+	params := map[string]string{}
+	_, err = NewHTMLRenderer(params)
+	assert.Err(t, err)
+
+	params["templates"] = "test/html/*.tpl"
+	_, err = NewHTMLRenderer(params)
+	assert.Err(t, err)
+
+	params["identifier"] = "html"
+	_, err = NewHTMLRenderer(params)
+	assert.Err(t, err)
+
+	params["templateroot"] = "main"
+	_, err = NewHTMLRenderer(params)
+	assert.NoErr(t, err)
+
+	params["templates"] = "invalid"
+	_, err = NewHTMLRenderer(params)
+	assert.Err(t, err)
+}
+
 func TestHTMLRendererProcess(t *testing.T) {
 	params := map[string]string{
 		"templates":    "test/html/*.tpl",

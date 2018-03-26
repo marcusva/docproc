@@ -22,6 +22,42 @@ const (
 `
 )
 
+func TestNewHTTPSender(t *testing.T) {
+	_, err := NewHTTPSender(nil)
+	assert.Err(t, err)
+
+	params := map[string]string{}
+	_, err = NewHTTPSender(params)
+	assert.Err(t, err)
+
+	params["address"] = "localhost"
+	_, err = NewHTTPSender(params)
+	assert.Err(t, err)
+
+	params["identifier"] = "body"
+	_, err = NewHTTPSender(params)
+	assert.NoErr(t, err)
+
+	params["timeout"] = "-1"
+	_, err = NewHTTPSender(params)
+	assert.Err(t, err)
+
+	params["timeout"] = "123"
+	_, err = NewHTTPSender(params)
+	assert.NoErr(t, err)
+}
+
+func TestHTTPSenderName(t *testing.T) {
+	params := map[string]string{
+		"address":    "127.0.0.1",
+		"identifier": "body",
+		"timeout":    "2",
+	}
+	sender, err := NewHTTPSender(params)
+	assert.FailOnErr(t, err)
+	assert.Equal(t, sender.Name(), "HTTPSender")
+}
+
 func TestHTTPSenderProcess(t *testing.T) {
 	okHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Content-Type") != "text/plain" {

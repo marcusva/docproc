@@ -32,7 +32,7 @@ const (
 )
 
 var (
-	validRules = []*Rule{
+	validRules = []Rule{
 		// contains
 		{Path: "textVal", Operator: "contains", Value: "some"},
 		// not contains
@@ -82,7 +82,11 @@ var (
 		{Path: "textVal", Operator: "exists", Value: nil},
 		{Path: "nonexisting", Operator: "not exists", Value: nil},
 	}
-	invalidComparators = []*Rule{
+	erroneousRules = []Rule{
+		{Path: "textVal", Operator: "=", Value: 1234},
+		{Path: "floatVal", Operator: "=", Value: true},
+	}
+	invalidComparators = []Rule{
 		// Strings
 		{Path: "textVal", Operator: "is the same as", Value: "some text to test"},
 		{Path: "textVal", Operator: "", Value: nil},
@@ -90,7 +94,7 @@ var (
 		{Path: "uintVal", Operator: "wants to be", Value: 1234},
 		{Path: "uintVal", Operator: "", Value: 1234},
 	}
-	pathRules = []*Rule{
+	pathRules = []Rule{
 		{Path: "textVal", Operator: "exists", Value: nil},
 		{Path: "nested1.nestedVal", Operator: "exists", Value: nil},
 		{Path: "nested1.invalid", Operator: "not exists", Value: nil},
@@ -98,14 +102,21 @@ var (
 		{Path: "nested1.array[0]", Operator: "eq", Value: 10},
 		{Path: "arrayMap[2].name", Operator: "eq", Value: "map3"},
 	}
-	validSubRules = []*Rule{
+	validSubRules = []Rule{
 		{Path: "uintVal", Operator: "=", Value: 1234, SubRules: []Rule{
 			{Path: "intVal", Operator: "<", Value: 0},
 		}},
 	}
-	invalidSubRules = []*Rule{
+	invalidSubRules = []Rule{
 		{Path: "uintVal", Operator: "=", Value: 1234, SubRules: []Rule{
 			{Path: "nonexisting", Operator: ">", Value: 0},
+		}},
+	}
+	invalidRules = []Rule{
+		{Path: "", Operator: "=", Value: 1},
+		{Path: "path", Operator: "", Value: 1},
+		{Path: "path", Operator: ">", Value: 1, SubRules: []Rule{
+			{Path: "", Operator: ">", Value: 0},
 		}},
 	}
 )
@@ -116,28 +127,45 @@ func TestRules(t *testing.T) {
 	assert.FailOnErr(t, json.Unmarshal(buf, &ct))
 
 	for _, r := range validRules {
-		t.Log(r)
 		ok, err := r.Test(ct)
 		assert.FailOnErr(t, err)
 		assert.Equal(t, ok, true)
+		assert.FailOnErr(t, r.Validate())
+	}
+	assert.FailOnErr(t, Validate(&validRules))
+
+	for _, r := range erroneousRules {
+		ok, err := r.Test(ct)
+		assert.Err(t, err, "%v", r)
+		assert.Equal(t, ok, false)
+		assert.FailOnErr(t, r.Validate())
 	}
 
 	for _, r := range invalidComparators {
 		_, err := r.Test(ct)
 		assert.Err(t, err)
+		assert.Err(t, r.Validate())
 	}
+	assert.Err(t, Validate(&invalidComparators))
 
 	for _, r := range validSubRules {
 		ok, err := r.Test(ct)
 		assert.FailOnErr(t, err)
 		assert.Equal(t, ok, true)
+		assert.FailOnErr(t, r.Validate())
 	}
+	assert.FailOnErr(t, Validate(&validSubRules))
 
 	for _, r := range invalidSubRules {
 		ok, err := r.Test(ct)
 		assert.FailOnErr(t, err)
 		assert.Equal(t, ok, false)
 	}
+
+	for _, r := range invalidRules {
+		assert.Err(t, r.Validate(), "rule %v must not validate", r)
+	}
+	assert.Err(t, Validate(&invalidRules))
 }
 
 func TestPaths(t *testing.T) {
@@ -150,4 +178,23 @@ func TestPaths(t *testing.T) {
 		assert.FailOnErr(t, err)
 		assert.Equal(t, ok, true)
 	}
+}
+
+func TestOperatorSupported(t *testing.T) {
+	operators := []string{
+		"=", "==", "eq", "equals",
+		"!=", "<>", "neq", "not equals",
+		">", "gt", "greater than",
+		">=", "gte", "greater than or equals",
+		"<", "lt", "less than",
+		"<=", "lte", "less than or equals",
+		"exists", "not exists",
+		"contains", "not contains",
+		"in", "not in",
+	}
+	for _, op := range operators {
+		assert.FailIfNot(t, OperatorSupported(op), "operator '%s' failed unexpectedly", op)
+	}
+	assert.FailIf(t, OperatorSupported(""))
+	assert.FailIf(t, OperatorSupported("something wrong"))
 }

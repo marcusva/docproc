@@ -178,14 +178,29 @@ func Validate(rules *[]Rule) error {
 	return nil
 }
 
-// Rule represents a logical comparision object consisting of a path, operator
+// Rule represents a logical comparison object consisting of a path, operator
 // and value to compare.
 type Rule struct {
-	Name     string      `json:"name,omitempty"`
-	Path     string      `json:"path"`
-	Operator string      `json:"op"`
-	Value    interface{} `json:"value"`
-	SubRules []Rule      `json:"subrules,omitempty"`
+
+	// Name describes the rule. This is for maintenance purposes and
+	// does not have any effect on the rule, if provided or absent.
+	Name string `json:"name,omitempty"`
+
+	// Path refers to the message's content element to check. Paths can be
+	// nested using a dotted notation.
+	Path string `json:"path"`
+
+	// Operator represents the comparison operator to use.
+	Operator string `json:"op"`
+
+	// Value is the value to compare the Path's value against. It can be left
+	// unset, if the comparison operator is ``exists`` or ``not exists``.
+	Value interface{} `json:"value"`
+
+	// SubRules is a list of additional rules that have have to be tested. The
+	// rule as well as all its sub-rules have to match successfully to consider
+	// the rule as a whole as successful.
+	SubRules []Rule `json:"subrules,omitempty"`
 }
 
 // Test tests, if the the passed map matches the rule criteria.

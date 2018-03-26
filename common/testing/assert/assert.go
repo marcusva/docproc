@@ -68,17 +68,21 @@ func NotNil(t *testing.T, v interface{}, args ...interface{}) {
 	}
 }
 
-// Err checks, if the passed error is not nil.
-func Err(t *testing.T, err error) {
+// Err checks, if the passed error is not nil. The additional args are used
+// for a customized error output, if the error is nil. If no args are provided,
+// a simple standard message will be printed via t.Errorf().
+func Err(t *testing.T, err error, args ...interface{}) {
 	if err == nil {
-		printErr(t, "", fmt.Sprintf("%v", err))
+		printErr(t, "Expected error is nil", args...)
 	}
 }
 
-// NoErr checks, if the passed error is nil.
-func NoErr(t *testing.T, err error) {
+// NoErr checks, if the passed error is nil. The additional args are used
+// for a customized error output, if the error is not nil. If no args are
+// provided, a simple standard message will be printed via t.Errorf().
+func NoErr(t *testing.T, err error, args ...interface{}) {
 	if err != nil {
-		printErr(t, "", fmt.Sprintf("%v", err))
+		printErr(t, fmt.Sprintf("%v", err), args...)
 	}
 }
 
