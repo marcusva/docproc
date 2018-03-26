@@ -75,7 +75,7 @@ Defining Target Paths
 ---------------------
 
 Target paths to write content to can be defined in the same way as the source
-paths for comparision. A target path can refer to an existing path, causing it
+paths for comparison. A target path can refer to an existing path, causing it
 to be overwritten with the new value on evaluating the rule successfully. The
 target path can also be a completely new path, that will be created, if the
 rule is successful.

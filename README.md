@@ -15,12 +15,35 @@ raw data and can be described as follows:
    output
 3. output the processed content as necessary
 
+![Simple docproc processing layout](https://raw.github.com/marcusva/docproc/doc/images/docproc_simple.png "Simple docproc processing layout")
+
 To enable scalability, each of those functional steps can be handled by an
 separate application of docproc. The applications are connected by message
 queues, they read from and write to. This allows you to scale individual parts
 or complete processing pipelines as required by your input and output scenarios.
 
+![Scaled file input, processing and output scenarios](https://raw.github.com/marcusva/docproc/doc/images/docproc_scenarios.gif "Scaled file input, processing and output scenarios")
+
+## Features
+
+docproc provides a rich set of features to process content. Supported input
+formats are
+
+* CSV
+* SAP RDI spool files
+
+Content processors support
+
+* validation and content enrichment using a simple to maintain rules engine
+* text-driven transformation through golang's mighty templating packages, such
+  as HTML, XML, JSON, plain text and others
+* HTTP transfer, message queue and file-based output
+
+Since docproc uses a simple JSON-based message format, applying your own
+transformation routines via message queue consumers, HTTP receivers for file
+listeners is easily accomplished.
+
 ## Documentation
 
 You can find the documentation at doc/html or online at
-http://docproc.readthedocs.org.
+https://docproc.readthedocs.org.

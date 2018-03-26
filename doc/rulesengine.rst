@@ -34,7 +34,7 @@ A rule typically consists of the following fields.
         "name":     "<optional name of the rule>",
         "path":     "<message content path to use for comparing or checking>",
         "op":       "<operator to use>",
-        "value":    "<value to use for comparision>",
+        "value":    "<value to use for comparison>",
         "subrules": [ "<more nested rules>" ]
     }
 
@@ -47,14 +47,14 @@ path
    notation.
 
 op
-   The comparision operator to use. If not stated otherwise, the comparision
+   The comparison operator to use. If not stated otherwise, the comparison
    will consider path being the left-hand and value the right-hand argument::
 
         value-of-path <op> rule-value
 
 value
     The value to compare the path's value against. **value** can be omitted, if
-    the comparision operator is ``exists`` or ``not exists``. If it is provided
+    the comparison operator is ``exists`` or ``not exists``. If it is provided
     for those operators, it will be ignored.
 
 subrules
