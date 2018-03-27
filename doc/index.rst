@@ -63,3 +63,4 @@ listeners is easily accomplished.
     processors
     rulesengine
     docker
+    news
