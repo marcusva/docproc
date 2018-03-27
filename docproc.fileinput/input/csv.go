@@ -42,6 +42,9 @@ func (tf *CSVTransformer) Transform(data []byte) ([]*queue.Message, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(records) == 0 {
+		return nil, fmt.Errorf("no CSV data found")
+	}
 
 	// The first row represents the field names
 	keys := records[0]
