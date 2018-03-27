@@ -15,7 +15,7 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-
+import os
 
 # -- Project information -----------------------------------------------------
 
@@ -23,11 +23,10 @@ project = 'docproc'
 copyright = '2018, Marcus von Appen'
 author = 'Marcus von Appen'
 
-# The short X.Y version
-version = '0.0.2'
-# The full version, including alpha/beta/rc tags
-release = '0.0.2'
-
+version = "unknown"
+with open(os.path.join("..", "VERSION"), "r") as verfile:
+    version = verfile.read().strip()
+release = version
 
 # -- General configuration ---------------------------------------------------
 
