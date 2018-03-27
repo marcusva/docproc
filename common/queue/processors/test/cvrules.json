@@ -1,0 +1,27 @@
+[
+    {
+        "path": "NET",
+        "op": "gte",
+        "value": 0
+    },
+    {
+        "path": "CUSTNO",
+        "op": "exists"
+    },
+    {
+        "path": "FIRSTNAME",
+        "op": "exists"
+    },
+    {
+        "path": "CITY",
+        "op": "exists"
+    },
+    {
+        "path": "STREET",
+        "op": "exists"
+    },
+    {
+        "path": "ZIP",
+        "op": "exists"
+    }
+]
