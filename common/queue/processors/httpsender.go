@@ -3,6 +3,7 @@ package processors
 import (
 	"bytes"
 	"fmt"
+	"github.com/marcusva/docproc/common/data"
 	"github.com/marcusva/docproc/common/log"
 	"github.com/marcusva/docproc/common/queue"
 	"net/http"
@@ -21,9 +22,9 @@ func init() {
 
 // HTTPSender sends particular message contents to a HTTP receiver
 type HTTPSender struct {
-	address    string
-	identifier string
-	timeout    time.Duration
+	address  string
+	readFrom string
+	timeout  time.Duration
 }
 
 // NewHTTPSender creates a new HTTPSender
@@ -32,9 +33,9 @@ func NewHTTPSender(params map[string]string) (queue.Processor, error) {
 	if !ok {
 		return nil, fmt.Errorf("parameter 'address' missing")
 	}
-	inputid, ok := params["identifier"]
+	inputid, ok := params["read.from"]
 	if !ok {
-		return nil, fmt.Errorf("parameter 'identifier' missing")
+		return nil, fmt.Errorf("parameter 'read.from' missing")
 	}
 	var tm uint64
 	timeout, ok := params["timeout"]
@@ -49,9 +50,9 @@ func NewHTTPSender(params map[string]string) (queue.Processor, error) {
 		}
 	}
 	return &HTTPSender{
-		address:    address,
-		identifier: inputid,
-		timeout:    time.Duration(tm) * time.Second,
+		address:  address,
+		readFrom: inputid,
+		timeout:  time.Duration(tm) * time.Second,
 	}, nil
 }
 
@@ -61,23 +62,16 @@ func (sender *HTTPSender) Name() string {
 }
 
 // Process processes the passed message, and sends the content identified by
-// the HTTPSender's configured identifier to the address of the HTTPSender.
+// the HTTPSender's configured readFrom to the address of the HTTPSender.
 func (sender *HTTPSender) Process(msg *queue.Message) error {
-	buf, ok := msg.Content[sender.identifier]
+	buf, ok := msg.Content[sender.readFrom]
 	if !ok {
-		return fmt.Errorf("message '%s' misses identifier '%s'", msg.Metadata[queue.MetaID], sender.identifier)
+		return fmt.Errorf("message '%s' misses identifier '%s'", msg.Metadata[queue.MetaID], sender.readFrom)
 	}
-	var bytebuf []byte
-	switch buf.(type) {
-	case []byte:
-		bytebuf = buf.([]byte)
-	case string:
-		bytebuf = []byte(buf.(string))
-	default:
-		log.Infof("content '%s' is not a string or byte buffer, using standard conversion", sender.identifier)
-		bytebuf = []byte(fmt.Sprintf("%v", buf))
+	bytebuf, err := data.Bytes(buf)
+	if err != nil {
+		return err
 	}
-
 	request, err := http.NewRequest("POST", sender.address, bytes.NewBuffer(bytebuf))
 	if err != nil {
 		log.Errorf("could not create HTTP request: %v", err)

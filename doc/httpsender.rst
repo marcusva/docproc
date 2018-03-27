@@ -14,13 +14,13 @@ The HTTPSender requires the following configuration entries:
 
     [httpsender-config]
     type = HTTPSender
-    identifier = body
+    read.from = body
     url = http://some.endpoint/receive_msg
 
 type
     To configure a HTTPSender, use ``HTTPSender`` as ``type``.
 
-identifier
+read.from
     The path of the message's content to send to the host.
 
 url

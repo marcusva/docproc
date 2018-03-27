@@ -41,7 +41,7 @@ func TestHTMLRenderer(t *testing.T) {
 	_, err = NewHTMLRenderer(params)
 	assert.Err(t, err)
 
-	params["identifier"] = "html"
+	params["store.in"] = "html"
 	_, err = NewHTMLRenderer(params)
 	assert.Err(t, err)
 
@@ -57,7 +57,7 @@ func TestHTMLRenderer(t *testing.T) {
 func TestHTMLRendererProcess(t *testing.T) {
 	params := map[string]string{
 		"templates":    "test/html/*.tpl",
-		"identifier":   "html",
+		"store.in":     "html",
 		"templateroot": "main",
 	}
 	html, err := NewHTMLRenderer(params)
@@ -76,7 +76,7 @@ func TestHTMLRendererProcess(t *testing.T) {
 func TestHTMLRenderName(t *testing.T) {
 	params := map[string]string{
 		"templates":    "test/html/*.tpl",
-		"identifier":   "html",
+		"store.in":     "html",
 		"templateroot": "main",
 	}
 	html, err := NewHTMLRenderer(params)

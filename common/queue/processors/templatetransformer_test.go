@@ -37,8 +37,8 @@ func TestNewTemplateTransformer(t *testing.T) {
 	assert.FailIf(t, err == nil, "NewTemplateTransformer() must fail, if no 'templateroot' arg is provided")
 	params["templateroot"] = "main"
 	_, err = NewTemplateTransformer(params)
-	assert.FailIf(t, err == nil, "NewTemplateTransformer() must fail, if no 'output' arg is provided")
-	params["identifier"] = "_output_"
+	assert.FailIf(t, err == nil, "NewTemplateTransformer() must fail, if no 'store.in' arg is provided")
+	params["store.in"] = "_output_"
 	_, err = NewTemplateTransformer(params)
 	assert.FailOnErr(t, err)
 }
@@ -46,7 +46,7 @@ func TestNewTemplateTransformer(t *testing.T) {
 func TestTemplateTransformerProcess(t *testing.T) {
 	params := map[string]string{
 		"templates":    "test//*.tpl",
-		"identifier":   "_xml_",
+		"store.in":     "_xml_",
 		"templateroot": "main",
 	}
 	lnt, err := NewTemplateTransformer(params)

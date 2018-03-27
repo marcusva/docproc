@@ -3,6 +3,7 @@ package processors
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/marcusva/docproc/common/data"
 	"github.com/marcusva/docproc/common/log"
 	"github.com/marcusva/docproc/common/path"
 	"github.com/marcusva/docproc/common/queue"
@@ -23,9 +24,9 @@ func init() {
 // FileWriter writes a specific content entry of a queue.Message into a file.
 // The message must contain the content as well as a file name to use.
 type FileWriter struct {
-	// identifier denotes the entry of the message content to write.
-	// data := message.Content[identifier]
-	identifier string
+	// readFrom denotes the entry of the message content to write.
+	// data := message.Content[readFrom]
+	readFrom string
 
 	// filename denotes the entry of the filename within the message content.
 	// fname := message.Content[filename]
@@ -49,9 +50,9 @@ func (fw *FileWriter) Name() string {
 // containing the content to write to the file and another one containing the
 // filename to use.
 func (fw *FileWriter) Process(msg *queue.Message) error {
-	buf, ok := msg.Content[fw.identifier]
+	buf, ok := msg.Content[fw.readFrom]
 	if !ok {
-		return fmt.Errorf("message '%s' misses identifier '%s'", msg.Metadata[queue.MetaID], fw.identifier)
+		return fmt.Errorf("message '%s' misses identifier '%s'", msg.Metadata[queue.MetaID], fw.readFrom)
 	}
 	filename, ok := msg.Content[fw.filename].(string)
 	if !ok {
@@ -67,15 +68,9 @@ func (fw *FileWriter) Process(msg *queue.Message) error {
 			return fmt.Errorf("message '%s' does not satisfy the rules", msg.Metadata[queue.MetaID])
 		}
 	}
-	var bytebuf []byte
-	switch buf.(type) {
-	case []byte:
-		bytebuf = buf.([]byte)
-	case string:
-		bytebuf = []byte(buf.(string))
-	default:
-		log.Infof("content '%s' is not a string or byte buffer, using standard conversion", fw.identifier)
-		bytebuf = []byte(fmt.Sprintf("%v", buf))
+	bytebuf, err := data.Bytes(buf)
+	if err != nil {
+		return err
 	}
 	fpath := filepath.Join(fw.directory, filename)
 	log.Debugf("writing html to '%s'", fpath)
@@ -85,13 +80,13 @@ func (fw *FileWriter) Process(msg *queue.Message) error {
 // NewFileWriter creates a FileWriter.
 // The parameter map params must contain the following entries:
 //
-// * "identifier": the key of the message content entry to write.
+// * "read.from": the key of the message content entry to write.
 // * "filename": the key of the filename entry of the message content.
 //
 func NewFileWriter(params map[string]string) (queue.Processor, error) {
-	identifier, ok := params["identifier"]
+	identifier, ok := params["read.from"]
 	if !ok {
-		return nil, fmt.Errorf("parameter 'identifier' missing")
+		return nil, fmt.Errorf("parameter 'read.from' missing")
 	}
 	filename, ok := params["filename"]
 	if !ok {
@@ -125,9 +120,9 @@ func NewFileWriter(params map[string]string) (queue.Processor, error) {
 		return nil, err
 	}
 	return &FileWriter{
-		identifier: identifier,
-		filename:   filename,
-		rules:      rules,
-		directory:  directory,
+		readFrom:  identifier,
+		filename:  filename,
+		rules:     rules,
+		directory: directory,
 	}, nil
 }

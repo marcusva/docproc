@@ -23,7 +23,7 @@ func init() {
 
 // HTMLRenderer is a template-based renderer for HTML content.
 type HTMLRenderer struct {
-	identifier   string
+	storeIn      string
 	templateRoot string
 	templates    *template.Template
 }
@@ -35,7 +35,7 @@ func (html *HTMLRenderer) Name() string {
 
 // Process processes the passed in message using the configured templates.
 // On success, the result will be stored as a key-value pair using the
-// HTMLRenderer's set identifier. Additionally, a "mime-type" : "text/html"
+// HTMLRenderer's set storeIn value. Additionally, a "mime-type" : "text/html"
 // key-value pair will be set on the message.
 func (html *HTMLRenderer) Process(msg *queue.Message) error {
 	buf := bytes.NewBufferString("")
@@ -44,7 +44,7 @@ func (html *HTMLRenderer) Process(msg *queue.Message) error {
 		log.Errorf("error on executing the templates: %v", err)
 		return err
 	}
-	msg.Content[html.identifier] = buf.String()
+	msg.Content[html.storeIn] = buf.String()
 	msg.Content[ContentType] = "text/html"
 	return nil
 }
@@ -56,9 +56,9 @@ func NewHTMLRenderer(params map[string]string) (queue.Processor, error) {
 	if !ok {
 		return nil, fmt.Errorf("parameter 'templates' missing")
 	}
-	output, ok := params["identifier"]
+	output, ok := params["store.in"]
 	if !ok {
-		return nil, fmt.Errorf("parameter 'identifier' missing")
+		return nil, fmt.Errorf("parameter 'store.in' missing")
 	}
 	tplroot, ok := params["templateroot"]
 	if !ok {
@@ -70,7 +70,7 @@ func NewHTMLRenderer(params map[string]string) (queue.Processor, error) {
 		return nil, err
 	}
 	return &HTMLRenderer{
-		identifier:   output,
+		storeIn:      output,
 		templateRoot: tplroot,
 		templates:    tmpl,
 	}, nil

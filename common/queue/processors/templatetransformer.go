@@ -19,9 +19,9 @@ func init() {
 // TemplateTransformer provides a simple mechanism to add additional data to
 // a queue.Message via Go's text/template transformation support.
 // The transformation result will be stored in the message's Content section and
-// can be reached via the transformer's Identifier.
+// can be reached via the transformer's storeIn value.
 type TemplateTransformer struct {
-	outputID     string
+	storeIn      string
 	templateRoot string
 	templates    *template.Template
 }
@@ -40,7 +40,7 @@ func (tf *TemplateTransformer) Process(msg *queue.Message) error {
 		log.Errorf("Executing the template '%s' failed for content %v", tf.templateRoot, msg.Content)
 		return err
 	}
-	msg.Content[tf.outputID] = buf.String()
+	msg.Content[tf.storeIn] = buf.String()
 	return nil
 }
 
@@ -51,9 +51,9 @@ func NewTemplateTransformer(params map[string]string) (queue.Processor, error) {
 	if !ok {
 		return nil, fmt.Errorf("parameter 'templates' missing")
 	}
-	output, ok := params["identifier"]
+	output, ok := params["store.in"]
 	if !ok {
-		return nil, fmt.Errorf("parameter 'identifier' missing")
+		return nil, fmt.Errorf("parameter 'store.in' missing")
 	}
 	tplroot, ok := params["templateroot"]
 	if !ok {
@@ -65,7 +65,7 @@ func NewTemplateTransformer(params map[string]string) (queue.Processor, error) {
 	}
 
 	return &TemplateTransformer{
-		outputID:     output,
+		storeIn:      output,
 		templateRoot: tplroot,
 		templates:    tmpl,
 	}, nil

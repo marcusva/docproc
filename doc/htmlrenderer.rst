@@ -17,14 +17,14 @@ The HTMLRenderer requires the following configuration entries:
 
     [htmlrenderer-config]
     type = HTMLRenderer
-    identifier = path_to_store
+    store.in = path_to_store
     templates = /path/to/all/templates/*.tpl
     templateroot = main
 
 type
    To configure a HTMLRenderer, use ``HTMLRenderer`` as ``type``.
 
-identifier
+store.in
     The path to use on the message's content to store the transformed result in.
 
 templates

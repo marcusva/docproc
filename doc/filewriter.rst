@@ -13,7 +13,7 @@ The FileWriter requires the following configuration entries:
 
     [filewrite-config]
     type = FileWriter
-    identifier = htmlresult
+    read.from = htmlresult
     rules = /app/rules/output/file-html.json
     filename = filename
     path = /app/output
@@ -21,7 +21,7 @@ The FileWriter requires the following configuration entries:
 type
     To configure a FileWriter, use ``FileWriter`` as ``type``.
 
-identifier
+read.from
     The path of the message's content save to the file.
 
 filename

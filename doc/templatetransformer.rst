@@ -15,14 +15,14 @@ The TemplateTransformer requires the following configuration entries:
 
     [templatetransformer-config]
     type = TemplateTransformer
-    identifier = path_to_store
+    store.in = path_to_store
     templates = /path/to/all/templates/*.tpl
     templateroot = main
 
 type
     To configure a TemplateTransformer, use ``TemplateTransformer`` as ``type``.
 
-identifier
+store.in
     The path to use on the message's content to store the transformed result in.
 
 templates

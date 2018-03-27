@@ -65,6 +65,7 @@ func NewContentValidator(params map[string]string) (queue.Processor, error) {
 	if err := rules.Validate(&ruleset); err != nil {
 		return nil, err
 	}
-
-	return nil, nil
+	return &ContentValidator{
+		rules: ruleset,
+	}, nil
 }

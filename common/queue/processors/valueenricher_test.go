@@ -40,9 +40,19 @@ func TestNewValueRuleEnricher(t *testing.T) {
 	_, err = NewValueEnricher(params)
 	assert.FailIf(t, err == nil, "NewValueEricher() must fail, if the rules are broken")
 
+	params = map[string]string{"rules": "test/xml-template.tpl"}
+	_, err = NewValueEnricher(params)
+	assert.FailIf(t, err == nil, "NewValueEricher() must fail, if the rules file is invalid")
+
 	params = map[string]string{"rules": "test/testrules.json"}
 	_, err = NewValueEnricher(params)
 	assert.FailOnErr(t, err)
+}
+
+func TestValueEnricherName(t *testing.T) {
+	ve, err := NewValueEnricher(map[string]string{"rules": "test/testrules.json"})
+	assert.FailOnErr(t, err)
+	assert.Equal(t, ve.Name(), "ValueEnricher")
 }
 
 func TestValueEnricherProcess(t *testing.T) {

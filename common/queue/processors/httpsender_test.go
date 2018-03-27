@@ -34,7 +34,7 @@ func TestNewHTTPSender(t *testing.T) {
 	_, err = NewHTTPSender(params)
 	assert.Err(t, err)
 
-	params["identifier"] = "body"
+	params["read.from"] = "body"
 	_, err = NewHTTPSender(params)
 	assert.NoErr(t, err)
 
@@ -49,9 +49,9 @@ func TestNewHTTPSender(t *testing.T) {
 
 func TestHTTPSenderName(t *testing.T) {
 	params := map[string]string{
-		"address":    "127.0.0.1",
-		"identifier": "body",
-		"timeout":    "2",
+		"address":   "127.0.0.1",
+		"read.from": "body",
+		"timeout":   "2",
 	}
 	sender, err := NewHTTPSender(params)
 	assert.FailOnErr(t, err)
@@ -79,9 +79,9 @@ func TestHTTPSenderProcess(t *testing.T) {
 	defer server.Close()
 
 	params := map[string]string{
-		"address":    server.URL,
-		"identifier": "body",
-		"timeout":    "2",
+		"address":   server.URL,
+		"read.from": "body",
+		"timeout":   "2",
 	}
 	sender, err := NewHTTPSender(params)
 	assert.FailOnErr(t, err)
