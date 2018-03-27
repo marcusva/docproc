@@ -47,7 +47,7 @@ On Windows, unpack docproc-|version|.zip into :envvar:`GOPATH`, then run
     > dep ensure
     > build-release.bat
 
-Those commands will build a set o docproc release distributions in the `dist`
+Those commands will build a set of docproc release distributions in the `dist`
 folder.
 
 
