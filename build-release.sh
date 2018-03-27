@@ -8,6 +8,7 @@ FOLDERS=examples
 
 VERSION=`cat VERSION`
 LDFLAGS="-X main.version=$VERSION"
+TAGS="beanstalk nats nsq"
 ARCH=`go env GOARCH`
 
 echo "Creating release packages for version $VERSION..."
@@ -19,6 +20,9 @@ echo "Creating documentation..."
 make -C doc html
 
 dep ensure -v || $GOPATH/bin/dep ensure -v
+
+echo "Running unit tests..."
+go test -tags "$TAGS" -ldflags "$LDFLAGS" ./...
 
 for os in $PLATFORMS; do
     suffix=""
@@ -33,7 +37,7 @@ for os in $PLATFORMS; do
     cp -rf doc/_build/html $destdir
     echo "Building application..."
     for app in $APPS; do
-        go build -tags "beanstalk nats nsq" -ldflags "$LDFLAGS" -o $destdir/$app$suffix ./$app
+        go build -tags "$TAGS" -ldflags "$LDFLAGS" -o $destdir/$app$suffix ./$app
     done
     echo "Copying dist files..."
     for folder in $FOLDERS; do

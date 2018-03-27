@@ -7,6 +7,7 @@
 @FOR /F "tokens=*" %%A IN ('go env GOARCH') DO @SET ARCH=%%A
 @SET /P VERSION=<VERSION
 @SET LDFLAGS="-X main.version=%VERSION%"
+@SET TAGS="beanstalk nats nsq"
 
 @ECHO Creating release packages for version %VERSION%...
 
@@ -20,6 +21,8 @@
 @CALL make html
 @CD ..
 @%GOPATH%\bin\dep ensure -v
+@ECHO Running unit tests...
+go test -tags %TAGS% -ldflags %LDFLAGS% ./...
 @FOR %%P IN (%PLATFORMS%) DO (
     SET SUFFIX=""
     if "%%P" == "windows" (
@@ -33,7 +36,7 @@
     XCOPY /Q /E /I doc\_build\html !DESTDIR!\doc
     ECHO Building application...
     FOR %%A IN (%APPS%) DO (
-        go build -tags "beanstalk nats nsq" -ldflags %LDFLAGS% -o !DESTDIR!\%%A!SUFFIX! ./%%A
+        go build -tags %TAGS% -ldflags %LDFLAGS% -o !DESTDIR!\%%A!SUFFIX! ./%%A
     )
     ECHO Copying dist files...
     FOR %%A IN (%FOLDERS%) DO XCOPY /Q /E /I %%A !DESTDIR!\%%A
