@@ -51,7 +51,7 @@ func (tf *CSVTransformer) Transform(data []byte) ([]*queue.Message, error) {
 	records = records[1:]
 	columns := len(keys)
 
-	msgs := make([]*queue.Message, 1)
+	msgs := []*queue.Message{}
 	ts := time.Now().Unix()
 	for _, rec := range records {
 		content := make(map[string]interface{})
