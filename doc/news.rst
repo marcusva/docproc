@@ -10,11 +10,11 @@ Released on 2018-XX-XX.
   content.
 * Changed in/output identifiers for processors to use more meaningful names.
 
-  * FileWriter, HTTPSender: ``'identifer'`` -> ``'read.from'``
-  * TemplateTransformer, HtmlRenderer: ``'identifier'`` -> ``'store.in'``
+  * :ref:`FileWriter`, :ref:`HTTPSender`: ``'identifer'`` -> ``'read.from'``
+  * :ref:`TemplateTransformer`, :ref:`HTMLRenderer`: ``'identifier'`` -> ``'store.in'``
 
-* Fixed ContentValidator creation bug.
-* Fixed a panic on reading empty CSV files in CSVTransformer.
+* Fixed :ref:`ContentValidator` creation bug.
+* Fixed a panic on reading empty CSV files in :ref:`CSVTransformer`.
 
 0.0.1
 -----
