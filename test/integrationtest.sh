@@ -30,7 +30,7 @@ sleep 10
 
 $DOCKER cp ./test/test-results.tar.gz $CIP.output_1:/app
 $DOCKER exec $CIP.output_1 tar -C /app -xzf test-results.tar.gz
-$DOCKER exec -it $CIP.output_1 diff -Nur /app/output /app/results
+$DOCKER exec -it $CIP.output_1 diff -Nur /app/output /app/test-results
 exitcode=$?
 
 $DOCKER_COMPOSE -p $PNAME kill
