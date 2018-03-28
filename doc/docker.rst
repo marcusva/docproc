@@ -29,17 +29,6 @@ Create the base image with the following instructions::
 The base image is now registered in your local docker registry as
 ``docproc/base``.
 
-.. note::
-    The docproc applications of the base image will be built with nsq
-    support only. To change this behaviour, you can tweak the ``BUILD_FLAGS``
-    within ``Dockerfile`` as necessary or override the ``BUILD_FLAGS`` at the
-    command line::
-
-        $ docker build --build-arg BUILD_FLAGS="-tags beanstalk" -t docproc/base .
-
-    The nsqd binary will be built and installed nevertheless, if ``Dockerfile``
-    is not edited, though.
-
 Build docproc Images
 --------------------
 

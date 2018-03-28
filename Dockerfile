@@ -11,14 +11,14 @@ RUN go get -v github.com/nsqio/nsq/... \
     && CGO_ENABLED=0 make DESTDIR=/opt PREFIX=/nsq GOFLAGS='-ldflags="-s -w"' install;
 
 # Build the docproc applications
-ARG BUILD_FLAGS="-tags nsq"
+ARG TAGS="beanstalk nats nsq"
 ENV SRC_DIR=/go/src/github.com/marcusva/docproc
 ADD . $SRC_DIR
 
 RUN cd $SRC_DIR \
     && /bin/dep ensure \
-    && go build $BUILD_FLAGS -v -o /app/docproc.fileinput ./docproc.fileinput \
-    && go build $BUILD_FLAGS -v -o /app/docproc.proc ./docproc.proc
+    && go build -tags "$TAGS" -v -o /app/docproc.fileinput ./docproc.fileinput \
+    && go build -tags "$TAGS" -v -o /app/docproc.proc ./docproc.proc
 
 RUN (cd $SRC_DIR && go test ./...) || (echo "tests failed" && false)
 
