@@ -51,15 +51,16 @@ func (tf *CSVTransformer) Transform(data []byte) ([]*queue.Message, error) {
 	records = records[1:]
 	columns := len(keys)
 
-	msgs := make([]*queue.Message, len(records))
+	msgs := make([]*queue.Message, 1)
 	ts := time.Now().Unix()
-	for idx, rec := range records {
+	for _, rec := range records {
 		content := make(map[string]interface{})
 		for i := 0; i < columns; i++ {
 			content[keys[i]] = rec[i]
 		}
-		msgs[idx] = queue.NewMessage(content)
-		msgs[idx].Metadata[queue.MetaBatch] = ts
+		msg := queue.NewMessage(content)
+		msg.Metadata[queue.MetaBatch] = ts
+		msgs = append(msgs, msg)
 	}
 	return msgs, nil
 }

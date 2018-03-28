@@ -14,7 +14,16 @@ import (
 var (
 	maxLinesCSV  = 2500
 	maxLenString = 10
+	csvCharset   = []byte("")
 )
+
+func init() {
+	// Use a latin-1 charset by default, excluding the non-printable characters
+	csvCharset = make([]byte, 0xFF)
+	for i := 0x0; i < (0xFF - 0x20); i++ {
+		csvCharset[i] = byte(i + 0x20)
+	}
+}
 
 // FuzzedCSV is an io.Rader that contains randomly generated CSV data.
 type FuzzedCSV struct {
@@ -25,6 +34,11 @@ type FuzzedCSV struct {
 	// Lines holds the line count of the generated CSV, excluding the optional
 	// header of the CSV.
 	Lines int
+}
+
+// SetCharset sets the character set to choose from.
+func SetCharset(charset []byte) {
+	csvCharset = charset
 }
 
 // SetMaxLines sets the maximum number of CSV lines to generate. If maxlines
@@ -56,10 +70,11 @@ func createRecord(types []string) []string {
 		case "bool":
 			record[idx] = strconv.FormatBool(rand.Int63n(2) > 0)
 		case "string":
-			len := rand.Intn(maxLenString) + 1
-			buf := make([]byte, len)
-			for i := 0; i < len; i++ {
-				buf[i] = byte(rand.Int63n(94) + 32) // any ASCII character in the range 0x20 - 0x7E
+			strlen := rand.Intn(maxLenString) + 1
+			buf := make([]byte, strlen)
+			chMax := len(csvCharset)
+			for i := 0; i < strlen; i++ {
+				buf[i] = byte(csvCharset[rand.Intn(chMax)])
 			}
 			record[idx] = string(buf)
 		default:

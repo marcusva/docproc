@@ -18,3 +18,9 @@ func TestCSV(t *testing.T) {
 	// lines includes the header, which's omitted in csv.Lines
 	assert.Equal(t, lines, csv.Lines+1)
 }
+
+func BenchmarkCSV(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		CSV([]string{"string", "int", "string", "string"}, ';', true)
+	}
+}

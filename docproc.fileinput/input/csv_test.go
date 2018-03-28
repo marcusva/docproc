@@ -46,7 +46,7 @@ func TestCSVTransformFuzzed(t *testing.T) {
 	assert.NoErr(t, err)
 	tf.(*CSVTransformer).Delim = ';'
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 500; i++ {
 		csv, err := fuzz.CSV([]string{"string", "int", "string", "string", "float", "int"}, ';', true)
 		assert.FailOnErr(t, err)
 		buf, err := ioutil.ReadAll(csv)
@@ -54,5 +54,15 @@ func TestCSVTransformFuzzed(t *testing.T) {
 		msgs, err := tf.Transform(buf)
 		assert.FailOnErr(t, err)
 		assert.Equal(t, len(msgs), csv.Lines)
+	}
+}
+
+func BenchmarkCSVTransform(b *testing.B) {
+	tf, _ := NewCSVTransformer(nil)
+	tf.(*CSVTransformer).Delim = ';'
+	for i := 0; i < b.N; i++ {
+		csv, _ := fuzz.CSV([]string{"string", "int", "string", "string", "float", "int"}, ';', true)
+		buf, _ := ioutil.ReadAll(csv)
+		tf.Transform(buf)
 	}
 }
