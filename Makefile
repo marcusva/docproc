@@ -17,7 +17,10 @@ TAGS := beanstalk nats nsq
 
 .PHONY: clean install dist test $(APPS)
 
-all: $(APPS)
+all: info $(APPS)
+
+info:
+	@echo "Building docproc $(VERSION) for $(GOOS)/$(GOARCH)..."
 
 clean:
 	rm -rf dist doc/_build vendor
@@ -52,4 +55,4 @@ dist/$(DISTNAME).tar.gz: docs $(APPS)
 	cd dist && tar -czf $(DISTNAME).tar.gz $(DISTNAME)
 
 dist: dist/$(DISTNAME).tar.gz
-	
+
