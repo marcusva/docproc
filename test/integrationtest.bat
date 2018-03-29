@@ -9,7 +9,7 @@ SET DOCKER_COMPOSE=docker-compose
 
 ECHO Building docker environment...
 %DOCKER% build -t docproc/base .
-%DOCKER_COMPOSE% -p %PNAME% build
+%DOCKER_COMPOSE% -p %PNAME% build --no-cache
 
 ECHO Starting docker environment...
 %DOCKER_COMPOSE% -p %PNAME% up -d
@@ -18,7 +18,6 @@ ECHO Creating queues manually to speed up testing...
 %DOCKER% exec -d %CIP%.fileinput_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=input
 %DOCKER% exec -d %CIP%.preproc_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=preprocessed
 %DOCKER% exec -d %CIP%.renderer_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=rendered
-%DOCKER% exec -d %CIP%.output_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=output
 
 ECHO Starting tests...
 %DOCKER% cp examples/data/testrecords.csv %CIP%.fileinput_1:/app/data

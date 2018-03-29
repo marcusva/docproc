@@ -12,12 +12,8 @@ ARG TAGS="beanstalk nats nsq"
 ENV SRC_DIR=/go/src/github.com/marcusva/docproc
 ADD . $SRC_DIR
 
-RUN cd $SRC_DIR \
-    && /bin/dep ensure \
-    && go build -tags "$TAGS" -v -o /app/docproc.fileinput ./docproc.fileinput \
-    && go build -tags "$TAGS" -v -o /app/docproc.proc ./docproc.proc
-
-RUN (cd $SRC_DIR && go test ./...) || (echo "tests failed" && false)
+RUN (cd $SRC_DIR && make && make test) || (echo "tests failed" && false)
+RUN cd $SRC_DIR && PREFIX=/app make install
 
 #### Image creation ####
 FROM golang

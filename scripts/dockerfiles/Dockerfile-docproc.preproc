@@ -3,7 +3,7 @@ FROM docproc/base
 WORKDIR /app
 
 COPY ./scripts/docproc.startup.sh /bin/docproc.startup.sh
-RUN sed -i -e 's/\$APP\$/\/app\/docproc.proc/g' /bin/docproc.startup.sh
+RUN sed -i -e 's/\$APP\$/\/app\/bin\/docproc.proc/g' /bin/docproc.startup.sh
 RUN chmod a+x /bin/docproc.startup.sh
 
 # Test data

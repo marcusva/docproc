@@ -30,26 +30,27 @@ following message queues:
 Unpack the source snapshot into your `GOPATH`, run the `dep` command and
 build docproc.
 
-On Unix and Linux run
+On Unix and Linux, unpack docproc-|version|.tar.gz into :envvar:`GOPATH`, then
+run
 
 .. code-block:: console
 
-    $ tar xzvf docproc-X.Y.Z.tar.gz $GOPATH
     $ cd $GOPATH/github.com/marcusva/docproc
-    $ dep ensure
-    $ build-release.sh
+    $ make install
+
+This will install the docproc binaries into ``/usr/local/bin`` by default. You
+can change the :envvar:`PREFIX` as well as :envvar:`DESTDIR` for your own
+installation scheme.
 
 On Windows, unpack docproc-|version|.zip into :envvar:`GOPATH`, then run
 
 .. code-block:: batch
 
     > cd %GOPATH%/github.com/marcusva/docproc
-    > dep ensure
-    > build-release.bat
+    > make.bat
 
-Those commands will build a set of docproc release distributions in the `dist`
-folder.
-
+Those commands will build docproc and put the binaries, documentation and
+examples into the  `dist` folder.
 
 Installation
 ------------
