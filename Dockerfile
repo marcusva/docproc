@@ -1,14 +1,11 @@
 #### Build stage ####
 FROM golang AS build
 
-# Build nsq
-RUN go get -v github.com/nsqio/nsq/... \
-    && wget -O /bin/dep https://github.com/golang/dep/releases/download/v0.4.1/dep-linux-amd64 \
-    && chmod +x /bin/dep \
-    && cd /go/src/github.com/nsqio/nsq \
-    && /bin/dep ensure \
-    && ./test.sh \
-    && CGO_ENABLED=0 make DESTDIR=/opt PREFIX=/nsq GOFLAGS='-ldflags="-s -w"' install;
+RUN wget -q -O /bin/dep https://github.com/golang/dep/releases/download/v0.4.1/dep-linux-amd64 \
+    && chmod +x /bin/dep
+RUN wget -q -O nsq.tgz https://github.com/nsqio/nsq/releases/download/v1.0.0-compat/nsq-1.0.0-compat.linux-amd64.go1.8.tar.gz \
+    && tar -xzf nsq.tgz \
+    && cp nsq-1.0.0-compat.linux-amd64.go1.8/bin/nsqd /usr/local/bin
 
 # Build the docproc applications
 ARG TAGS="beanstalk nats nsq"
@@ -25,6 +22,6 @@ RUN (cd $SRC_DIR && go test ./...) || (echo "tests failed" && false)
 #### Image creation ####
 FROM golang
 
-COPY --from=build /opt/nsq/bin/nsqd /usr/local/bin/nsqd
+COPY --from=build /usr/local/bin/nsqd /usr/local/bin/nsqd
 RUN ln -s /usr/local/bin/nsqd /bin/nsqd
 COPY --from=build /app /app
