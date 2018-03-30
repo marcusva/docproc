@@ -4,7 +4,7 @@ This describes the latest changes between the docproc releases.
 
 0.0.2
 -----
-Released on 2018-XX-XX.
+Released on 2018-03-30.
 
 * New :ref:`CommandProc` processor for executing external commands on message
   content.
