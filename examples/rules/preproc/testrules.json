@@ -18,5 +18,41 @@
         "op": "exists",
         "targetpath": "filename",
         "targetvalue": "fn-${CUSTNO}.html"
+    },
+    {
+        "path": "FIRSTNAME",
+        "op": "exists",
+        "subrules": [
+            {
+                "path": "LASTNAME",
+                "op": "exists"
+            }
+        ],
+        "targetpath": "fullname",
+        "targetvalue": "${FIRSTNAME} ${LASTNAME}"
+    },
+    {
+        "path": "FIRSTNAME",
+        "op": "not exists",
+        "subrules": [
+            {
+                "path": "LASTNAME",
+                "op": "exists"
+            }
+        ],
+        "targetpath": "fullname",
+        "targetvalue": "Mr/Mrs ${LASTNAME}"
+    },
+    {
+        "path": "FIRSTNAME",
+        "op": "exists",
+        "subrules": [
+            {
+                "path": "LASTNAME",
+                "op": "not exists"
+            }
+        ],
+        "targetpath": "fullname",
+        "targetvalue": "${FIRSTNAME}"
     }
 ]
