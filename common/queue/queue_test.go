@@ -13,7 +13,13 @@ func TestPackage(t *testing.T) {
 func TestQueueTypes(t *testing.T) {
 	rqtypes := ReadTypes()
 	assert.ContainsS(t, rqtypes, "memory")
-	// assert.ContainsS(t, rqtypes, "nats")
-	// assert.ContainsS(t, rqtypes, "nsq")
-	// assert.ContainsS(t, rqtypes, "beanstalk")
+	assert.ContainsS(t, rqtypes, "nats")
+	assert.ContainsS(t, rqtypes, "nsq")
+	assert.ContainsS(t, rqtypes, "beanstalk")
+
+	wqtypes := WriteTypes()
+	assert.ContainsS(t, wqtypes, "memory")
+	assert.ContainsS(t, wqtypes, "nats")
+	assert.ContainsS(t, wqtypes, "nsq")
+	assert.ContainsS(t, wqtypes, "beanstalk")
 }
