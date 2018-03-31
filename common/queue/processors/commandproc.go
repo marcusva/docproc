@@ -16,6 +16,10 @@ const (
 	cmdName = "CommandProc"
 )
 
+func init() {
+	Register(cmdName, NewCommandProc)
+}
+
 // CommandProc is a simple command processor for queue.Message objects.
 type CommandProc struct {
 	readFrom string
@@ -63,6 +67,7 @@ func (cmd *CommandProc) Process(msg *queue.Message) error {
 		log.Infof("could not connect stderr for command")
 		stderr = nil
 	}
+	log.Debugf("Executing '%s'", strings.Join(command.Args, " "))
 	output, err := command.Output()
 	if err != nil {
 		if stderr != nil {
@@ -75,7 +80,7 @@ func (cmd *CommandProc) Process(msg *queue.Message) error {
 		}
 		return err
 	}
-	msg.Content[cmd.storeIn] = string(output)
+	msg.Content[cmd.storeIn] = output
 	return nil
 }
 
