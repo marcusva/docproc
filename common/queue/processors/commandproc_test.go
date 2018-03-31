@@ -77,7 +77,7 @@ func TestCommandProcProcess(t *testing.T) {
 	msg, err := queue.MsgFromJSON([]byte(cmdmsg))
 	assert.FailOnErr(t, err)
 	assert.NoErr(t, cmd.Process(msg))
-	assert.Equal(t, msg.Content["cmdfield"], []byte("New York"))
+	assert.Equal(t, msg.Content["cmdfield"], "New York")
 }
 
 func TestCommandProcProcessBroken(t *testing.T) {

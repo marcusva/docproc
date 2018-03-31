@@ -1,6 +1,7 @@
 package processors
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/marcusva/docproc/common/data"
@@ -11,6 +12,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 const (
@@ -28,6 +30,7 @@ type FileWriter struct {
 	// data := message.Content[readFrom]
 	readFrom string
 
+	asBase64 bool
 	// filename denotes the entry of the filename within the message content.
 	// fname := message.Content[filename]
 	filename string
@@ -68,12 +71,22 @@ func (fw *FileWriter) Process(msg *queue.Message) error {
 			return fmt.Errorf("message '%s' does not satisfy the rules", msg.Metadata[queue.MetaID])
 		}
 	}
-	bytebuf, err := data.Bytes(buf)
+	var err error
+	var bytebuf []byte
+	if fw.asBase64 {
+		strbuf, ok := buf.(string)
+		if !ok {
+			return fmt.Errorf("message '%s', field '%s' is not a base64 string", msg.Metadata[queue.MetaID], fw.readFrom)
+		}
+		bytebuf, err = base64.StdEncoding.DecodeString(strbuf)
+	} else {
+		bytebuf, err = data.Bytes(buf)
+	}
 	if err != nil {
 		return err
 	}
 	fpath := filepath.Join(fw.directory, filename)
-	log.Debugf("writing html to '%s'", fpath)
+	log.Debugf("writing data to '%s'", fpath)
 	return ioutil.WriteFile(fpath, bytebuf, os.FileMode(0644))
 }
 
@@ -84,6 +97,7 @@ func (fw *FileWriter) Process(msg *queue.Message) error {
 // * "filename": the key of the filename entry of the message content.
 //
 func NewFileWriter(params map[string]string) (queue.Processor, error) {
+	var err error
 	identifier, ok := params["read.from"]
 	if !ok {
 		return nil, fmt.Errorf("parameter 'read.from' missing")
@@ -96,17 +110,24 @@ func NewFileWriter(params map[string]string) (queue.Processor, error) {
 	if !ok {
 		return nil, fmt.Errorf("parameter 'path' missing")
 	}
-	if ok, err := path.DirExists(directory); err != nil {
+	if ok, err = path.DirExists(directory); err != nil {
 		return nil, err
 	} else if !ok {
 		return nil, fmt.Errorf("path '%s' is not a directory", directory)
 	}
-	if ok, err := path.Writable(directory); err != nil {
+	if ok, err = path.Writable(directory); err != nil {
 		return nil, err
 	} else if !ok {
 		return nil, fmt.Errorf("path '%s' is not a writable", directory)
 	}
-
+	base64 := false
+	b64, ok := params["read.base64"]
+	if ok {
+		base64, err = strconv.ParseBool(b64)
+		if err != nil {
+			return nil, err
+		}
+	}
 	rulefile, ok := params["rules"]
 	if !ok {
 		return nil, fmt.Errorf("parameter 'rules' missing")
@@ -121,6 +142,7 @@ func NewFileWriter(params map[string]string) (queue.Processor, error) {
 	}
 	return &FileWriter{
 		readFrom:  identifier,
+		asBase64:  base64,
 		filename:  filename,
 		rules:     rules,
 		directory: directory,

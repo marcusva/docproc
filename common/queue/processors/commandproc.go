@@ -2,6 +2,7 @@ package processors
 
 import (
 	"bufio"
+	"encoding/base64"
 	"fmt"
 	"github.com/marcusva/docproc/common/data"
 	"github.com/marcusva/docproc/common/log"
@@ -9,6 +10,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 )
 
@@ -24,6 +26,7 @@ func init() {
 type CommandProc struct {
 	readFrom string
 	storeIn  string
+	asBase64 bool
 	execArgs []string
 }
 
@@ -73,14 +76,18 @@ func (cmd *CommandProc) Process(msg *queue.Message) error {
 		if stderr != nil {
 			rd := bufio.NewReader(stderr)
 			errbuf, newerr := rd.ReadString(0)
-			if newerr != nil {
-				errbuf = "could not retrieve error information"
+			if newerr == nil {
+				err = fmt.Errorf(errbuf)
 			}
-			log.Errorf("command '%s', arguments '%s' failed: %s", app, varargs, errbuf)
 		}
+		log.Errorf("command '%s', arguments '%s' failed: %s", app, varargs, err)
 		return err
 	}
-	msg.Content[cmd.storeIn] = output
+	if cmd.asBase64 {
+		msg.Content[cmd.storeIn] = base64.StdEncoding.EncodeToString(output)
+	} else {
+		msg.Content[cmd.storeIn] = string(output)
+	}
 	return nil
 }
 
@@ -94,6 +101,15 @@ func NewCommandProc(params map[string]string) (queue.Processor, error) {
 	if !ok {
 		return nil, fmt.Errorf("parameter 'store.in' missing")
 	}
+	var err error
+	base64 := false
+	b64, ok := params["store.base64"]
+	if ok {
+		base64, err = strconv.ParseBool(b64)
+		if err != nil {
+			return nil, err
+		}
+	}
 	args, ok := params["exec"]
 	if !ok {
 		return nil, fmt.Errorf("parameter 'exec' missing")
@@ -101,6 +117,7 @@ func NewCommandProc(params map[string]string) (queue.Processor, error) {
 	return &CommandProc{
 		readFrom: inputid,
 		storeIn:  outputid,
+		asBase64: base64,
 		execArgs: strings.Split(args, " "),
 	}, nil
 }

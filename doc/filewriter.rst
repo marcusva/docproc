@@ -14,6 +14,7 @@ The FileWriter requires the following configuration entries:
     [filewrite-config]
     type = FileWriter
     read.from = htmlresult
+    read.base64 = true
     rules = /app/rules/output/file-html.json
     filename = filename
     path = /app/output
@@ -23,6 +24,13 @@ type
 
 read.from
     The path of the message's content save to the file.
+
+read.base64
+    Indicates, if the message content path is base64-encoded and needs to
+    be decoded beforehand (necessary, if e.g. the ``read.from`` entry
+    originally contained binary data).
+
+    The entry is optional and, if unset, assumed to be ``false``.
 
 filename
     The path of the message's content containing the filename to use.
