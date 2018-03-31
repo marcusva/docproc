@@ -31,17 +31,25 @@ const (
 func TestNewTemplateTransformer(t *testing.T) {
 	params := map[string]string{}
 	_, err := NewTemplateTransformer(params)
-	assert.FailIf(t, err == nil, "NewTemplateTransformer() must fail, if no 'templates' arg is provided")
+	assert.Err(t, err)
+
 	params["templates"] = "test//*.tpl"
 	_, err = NewTemplateTransformer(params)
-	assert.FailIf(t, err == nil, "NewTemplateTransformer() must fail, if no 'templateroot' arg is provided")
+	assert.Err(t, err)
+
 	params["templateroot"] = "main"
 	_, err = NewTemplateTransformer(params)
-	assert.FailIf(t, err == nil, "NewTemplateTransformer() must fail, if no 'store.in' arg is provided")
+	assert.Err(t, err)
+
 	params["store.in"] = "_output_"
 	_, err = NewTemplateTransformer(params)
 	assert.FailOnErr(t, err)
+
+	params["templates"] = "invalid//*.tpl"
+	_, err = NewTemplateTransformer(params)
+	assert.Err(t, err)
 }
+
 func TestTemplateTransformerCreate(t *testing.T) {
 	params := map[string]string{
 		"type":         "TemplateTransformer",

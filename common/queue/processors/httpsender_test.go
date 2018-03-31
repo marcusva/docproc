@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 const (
@@ -45,6 +46,11 @@ func TestNewHTTPSender(t *testing.T) {
 	params["timeout"] = "123"
 	_, err = NewHTTPSender(params)
 	assert.NoErr(t, err)
+
+	params["address"] = "::some##invalid?!!!\\data"
+	_, err = NewHTTPSender(params)
+	assert.Err(t, err)
+
 }
 
 func TestHTTPSenderCreate(t *testing.T) {
@@ -100,6 +106,32 @@ func TestHTTPSenderProcess(t *testing.T) {
 
 	msg, err := queue.MsgFromJSON([]byte(httpmessage))
 	assert.FailOnErr(t, err)
-
 	assert.FailOnErr(t, sender.Process(msg))
+}
+
+func TestHTTPSenderProcessInvalid(t *testing.T) {
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(1001 * time.Millisecond)
+	})
+	server := httptest.NewServer(handler)
+	defer server.Close()
+
+	params := map[string]string{
+		"address":   server.URL,
+		"read.from": "noexist",
+		"timeout":   "1",
+	}
+	sender, err := NewHTTPSender(params)
+	assert.FailOnErr(t, err)
+
+	msg, err := queue.MsgFromJSON([]byte(httpmessage))
+	assert.FailOnErr(t, err)
+
+	assert.Err(t, sender.Process(msg))
+
+	params["read.from"] = "body"
+	sender, err = NewHTTPSender(params)
+	assert.FailOnErr(t, err)
+	assert.Err(t, sender.Process(msg))
+
 }

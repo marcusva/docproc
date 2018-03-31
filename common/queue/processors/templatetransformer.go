@@ -51,13 +51,13 @@ func NewTemplateTransformer(params map[string]string) (queue.Processor, error) {
 	if !ok {
 		return nil, fmt.Errorf("parameter 'templates' missing")
 	}
-	output, ok := params["store.in"]
-	if !ok {
-		return nil, fmt.Errorf("parameter 'store.in' missing")
-	}
 	tplroot, ok := params["templateroot"]
 	if !ok {
 		return nil, fmt.Errorf("parameter 'templateroot' missing")
+	}
+	output, ok := params["store.in"]
+	if !ok {
+		return nil, fmt.Errorf("parameter 'store.in' missing")
 	}
 	tmpl, err := template.ParseGlob(tplfiles)
 	if err != nil {

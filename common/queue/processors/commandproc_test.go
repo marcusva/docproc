@@ -1,6 +1,7 @@
 package processors
 
 import (
+	"encoding/base64"
 	"github.com/marcusva/docproc/common/queue"
 	"github.com/marcusva/docproc/common/testing/assert"
 	"runtime"
@@ -98,6 +99,34 @@ func TestCommandProcProcess(t *testing.T) {
 	assert.FailOnErr(t, err)
 	assert.NoErr(t, cmd.Process(msg))
 	assert.Equal(t, msg.Content["cmdfield"], "New York")
+
+	params["read.from"] = "unknown"
+	cmd, err = NewCommandProc(params)
+	assert.FailOnErr(t, err)
+	assert.Err(t, cmd.Process(msg))
+}
+
+func TestCommandProcBase64(t *testing.T) {
+	params := map[string]string{
+		"read.from":    "CITY",
+		"store.in":     "cmdfield",
+		"store.base64": "t",
+	}
+	switch runtime.GOOS {
+	case "windows":
+		params["exec"] = "cmd /C type"
+	default:
+		params["exec"] = "cat"
+	}
+	cmd, err := NewCommandProc(params)
+	assert.FailOnErr(t, err)
+
+	msg, err := queue.MsgFromJSON([]byte(cmdmsg))
+	assert.FailOnErr(t, err)
+	assert.NoErr(t, cmd.Process(msg))
+	assert.NotEqual(t, msg.Content["cmdfield"], "New York")
+	assert.Equal(t, msg.Content["cmdfield"], base64.StdEncoding.EncodeToString([]byte("New York")))
+
 }
 
 func TestCommandProcProcessBroken(t *testing.T) {

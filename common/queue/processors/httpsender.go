@@ -7,6 +7,7 @@ import (
 	"github.com/marcusva/docproc/common/log"
 	"github.com/marcusva/docproc/common/queue"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 )
@@ -23,6 +24,7 @@ func init() {
 // HTTPSender sends particular message contents to a HTTP receiver
 type HTTPSender struct {
 	address  string
+	url      *url.URL
 	readFrom string
 	timeout  time.Duration
 }
@@ -33,6 +35,10 @@ func NewHTTPSender(params map[string]string) (queue.Processor, error) {
 	if !ok {
 		return nil, fmt.Errorf("parameter 'address' missing")
 	}
+	if _, err := url.Parse(address); err != nil {
+		return nil, fmt.Errorf("parameter 'address' is invalid: %v", err)
+	}
+
 	inputid, ok := params["read.from"]
 	if !ok {
 		return nil, fmt.Errorf("parameter 'read.from' missing")
