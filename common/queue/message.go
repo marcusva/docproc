@@ -45,7 +45,7 @@ func NewMessage(content map[string]interface{}) *Message {
 	}
 	metadata := map[string]interface{}{
 		MetaID:      id,
-		MetaCreated: time.Now(),
+		MetaCreated: time.Now().Format(time.RFC3339Nano),
 	}
 	return &Message{
 		Metadata: metadata,
