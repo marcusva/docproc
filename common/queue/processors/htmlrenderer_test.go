@@ -54,6 +54,18 @@ func TestHTMLRenderer(t *testing.T) {
 	assert.Err(t, err)
 }
 
+func TestHTMLRendererCreate(t *testing.T) {
+	params := map[string]string{
+		"type":         "HTMLRenderer",
+		"templates":    "test/html/*.tpl",
+		"store.in":     "html",
+		"templateroot": "main",
+	}
+	proc, err := Create(params)
+	assert.FailOnErr(t, err)
+	assert.Equal(t, proc.Name(), "HTMLRenderer")
+}
+
 func TestHTMLRendererProcess(t *testing.T) {
 	params := map[string]string{
 		"templates":    "test/html/*.tpl",

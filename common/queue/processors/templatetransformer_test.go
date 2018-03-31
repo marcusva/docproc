@@ -42,6 +42,17 @@ func TestNewTemplateTransformer(t *testing.T) {
 	_, err = NewTemplateTransformer(params)
 	assert.FailOnErr(t, err)
 }
+func TestTemplateTransformerCreate(t *testing.T) {
+	params := map[string]string{
+		"type":         "TemplateTransformer",
+		"templates":    "test//*.tpl",
+		"store.in":     "_xml_",
+		"templateroot": "main",
+	}
+	proc, err := Create(params)
+	assert.FailOnErr(t, err)
+	assert.Equal(t, proc.Name(), "TemplateTransformer")
+}
 
 func TestTemplateTransformerProcess(t *testing.T) {
 	params := map[string]string{

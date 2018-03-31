@@ -47,6 +47,18 @@ func TestNewHTTPSender(t *testing.T) {
 	assert.NoErr(t, err)
 }
 
+func TestHTTPSenderCreate(t *testing.T) {
+	params := map[string]string{
+		"type":      "HTTPSender",
+		"address":   "127.0.0.1",
+		"read.from": "body",
+		"timeout":   "2",
+	}
+	proc, err := Create(params)
+	assert.FailOnErr(t, err)
+	assert.Equal(t, proc.Name(), "HTTPSender")
+}
+
 func TestHTTPSenderName(t *testing.T) {
 	params := map[string]string{
 		"address":   "127.0.0.1",

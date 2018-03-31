@@ -47,6 +47,26 @@ func TestNewCommandProc(t *testing.T) {
 	params["exec"] = "cmd"
 	_, err = NewCommandProc(params)
 	assert.NoErr(t, err)
+
+	params["store.base64"] = "banana"
+	_, err = NewCommandProc(params)
+	assert.Err(t, err)
+
+	params["store.base64"] = "t"
+	_, err = NewCommandProc(params)
+	assert.NoErr(t, err)
+}
+
+func TestCommandProcCreate(t *testing.T) {
+	params := map[string]string{
+		"type":      "CommandProc",
+		"read.from": "CITY",
+		"store.in":  "cmdfield",
+		"exec":      "cmd",
+	}
+	proc, err := Create(params)
+	assert.FailOnErr(t, err)
+	assert.Equal(t, proc.Name(), "CommandProc")
 }
 
 func TestCommandProcName(t *testing.T) {

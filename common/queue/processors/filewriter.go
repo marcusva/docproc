@@ -30,7 +30,10 @@ type FileWriter struct {
 	// data := message.Content[readFrom]
 	readFrom string
 
+	// asBase64 indicates, if the readFrom entry should be considered
+	// base64-encoded and needs to be decoded before writing to the file.
 	asBase64 bool
+
 	// filename denotes the entry of the filename within the message content.
 	// fname := message.Content[filename]
 	filename string

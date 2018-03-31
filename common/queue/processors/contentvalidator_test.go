@@ -52,11 +52,20 @@ func TestNewContentValidator(t *testing.T) {
 	assert.NoErr(t, err)
 }
 
+func TestContentValidatorCreate(t *testing.T) {
+	params := map[string]string{
+		"type":  "ContentValidator",
+		"rules": "test/testrules.json",
+	}
+	proc, err := Create(params)
+	assert.FailOnErr(t, err)
+	assert.Equal(t, proc.Name(), "ContentValidator")
+}
+
 func TestContentValidatorName(t *testing.T) {
 	cv, err := NewContentValidator(map[string]string{"rules": "test/testrules.json"})
 	assert.FailOnErr(t, err)
 	assert.Equal(t, cv.Name(), "ContentValidator")
-
 }
 
 func TestContentValidatorProcess(t *testing.T) {

@@ -24,9 +24,19 @@ func init() {
 
 // CommandProc is a simple command processor for queue.Message objects.
 type CommandProc struct {
+	// readFrom denotes the entry of the message content to read from.
+	// data := message.Content[readFrom]
 	readFrom string
-	storeIn  string
+	// storeIn denotes the entry of the message content to write to.
+	// message.Content[storeIn] = cmdOutput
+	storeIn string
+
+	// asBase64 indicates, if the command output should be converted to a base64
+	// encoded string before writing it to the message content (useful for e.g.
+	// binary output).
 	asBase64 bool
+
+	// The command to execute, including all arguments.
 	execArgs []string
 }
 

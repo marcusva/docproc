@@ -49,6 +49,16 @@ func TestNewValueRuleEnricher(t *testing.T) {
 	assert.FailOnErr(t, err)
 }
 
+func TestValueEnricherCreate(t *testing.T) {
+	params := map[string]string{
+		"type":  "ValueEnricher",
+		"rules": "test/testrules.json",
+	}
+	proc, err := Create(params)
+	assert.FailOnErr(t, err)
+	assert.Equal(t, proc.Name(), "ValueEnricher")
+}
+
 func TestValueEnricherName(t *testing.T) {
 	ve, err := NewValueEnricher(map[string]string{"rules": "test/testrules.json"})
 	assert.FailOnErr(t, err)
