@@ -1,5 +1,4 @@
-{{ define "main" }}
-<?xml version="1.0" encoding="UTF-8"?>
+{{ define "main" }}<?xml version="1.0" encoding="UTF-8"?>
 <root>
     <customer>
         <number>{{ index . "CUSTNO" }}</number>

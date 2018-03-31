@@ -2,6 +2,24 @@ FROM docproc/base
 
 WORKDIR /app
 
+#
+# Test and example code for using Apache FOP to produce documents of different
+# types. Check the comments in examples/docproc-renderer.conf and
+# examples/docproc-output.conf for generating PDF files.
+#
+# RUN apt-get update && apt-get install -y default-jre-headless unzip
+# RUN wget -q -O fop-2.2.tar.gz http://www.apache.org/dist/xmlgraphics/fop/binaries/fop-2.2-bin.tar.gz \
+#     && tar xzf fop-2.2.tar.gz \
+#     && chmod a+x fop-2.2/fop/fop \
+#     && cp fop-2.2/fop/fop /bin/fop
+# RUN wget -q -O saxonHE9.zip https://downloads.sourceforge.net/project/saxon/Saxon-HE/9.8/SaxonHE9-8-0-11J.zip \
+#     && mkdir sxtmp && unzip -q saxonHE9.zip -d sxtmp \
+#     && cp sxtmp/saxon9he.jar fop-2.2/fop/lib \
+#     && rm -rf sxtmp
+#
+# ENV FOP_HOME=/app/fop-2.2/fop
+# ENV FOP_OPTS=-Djavax.xml.transform.TransformerFactory=net.sf.saxon.TransformerFactoryImpl
+
 COPY ./scripts/docproc.startup.sh /bin/docproc.startup.sh
 RUN sed -i -e 's/\$APP\$/\/app\/bin\/docproc.proc/g' /bin/docproc.startup.sh
 RUN chmod a+x /bin/docproc.startup.sh

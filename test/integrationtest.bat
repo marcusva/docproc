@@ -9,7 +9,7 @@ SET DOCKER_COMPOSE=docker-compose
 
 ECHO Building docker environment...
 %DOCKER% build -t docproc/base .
-%DOCKER_COMPOSE% -p %PNAME% build --no-cache
+%DOCKER_COMPOSE% -p %PNAME% build
 
 ECHO Starting docker environment...
 %DOCKER_COMPOSE% -p %PNAME% up -d

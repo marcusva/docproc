@@ -20,6 +20,12 @@
         "targetvalue": "fn-${CUSTNO}.html"
     },
     {
+        "path": "CUSTNO",
+        "op": "exists",
+        "targetpath": "pdffilename",
+        "targetvalue": "fn-${CUSTNO}.pdf"
+    },
+    {
         "path": "FIRSTNAME",
         "op": "exists",
         "subrules": [
