@@ -34,7 +34,7 @@ store.in
 
 store.base64
     Indicates, if the output result must be base64-encoded. This is necessary,
-    if e.g. the output is binary content, which mustn not be converted to a
+    if e.g. the output is binary content, which must not be converted to a
     string.
 
     The entry is optional and, if unset, assumed to be ``false``.
