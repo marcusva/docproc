@@ -15,8 +15,9 @@
 @SET DISTNAME=docproc-%VERSION%-%GOOS%-%GOARCH%
 @SET DISTDIR=dist\%DISTNAME%
 
-@SET LDFLAGS="-X main.version=%VERSION%"
-@SET TAGS="beanstalk nats nsq"
+@SET LDFLAGS=-X main.version=%VERSION%
+@SET TAGS=beanstalk nats nsq
+@IF "%CGO_ENABLED%" == "0" SET TAGS=%TAGS% netgo
 
 @IF "%~1" == "" GOTO :all
 @GOTO :%~1
@@ -47,7 +48,7 @@
 :build
 @ECHO Building apps for %GOOS% on arch %GOARCH%...
 FOR %%A IN (%APPS%) DO (
-    go build -tags %TAGS% -ldflags %LDFLAGS% -o %DISTDIR%\%%A%EXT% ./%%A
+    go build -tags "%TAGS%" -ldflags "%LDFLAGS%" -o %DISTDIR%\%%A%EXT% ./%%A
 )
 @GOTO :eof
 

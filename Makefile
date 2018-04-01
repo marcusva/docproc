@@ -13,7 +13,8 @@ DISTNAME := docproc-$(VERSION)-$(GOOS)-$(GOARCH)
 DISTDIR := dist/$(DISTNAME)
 
 LDFLAGS := -X main.version=$(VERSION)
-TAGS := beanstalk nats nsq
+STATICS != if [ "$(CGO_ENABLED)" = "0" ]; then echo -n "netgo"; else echo -n ""; fi
+TAGS := beanstalk nats nsq $(STATICS)
 
 .PHONY: clean install dist test $(APPS)
 
@@ -52,7 +53,15 @@ dist/$(DISTNAME).tar.gz: docs $(APPS)
 	for f in $(DISTFILES); do \
 		cp -rf $$f $(DISTDIR); \
 	done
-	cd dist && tar -czf $(DISTNAME).tar.gz $(DISTNAME)
+	if [ "$(GOOS)" = "windows" ]; then \
+		cd dist && zip -r $(DISTNAME).zip $(DISTNAME); \
+	else \
+		cd dist && tar -czf $(DISTNAME).tar.gz $(DISTNAME); \
+	fi
 
 dist: dist/$(DISTNAME).tar.gz
 
+PLATFORMS := windows linux darwin dragonfly freebsd
+release: $(PLATFORMS)
+$(PLATFORMS): %:
+	GOOS=$* make && make dist
