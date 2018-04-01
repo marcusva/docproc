@@ -62,7 +62,7 @@ FOR %%A IN (%APPS%) DO (
 @GOTO :eof
 
 :test
-go test -tags %TAGS% -ldflags %LDFLAGS% ./...
+go test -tags "%TAGS%" -ldflags "%LDFLAGS%" ./...
 @GOTO :eof
 
 @ENDLOCAL
