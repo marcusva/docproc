@@ -12,11 +12,14 @@ ARG TAGS="beanstalk nats nsq"
 ENV SRC_DIR=/go/src/github.com/marcusva/docproc
 ADD . $SRC_DIR
 
-RUN (cd $SRC_DIR && make && make test) || (echo "tests failed" && false)
+RUN (cd $SRC_DIR && CGO_ENABLED=0 make all test) || (echo "tests failed" && false)
 RUN cd $SRC_DIR && PREFIX=/app make install
 
 #### Image creation ####
-FROM golang
+FROM alpine
+
+# curl is used for integration testing
+RUN apk add --update curl
 
 COPY --from=build /usr/local/bin/nsqd /usr/local/bin/nsqd
 RUN ln -s /usr/local/bin/nsqd /bin/nsqd
