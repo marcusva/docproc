@@ -23,3 +23,50 @@ func TestQueueTypes(t *testing.T) {
 	assert.ContainsS(t, wqtypes, "nsq")
 	assert.ContainsS(t, wqtypes, "beanstalk")
 }
+
+func TestCreateQueue(t *testing.T) {
+
+	for _, rq := range ReadTypes() {
+		_, err := CreateRQ(rq, nil)
+		assert.Err(t, err)
+	}
+	for _, wq := range WriteTypes() {
+		_, err := CreateWQ(wq, nil)
+		assert.Err(t, err)
+	}
+
+	pmap := map[string]map[string]string{
+		"memory": map[string]string{
+			"topic": "input",
+		},
+		"nats": map[string]string{
+			"topic": "input",
+			"host":  "127.0.0.1:1234",
+		},
+		"nsq": map[string]string{
+			"topic": "input",
+			"host":  "127.0.0.1:1234",
+		},
+		"beanstalk": map[string]string{
+			"topic": "input",
+			"host":  "127.0.0.1:1234",
+		},
+	}
+	for _, rq := range ReadTypes() {
+		q, err := CreateRQ(rq, pmap[rq])
+		assert.NoErr(t, err)
+		assert.NotNil(t, q)
+	}
+	for _, wq := range WriteTypes() {
+		q, err := CreateWQ(wq, pmap[wq])
+		assert.NoErr(t, err)
+		assert.NotNil(t, q)
+	}
+
+	_, err := CreateRQ("unknown", map[string]string{})
+	assert.Err(t, err)
+	assert.Equal(t, err.Error(), "Invalid readable queue type 'unknown'")
+	_, err = CreateWQ("unknown", map[string]string{})
+	assert.Err(t, err)
+	assert.Equal(t, err.Error(), "Invalid writeable queue type 'unknown'")
+}
