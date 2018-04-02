@@ -48,14 +48,15 @@ func (handler *FileHandler) Process(filename string) error {
 		renameFile(fnameproc, filename+suffixFailed)
 		return err
 	}
-	defer fp.Close()
 
 	var msgs []*queue.Message
 	if msgs, err = handler.Transform(fp); err != nil {
 		log.Errorf("could not transform input data: %v", err)
+		fp.Close()
 		renameFile(fnameproc, filename+suffixFailed)
 		return err
 	}
+	fp.Close()
 
 	// Pass the data into the queue
 	for _, msg := range msgs {
