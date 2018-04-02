@@ -2,10 +2,10 @@ package input
 
 import (
 	"bufio"
-	"bytes"
 	"compress/gzip"
 	"fmt"
 	"github.com/marcusva/docproc/common/queue"
+	"io"
 	"strconv"
 	"strings"
 	"time"
@@ -76,8 +76,8 @@ type RDITransformer struct {
 // - 3 characters for the value length
 // - up to 255 characters for the value contents
 //
-func (tf *RDITransformer) Transform(data []byte) ([]*queue.Message, error) {
-	gzreader, err := gzip.NewReader(bytes.NewReader(data))
+func (tf *RDITransformer) Transform(r io.Reader) ([]*queue.Message, error) {
+	gzreader, err := gzip.NewReader(r)
 	if err != nil {
 		return nil, err
 	}

@@ -3,7 +3,7 @@ package input
 import (
 	"github.com/marcusva/docproc/common/log"
 	"github.com/marcusva/docproc/common/queue"
-	"io/ioutil"
+	"io"
 	"os"
 )
 
@@ -15,7 +15,7 @@ const (
 
 // FileTransformer converts an input file into one or more Message objects
 type FileTransformer interface {
-	Transform(data []byte) ([]*queue.Message, error)
+	Transform(r io.Reader) ([]*queue.Message, error)
 }
 
 // FileHandler transforms files provided by a FileProcessor and publishes the
@@ -42,15 +42,16 @@ func (handler *FileHandler) Process(filename string) error {
 		return err
 	}
 
-	data, err := ioutil.ReadFile(fnameproc)
+	fp, err := os.Open(fnameproc)
 	if err != nil {
 		log.Errorf("could not read file %s: %v", fnameproc, err)
 		renameFile(fnameproc, filename+suffixFailed)
 		return err
 	}
+	defer fp.Close()
 
 	var msgs []*queue.Message
-	if msgs, err = handler.Transform(data); err != nil {
+	if msgs, err = handler.Transform(fp); err != nil {
 		log.Errorf("could not transform input data: %v", err)
 		renameFile(fnameproc, filename+suffixFailed)
 		return err

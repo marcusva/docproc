@@ -1,10 +1,10 @@
 package input
 
 import (
-	"bytes"
 	"encoding/csv"
 	"fmt"
 	"github.com/marcusva/docproc/common/queue"
+	"io"
 	"time"
 )
 
@@ -33,10 +33,10 @@ func NewCSVTransformer(params map[string]string) (FileTransformer, error) {
 	}, nil
 }
 
-// Transform creates queue.Message objects from the passed input data. For each
-// row of the CSV input data, a queue.Message will be created.
-func (tf *CSVTransformer) Transform(data []byte) ([]*queue.Message, error) {
-	reader := csv.NewReader(bytes.NewReader(data))
+// Transform creates queue.Message objects from the passed input reader. For
+// each row of the CSV input data, a queue.Message will be created.
+func (tf *CSVTransformer) Transform(r io.Reader) ([]*queue.Message, error) {
+	reader := csv.NewReader(r)
 	reader.Comma = tf.Delim
 	records, err := reader.ReadAll()
 	if err != nil {

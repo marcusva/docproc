@@ -4,18 +4,20 @@ import (
 	// "encoding/json"
 	"github.com/marcusva/docproc/common/queue"
 	"github.com/marcusva/docproc/common/testing/assert"
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
 func TestRDITransformer(t *testing.T) {
 	t.Skip()
 
-	buf, err := ioutil.ReadFile("test/testrdi.gz")
+	fp, err := os.Open("test/testrdi.gz")
 	assert.FailOnErr(t, err)
+	defer fp.Close()
+
 	tf := &RDITransformer{}
 
-	messages, err := tf.Transform(buf)
+	messages, err := tf.Transform(fp)
 	assert.FailOnErr(t, err)
 
 	assert.Equal(t, len(messages), 7)
