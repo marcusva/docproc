@@ -3,26 +3,32 @@ package fuzz
 import (
 	"bytes"
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"io"
 	"math/rand"
 	"runtime"
 	"strconv"
+	"sync"
 	"time"
 )
 
 var (
 	maxLinesCSV  = 2500
-	maxLenString = 10
+	minLinesCSV  = 0
+	maxLenString = 50
 	csvCharset   = []byte("")
+	mu           = sync.Mutex{}
 )
 
 func init() {
 	// Use a latin-1 charset by default, excluding the non-printable characters
+	mu.Lock()
 	csvCharset = make([]byte, 0xFF)
 	for i := 0x0; i < (0xFF - 0x20); i++ {
 		csvCharset[i] = byte(i + 0x20)
 	}
+	mu.Unlock()
 }
 
 // FuzzedCSV is an io.Rader that contains randomly generated CSV data.
@@ -38,16 +44,29 @@ type FuzzedCSV struct {
 
 // SetCharset sets the character set to choose from.
 func SetCharset(charset []byte) {
+	mu.Lock()
 	csvCharset = charset
+	mu.Unlock()
 }
 
-// SetMaxLines sets the maximum number of CSV lines to generate. If maxlines
-// is smaller than 1, 1 will be set.
-func SetMaxLines(maxlines int) {
-	if maxlines <= 0 {
-		maxlines = 1
+// SetLines sets the minimum and maximum number of CSV lines to generate.
+// If minlines is smaller than 0, minlines is set to 0. If maxlines is
+// smaller than 1, maxlines is set to 0.
+func SetLines(min, max int) error {
+	if min > max {
+		return errors.New("min must be smaller than or equal to max")
 	}
-	maxLinesCSV = maxlines
+	if max <= 0 {
+		max = 1
+	}
+	if min < 0 {
+		min = 0
+	}
+	mu.Lock()
+	maxLinesCSV = max
+	minLinesCSV = min
+	mu.Unlock()
+	return nil
 }
 
 // SetMaxLenString sets the maximum length of a single string columns.
@@ -56,7 +75,9 @@ func SetMaxLenString(maxlen int) {
 	if maxlen <= 0 {
 		maxlen = 1
 	}
+	mu.Lock()
 	maxLenString = maxlen
+	mu.Unlock()
 }
 
 func createRecord(types []string) []string {
@@ -126,7 +147,12 @@ func CSV(types []string, delim rune, headers bool) (*FuzzedCSV, error) {
 			return nil, err
 		}
 	}
+	mu.Lock()
+	defer mu.Unlock()
 	maxlines := rand.Intn(maxLinesCSV)
+	if maxlines < minLinesCSV {
+		maxlines = minLinesCSV
+	}
 	for i := 0; i < maxlines; i++ {
 		if err := writer.Write(createRecord(types)); err != nil {
 			return nil, err
