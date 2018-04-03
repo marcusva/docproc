@@ -13,27 +13,41 @@ import (
 	"time"
 )
 
+const (
+	MaxLinesCSV     = 2500
+	MinLinesCSV     = 0
+	MaxLenStringCSV = 50
+)
+
 var (
-	maxLinesCSV  = 2500
-	minLinesCSV  = 0
-	maxLenString = 50
+	maxLinesCSV  = MaxLinesCSV
+	minLinesCSV  = MinLinesCSV
+	maxLenString = MaxLenStringCSV
 	csvCharset   = []byte("")
 	mu           = sync.Mutex{}
 )
 
 func init() {
-	// Use a latin-1 charset by default, excluding the non-printable characters
+	// Use a ASCII charset by default, excluding the non-printable characters
 	mu.Lock()
-	csvCharset = make([]byte, 0xFF)
-	for i := 0x0; i < (0xFF - 0x20); i++ {
-		csvCharset[i] = byte(i + 0x20)
-	}
+	csvCharset = createASCII()
 	mu.Unlock()
+}
+
+// createASCII populates a byte array with the ASCII charset in the range
+// 0x20 (space) to 0x7E (tilde), excluding non-printable characters.
+func createASCII() []byte {
+	charset := make([]byte, 0x7E-0x20)
+	for i := 0x0; i < (0x7E - 0x20); i++ {
+		charset[i] = byte(i + 0x20)
+	}
+	return charset
 }
 
 // FuzzedCSV is an io.Rader that contains randomly generated CSV data.
 type FuzzedCSV struct {
-	io.Reader
+	io.ReadSeeker
+
 	// Columns contains the column count of the CSV.
 	Columns int
 
@@ -42,8 +56,12 @@ type FuzzedCSV struct {
 	Lines int
 }
 
-// SetCharset sets the character set to choose from.
+// SetCharset sets the character set to choose from. if charset is nil,
+// the ASCII charset, excluding non-printable characters, will be used.
 func SetCharset(charset []byte) {
+	if charset == nil {
+		charset = createASCII()
+	}
 	mu.Lock()
 	csvCharset = charset
 	mu.Unlock()
@@ -160,8 +178,8 @@ func CSV(types []string, delim rune, headers bool) (*FuzzedCSV, error) {
 	}
 	writer.Flush()
 	return &FuzzedCSV{
-		Reader:  &buf,
-		Lines:   maxlines,
-		Columns: len(types),
+		ReadSeeker: bytes.NewReader(buf.Bytes()),
+		Lines:      maxlines,
+		Columns:    len(types),
 	}, nil
 }

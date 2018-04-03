@@ -3,6 +3,7 @@ package input
 import (
 	"github.com/marcusva/docproc/common/testing/assert"
 	"github.com/marcusva/docproc/common/testing/fuzz"
+	"io"
 	"os"
 	"testing"
 )
@@ -53,6 +54,21 @@ func TestCSVTransformFuzzed(t *testing.T) {
 		msgs, err := tf.Transform(csv)
 		assert.FailOnErr(t, err)
 		assert.Equal(t, len(msgs), csv.Lines)
+	}
+}
+
+func BenchmarkCSVTransformLarge(b *testing.B) {
+	tf, _ := NewCSVTransformer(nil)
+	tf.(*CSVTransformer).Delim = ';'
+
+	fuzz.SetLines(100000, 100000)
+	csv, _ := fuzz.CSV([]string{"string", "int", "string", "string", "float", "int"}, ';', true)
+	fuzz.SetLines(fuzz.MinLinesCSV, fuzz.MaxLinesCSV)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		tf.Transform(csv)
+		csv.Seek(0, io.SeekStart)
 	}
 }
 

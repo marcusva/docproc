@@ -36,18 +36,18 @@ func TestCreateQueue(t *testing.T) {
 	}
 
 	pmap := map[string]map[string]string{
-		"memory": map[string]string{
+		"memory": {
 			"topic": "input",
 		},
-		"nats": map[string]string{
-			"topic": "input",
-			"host":  "127.0.0.1:1234",
-		},
-		"nsq": map[string]string{
+		"nats": {
 			"topic": "input",
 			"host":  "127.0.0.1:1234",
 		},
-		"beanstalk": map[string]string{
+		"nsq": {
+			"topic": "input",
+			"host":  "127.0.0.1:1234",
+		},
+		"beanstalk": {
 			"topic": "input",
 			"host":  "127.0.0.1:1234",
 		},
@@ -70,3 +70,4 @@ func TestCreateQueue(t *testing.T) {
 	assert.Err(t, err)
 	assert.Equal(t, err.Error(), "Invalid writeable queue type 'unknown'")
 }
+	

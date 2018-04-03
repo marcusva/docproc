@@ -78,6 +78,7 @@ func (sender *HTTPSender) Process(msg *queue.Message) error {
 	if err != nil {
 		return err
 	}
+
 	request, err := http.NewRequest("POST", sender.address, bytes.NewBuffer(bytebuf))
 	if err != nil {
 		log.Errorf("could not create HTTP request: %v", err)

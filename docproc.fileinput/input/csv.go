@@ -38,22 +38,22 @@ func NewCSVTransformer(params map[string]string) (FileTransformer, error) {
 func (tf *CSVTransformer) Transform(r io.Reader) ([]*queue.Message, error) {
 	reader := csv.NewReader(r)
 	reader.Comma = tf.Delim
-	records, err := reader.ReadAll()
-	if err != nil {
-		return nil, err
-	}
-	if len(records) == 0 {
-		return nil, fmt.Errorf("no CSV data found")
-	}
 
 	// The first row represents the field names
-	keys := records[0]
-	records = records[1:]
+	keys, err := reader.Read()
+	if err != nil {
+		return nil, fmt.Errorf("no CSV data found")
+	}
 	columns := len(keys)
 
 	msgs := []*queue.Message{}
 	ts := time.Now().Unix()
-	for _, rec := range records {
+
+	for {
+		rec, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
 		content := make(map[string]interface{})
 		for i := 0; i < columns; i++ {
 			content[keys[i]] = rec[i]
