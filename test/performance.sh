@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-CIP="docprocci_docproc"
+CIP="docprocperf_docproc"
 PNAME="docproc-ci"
 DOCKER=docker
 DOCKER_COMPOSE=docker-compose
@@ -20,31 +20,14 @@ $DOCKER exec -d $CIP.renderer_1 curl -X POST http://127.0.0.1:4151/topic/create?
 $DOCKER exec -d $CIP.output_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=output
 
 echo "Starting tests..."
-$DOCKER cp examples/data/testrecords.csv $CIP.fileinput_1:/app/data
+$DOCKER cp examples/data/performance.csv $CIP.fileinput_1:/app/data
 
 sleep 10
 
-# DO NOT USE: the following lines are to sync proper results with the test result dir
-# $DOCKER exec $CIP.output_1 ls -al /app/output
-# $DOCKER cp $CIP.output_1:/app/output/. ./test/results
-
-$DOCKER cp ./test/test-results.tar.gz $CIP.output_1:/app
-$DOCKER exec $CIP.output_1 tar -C /app -xzf test-results.tar.gz
-$DOCKER exec -it $CIP.output_1 diff -Nur /app/output /app/test-results
-exitcode=$?
-
-if [ $exitcode -ne 1 ]; then
-    for app in $CIP.fileinput_1 $CIP.preproc_1 $CIP.renderer_1 $CIP.output_1; do
-        $DOCKER% logs $app 1> test/$app.log 2>&1
-    done
-fi
+$DOCKER exec -it $CIP.output_1 cat /app/output/performance.text
+for app in $CIP.fileinput_1 $CIP.preproc_1 $CIP.renderer_1 $CIP.output_1; do
+    $DOCKER% logs $app 1> test/$app.log 2>&1
+done
 
 $DOCKER_COMPOSE -p $PNAME kill
 $DOCKER_COMPOSE -p $PNAME rm -f
-
-if [ $exitcode -ne 0 ]; then
-    echo "Tests failed!"
-else
-    echo "Tests successful"
-fi
-exit $exitcode
