@@ -27,6 +27,9 @@ and their usage.
 :ref:`httpsender`
     Sends a specific entry of the message content via HTTP POST to an HTTP host.
 
+:ref:`performancechecker`
+    Simple performance measurement for messages.
+
 :ref:`templatetransformer`
     Provides templating support via Go's ``text/template`` package.
 
@@ -40,8 +43,9 @@ and their usage.
 
     commandproc
     contentvalidator
-    valueenricher
-    templatetransformer
-    htmlrenderer
     filewriter
+    htmlrenderer
     httpsender
+    performancechecker
+    templatetransformer
+    valueenricher

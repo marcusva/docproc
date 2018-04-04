@@ -46,6 +46,7 @@ Content processors support
 * validation and content enrichment using a simple to maintain rules engine
 * text-driven transformation through golang's mighty templating packages, such
   as HTML, XML, JSON, plain text and others
+* transforming content easily through external commands
 * HTTP transfer, message queue and file-based output
 
 Since docproc uses a simple JSON-based message format, applying your own

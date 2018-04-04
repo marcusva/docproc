@@ -25,6 +25,7 @@ func TestProcessorsTypes(t *testing.T) {
 		"FileWriter",
 		"HTMLRenderer",
 		"HTTPSender",
+		"PerformanceChecker",
 		"TemplateTransformer",
 		"ValueEnricher",
 	}

@@ -23,8 +23,12 @@ const (
 // Message represents the information being passed around by the different
 // docproc services.
 type Message struct {
-	Metadata map[string]interface{} `json:"metadata"`
-	Content  map[string]interface{} `json:"content"`
+	//Timestamp is a temporary timestamp used to track the in-program creation
+	// time of the message. Use Metadata[MetaCreated] for the original creation
+	// time of the message, indifferent from the current program.
+	Timestamp time.Time              `json:"-"`
+	Metadata  map[string]interface{} `json:"metadata"`
+	Content   map[string]interface{} `json:"content"`
 }
 
 // Processor implementations are used to perform operations based on a Message.
@@ -38,18 +42,20 @@ type Processor interface {
 // a MetaID and MetaCreated field.
 func NewMessage(content map[string]interface{}) *Message {
 	var id string
+	ts := time.Now()
 	if uid, err := uuid.NewRandom(); err != nil {
-		id = fmt.Sprint(time.Now().Unix())
+		id = fmt.Sprint(ts.Unix())
 	} else {
 		id = uid.String()
 	}
 	metadata := map[string]interface{}{
 		MetaID:      id,
-		MetaCreated: time.Now().Format(time.RFC3339Nano),
+		MetaCreated: ts.Format(time.RFC3339Nano),
 	}
 	return &Message{
-		Metadata: metadata,
-		Content:  content,
+		Timestamp: ts,
+		Metadata:  metadata,
+		Content:   content,
 	}
 }
 
@@ -66,7 +72,11 @@ func (msg *Message) ToJSON() ([]byte, error) {
 // FromJSON will initialize the Message with the JSON representation of a
 // Message.
 func (msg *Message) FromJSON(data []byte) error {
-	return json.Unmarshal(data, msg)
+	err := json.Unmarshal(data, msg)
+	if err == nil {
+		msg.Timestamp = time.Now()
+	}
+	return err
 }
 
 // MsgFromJSON returns a new Message from the passed in JSON representation

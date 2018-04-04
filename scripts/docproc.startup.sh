@@ -6,7 +6,7 @@ if [ $st -ne 0 ]; then
   echo "Failed to start nsqd"
   exit $st
 fi
-sleep 3
+sleep 5
 
 $APP$ $@ &
 st=$?
