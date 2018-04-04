@@ -33,9 +33,9 @@ $DOCKER exec $CIP.output_1 tar -C /app -xzf test-results.tar.gz
 $DOCKER exec -it $CIP.output_1 diff -Nur /app/output /app/test-results
 exitcode=$?
 
-if [ $exitcode -ne 1 ]; then
+if [ $exitcode -ne 0 ]; then
     for app in $CIP.fileinput_1 $CIP.preproc_1 $CIP.renderer_1 $CIP.output_1; do
-        $DOCKER% logs $app 1> test/$app.log 2>&1
+        $DOCKER% logs $app
     done
 fi
 
