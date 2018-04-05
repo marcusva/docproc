@@ -6,7 +6,7 @@ import (
 	"errors"
 	"github.com/marcusva/docproc/common/log"
 	"github.com/nsqio/go-nsq"
-	//"runtime"
+	"runtime"
 )
 
 func init() {
@@ -169,9 +169,9 @@ func (rq *nsqRQ) Open(consumer Consumer) error {
 		}
 		return nil
 	})
-	//log.Debugf("Setting up %d concurrent consumers", runtime.GOMAXPROCS(0))
-	//rq.nsqconsumer.AddConcurrentHandlers(handler, runtime.GOMAXPROCS(0))
-	rq.nsqconsumer.AddHandler(handler)
+	log.Debugf("Setting up %d concurrent consumers", runtime.GOMAXPROCS(0))
+	rq.nsqconsumer.AddConcurrentHandlers(handler, runtime.GOMAXPROCS(0))
+	//rq.nsqconsumer.AddHandler(handler)
 	return rq.nsqconsumer.ConnectToNSQLookupd(rq.host)
 }
 
