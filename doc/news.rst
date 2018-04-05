@@ -10,8 +10,16 @@ Released on 2018-XX-XX.
   output in messages.
 * New ``read.base64`` flag for :ref:`FileWriter` to write binary content, that
   is stored as base64-encoded string in the message.
+* New :ref:`PerformanceChecker` processor to measure the processing times of
+  messages.
 * Added Apache FOP examples to produce PDF files.
 * Fixed :ref:`CommandProc` usage in configuration files.
+
+* :ref:`fileinput` consumes less memory on processing large CSV files now.
+* *Test* configurations using  ``memory`` as queue implementation consume
+  messages concurrently now. This can be tweaked via ``GOMAXPROCS``.
+* Configurations using NSQ as queue implementation consume messages
+  concurrently now. This can be tweaked via ``GOMAXPROCS``.
 
 0.0.2
 -----
