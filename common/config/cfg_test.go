@@ -1,6 +1,7 @@
-package config
+package config_test
 
 import (
+	"github.com/marcusva/docproc/common/config"
 	"github.com/marcusva/docproc/common/testing/assert"
 	"strings"
 	"testing"
@@ -25,10 +26,10 @@ ar = this,is,    an, array     , with	some values, yay
 )
 
 func TestLoad(t *testing.T) {
-	_, err := Load(strings.NewReader(_cfg), NoValidate)
+	_, err := config.Load(strings.NewReader(_cfg), config.NoValidate)
 	assert.FailOnErr(t, err)
 
-	_, err = Load(strings.NewReader(_cfg), nil)
+	_, err = config.Load(strings.NewReader(_cfg), nil)
 	assert.FailOnErr(t, err)
 
 	_broken := `
@@ -37,14 +38,14 @@ func TestLoad(t *testing.T) {
 	# file=<path/to/the/file>
 	# Emergency,Alert,Critical,Error,Warning,Notice,Info,Debug
 	level = Debug`
-	_, err = Load(strings.NewReader(_broken), NoValidate)
+	_, err = config.Load(strings.NewReader(_broken), config.NoValidate)
 	assert.Err(t, err)
 
 	_broken2 := `
 	nosecval = 1234
 	[log]
 	level = Debug`
-	_, err = Load(strings.NewReader(_broken2), NoValidate)
+	_, err = config.Load(strings.NewReader(_broken2), config.NoValidate)
 	assert.Err(t, err)
 
 	_broken3 := `
@@ -52,18 +53,18 @@ func TestLoad(t *testing.T) {
 	level = Debug
 	[log]
 	level = Info`
-	_, err = Load(strings.NewReader(_broken3), NoValidate)
+	_, err = config.Load(strings.NewReader(_broken3), config.NoValidate)
 	assert.Err(t, err)
 
 	_broken4 := `
 	[ ]
 	some = value`
-	_, err = Load(strings.NewReader(_broken4), NoValidate)
+	_, err = config.Load(strings.NewReader(_broken4), config.NoValidate)
 	assert.Err(t, err)
 }
 
 func TestGet(t *testing.T) {
-	cfg, err := Load(strings.NewReader(_cfg), NoValidate)
+	cfg, err := config.Load(strings.NewReader(_cfg), config.NoValidate)
 	assert.FailOnErr(t, err)
 
 	val, err := cfg.Get("log", "level")
@@ -87,7 +88,7 @@ func TestGet(t *testing.T) {
 }
 
 func TestGetOrPanic(t *testing.T) {
-	cfg, err := Load(strings.NewReader(_cfg), NoValidate)
+	cfg, err := config.Load(strings.NewReader(_cfg), config.NoValidate)
 	assert.FailOnErr(t, err)
 
 	v1 := cfg.GetOrPanic("section", "k")
@@ -97,7 +98,7 @@ func TestGetOrPanic(t *testing.T) {
 }
 
 func TestGetDefault(t *testing.T) {
-	cfg, err := Load(strings.NewReader(_cfg), NoValidate)
+	cfg, err := config.Load(strings.NewReader(_cfg), config.NoValidate)
 	assert.FailOnErr(t, err)
 
 	val := cfg.GetDefault("log", "level", "Info")
@@ -108,7 +109,7 @@ func TestGetDefault(t *testing.T) {
 }
 
 func TestInt(t *testing.T) {
-	cfg, err := Load(strings.NewReader(_cfg), NoValidate)
+	cfg, err := config.Load(strings.NewReader(_cfg), config.NoValidate)
 	assert.FailOnErr(t, err)
 
 	intval, err := cfg.Int("section", "intval")
@@ -122,7 +123,7 @@ func TestInt(t *testing.T) {
 	assert.Err(t, err)
 }
 func TestBool(t *testing.T) {
-	cfg, err := Load(strings.NewReader(_cfg), NoValidate)
+	cfg, err := config.Load(strings.NewReader(_cfg), config.NoValidate)
 	assert.FailOnErr(t, err)
 
 	bv, err := cfg.Bool("section", "boolval")
@@ -138,7 +139,7 @@ func TestBool(t *testing.T) {
 }
 
 func TestHasSection(t *testing.T) {
-	cfg, err := Load(strings.NewReader(_cfg), NoValidate)
+	cfg, err := config.Load(strings.NewReader(_cfg), config.NoValidate)
 	assert.FailOnErr(t, err)
 
 	assert.Equal(t, cfg.HasSection("section"), true)
@@ -146,7 +147,7 @@ func TestHasSection(t *testing.T) {
 }
 
 func TestAllFor(t *testing.T) {
-	cfg, err := Load(strings.NewReader(_cfg), NoValidate)
+	cfg, err := config.Load(strings.NewReader(_cfg), config.NoValidate)
 	assert.FailOnErr(t, err)
 
 	sec, err := cfg.AllFor("section")
@@ -160,7 +161,7 @@ func TestAllFor(t *testing.T) {
 }
 
 func TestArray(t *testing.T) {
-	cfg, err := Load(strings.NewReader(_cfg), NoValidate)
+	cfg, err := config.Load(strings.NewReader(_cfg), config.NoValidate)
 	assert.FailOnErr(t, err)
 
 	ar, err := cfg.Array("arrays", "ar")
@@ -176,13 +177,13 @@ func TestArray(t *testing.T) {
 }
 
 func TestLoadFile(t *testing.T) {
-	cfg, err := LoadFile("test/test.ini", NoValidate)
+	cfg, err := config.LoadFile("test/test.ini", config.NoValidate)
 	assert.FailOnErr(t, err)
 
 	val, err := cfg.Get("log", "level")
 	assert.FailOnErr(t, err)
 	assert.Equal(t, val, "Debug")
 
-	_, err = LoadFile("invalid.ini", NoValidate)
+	_, err = config.LoadFile("invalid.ini", config.NoValidate)
 	assert.Err(t, err)
 }

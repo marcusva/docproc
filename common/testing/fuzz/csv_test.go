@@ -1,8 +1,9 @@
-package fuzz
+package fuzz_test
 
 import (
 	"bufio"
 	"github.com/marcusva/docproc/common/testing/assert"
+	"github.com/marcusva/docproc/common/testing/fuzz"
 	"testing"
 )
 
@@ -15,32 +16,32 @@ func TestSetLines(t *testing.T) {
 	}
 	for _, p := range pairs {
 		min, max := p[0], p[1]
-		assert.FailOnErr(t, SetLines(min, max))
-		csv, err := CSV([]string{"int"}, ';', true)
+		assert.FailOnErr(t, fuzz.SetLines(min, max))
+		csv, err := fuzz.CSV([]string{"int"}, ';', true)
 		assert.FailOnErr(t, err)
 		assert.Equal(t, (csv.Lines >= min && csv.Lines <= max), true)
 	}
-	assert.FailOnErr(t, SetLines(0, 0))
-	csv, err := CSV([]string{"int"}, ';', true)
+	assert.FailOnErr(t, fuzz.SetLines(0, 0))
+	csv, err := fuzz.CSV([]string{"int"}, ';', true)
 	assert.FailOnErr(t, err)
 	assert.Equal(t, (csv.Lines >= 0 && csv.Lines <= 1), true)
 
-	assert.FailOnErr(t, SetLines(5, 5))
-	csv, err = CSV([]string{"int"}, ';', true)
+	assert.FailOnErr(t, fuzz.SetLines(5, 5))
+	csv, err = fuzz.CSV([]string{"int"}, ';', true)
 	assert.FailOnErr(t, err)
 	assert.Equal(t, csv.Lines == 5, true)
 
-	assert.NoErr(t, SetLines(-10, 9))
-	csv, err = CSV([]string{"int"}, ';', true)
+	assert.NoErr(t, fuzz.SetLines(-10, 9))
+	csv, err = fuzz.CSV([]string{"int"}, ';', true)
 	assert.FailOnErr(t, err)
 	assert.Equal(t, (csv.Lines >= 0 && csv.Lines <= 9), true)
 
-	assert.Err(t, SetLines(-1, -200))
-	assert.Err(t, SetLines(10, 9))
+	assert.Err(t, fuzz.SetLines(-1, -200))
+	assert.Err(t, fuzz.SetLines(10, 9))
 }
 
 func TestCSV(t *testing.T) {
-	csv, err := CSV([]string{"string", "int", "string", "string"}, ';', true)
+	csv, err := fuzz.CSV([]string{"string", "int", "string", "string"}, ';', true)
 	assert.FailOnErr(t, err)
 
 	lines := 0
@@ -54,6 +55,6 @@ func TestCSV(t *testing.T) {
 
 func BenchmarkCSV(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		CSV([]string{"string", "int", "string", "string"}, ';', true)
+		fuzz.CSV([]string{"string", "int", "string", "string"}, ';', true)
 	}
 }

@@ -1,9 +1,10 @@
-package input
+package input_test
 
 import (
 	// "encoding/json"
 	"github.com/marcusva/docproc/common/queue"
 	"github.com/marcusva/docproc/common/testing/assert"
+	"github.com/marcusva/docproc/docproc.fileinput/input"
 	"os"
 	"testing"
 )
@@ -15,7 +16,7 @@ func TestRDITransformer(t *testing.T) {
 	assert.FailOnErr(t, err)
 	defer fp.Close()
 
-	tf := &RDITransformer{}
+	tf := &input.RDITransformer{}
 
 	messages, err := tf.Transform(fp)
 	assert.FailOnErr(t, err)

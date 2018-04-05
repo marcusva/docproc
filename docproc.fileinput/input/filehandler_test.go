@@ -1,9 +1,10 @@
-package input
+package input_test
 
 import (
 	"bytes"
 	"github.com/marcusva/docproc/common/queue"
 	"github.com/marcusva/docproc/common/testing/assert"
+	"github.com/marcusva/docproc/docproc.fileinput/input"
 	"io"
 	"io/ioutil"
 	"testing"
@@ -31,7 +32,7 @@ func createWQ() queue.WriteQueue {
 }
 
 func TestTransform(t *testing.T) {
-	fh := NewFileHandler(createWQ(), nopTransformer(0))
+	fh := input.NewFileHandler(createWQ(), nopTransformer(0))
 
 	messages, err := fh.Transform(bytes.NewReader(buf))
 	assert.NoErr(t, err)

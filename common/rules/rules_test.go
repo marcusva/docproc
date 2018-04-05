@@ -1,8 +1,9 @@
-package rules
+package rules_test
 
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/marcusva/docproc/common/rules"
 	"github.com/marcusva/docproc/common/testing/assert"
 	"testing"
 )
@@ -32,7 +33,7 @@ const (
 )
 
 var (
-	validRules = []Rule{
+	validRules = []rules.Rule{
 		// contains
 		{Path: "textVal", Operator: "contains", Value: "some"},
 		// not contains
@@ -82,11 +83,11 @@ var (
 		{Path: "textVal", Operator: "exists", Value: nil},
 		{Path: "nonexisting", Operator: "not exists", Value: nil},
 	}
-	erroneousRules = []Rule{
+	erroneousRules = []rules.Rule{
 		{Path: "textVal", Operator: "=", Value: 1234},
 		{Path: "floatVal", Operator: "=", Value: true},
 	}
-	invalidComparators = []Rule{
+	invalidComparators = []rules.Rule{
 		// Strings
 		{Path: "textVal", Operator: "is the same as", Value: "some text to test"},
 		{Path: "textVal", Operator: "", Value: nil},
@@ -94,7 +95,7 @@ var (
 		{Path: "uintVal", Operator: "wants to be", Value: 1234},
 		{Path: "uintVal", Operator: "", Value: 1234},
 	}
-	pathRules = []Rule{
+	pathRules = []rules.Rule{
 		{Path: "textVal", Operator: "exists", Value: nil},
 		{Path: "nested1.nestedVal", Operator: "exists", Value: nil},
 		{Path: "nested1.invalid", Operator: "not exists", Value: nil},
@@ -102,20 +103,20 @@ var (
 		{Path: "nested1.array[0]", Operator: "eq", Value: 10},
 		{Path: "arrayMap[2].name", Operator: "eq", Value: "map3"},
 	}
-	validSubRules = []Rule{
-		{Path: "uintVal", Operator: "=", Value: 1234, SubRules: []Rule{
+	validSubRules = []rules.Rule{
+		{Path: "uintVal", Operator: "=", Value: 1234, SubRules: []rules.Rule{
 			{Path: "intVal", Operator: "<", Value: 0},
 		}},
 	}
-	invalidSubRules = []Rule{
-		{Path: "uintVal", Operator: "=", Value: 1234, SubRules: []Rule{
+	invalidSubRules = []rules.Rule{
+		{Path: "uintVal", Operator: "=", Value: 1234, SubRules: []rules.Rule{
 			{Path: "nonexisting", Operator: ">", Value: 0},
 		}},
 	}
-	invalidRules = []Rule{
+	invalidRules = []rules.Rule{
 		{Path: "", Operator: "=", Value: 1},
 		{Path: "path", Operator: "", Value: 1},
-		{Path: "path", Operator: ">", Value: 1, SubRules: []Rule{
+		{Path: "path", Operator: ">", Value: 1, SubRules: []rules.Rule{
 			{Path: "", Operator: ">", Value: 0},
 		}},
 	}
@@ -132,7 +133,7 @@ func TestRules(t *testing.T) {
 		assert.Equal(t, ok, true)
 		assert.FailOnErr(t, r.Validate())
 	}
-	assert.FailOnErr(t, Validate(&validRules))
+	assert.FailOnErr(t, rules.Validate(&validRules))
 
 	for _, r := range erroneousRules {
 		ok, err := r.Test(ct)
@@ -146,7 +147,7 @@ func TestRules(t *testing.T) {
 		assert.Err(t, err)
 		assert.Err(t, r.Validate())
 	}
-	assert.Err(t, Validate(&invalidComparators))
+	assert.Err(t, rules.Validate(&invalidComparators))
 
 	for _, r := range validSubRules {
 		ok, err := r.Test(ct)
@@ -154,7 +155,7 @@ func TestRules(t *testing.T) {
 		assert.Equal(t, ok, true)
 		assert.FailOnErr(t, r.Validate())
 	}
-	assert.FailOnErr(t, Validate(&validSubRules))
+	assert.FailOnErr(t, rules.Validate(&validSubRules))
 
 	for _, r := range invalidSubRules {
 		ok, err := r.Test(ct)
@@ -165,7 +166,7 @@ func TestRules(t *testing.T) {
 	for _, r := range invalidRules {
 		assert.Err(t, r.Validate(), "rule %v must not validate", r)
 	}
-	assert.Err(t, Validate(&invalidRules))
+	assert.Err(t, rules.Validate(&invalidRules))
 }
 
 func TestPaths(t *testing.T) {
@@ -193,8 +194,9 @@ func TestOperatorSupported(t *testing.T) {
 		"in", "not in",
 	}
 	for _, op := range operators {
-		assert.FailIfNot(t, OperatorSupported(op), "operator '%s' failed unexpectedly", op)
+		assert.FailIfNot(t, rules.OperatorSupported(op),
+			"operator '%s' failed unexpectedly", op)
 	}
-	assert.FailIf(t, OperatorSupported(""))
-	assert.FailIf(t, OperatorSupported("something wrong"))
+	assert.FailIf(t, rules.OperatorSupported(""))
+	assert.FailIf(t, rules.OperatorSupported("something wrong"))
 }

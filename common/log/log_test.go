@@ -1,8 +1,9 @@
-package log
+package log_test
 
 import (
 	"bytes"
 	"fmt"
+	"github.com/marcusva/docproc/common/log"
 	"github.com/marcusva/docproc/common/testing/assert"
 	"io/ioutil"
 	"os"
@@ -11,36 +12,36 @@ import (
 )
 
 func TestPackage(t *testing.T) {
-	if logger == nil {
+	if log.Logger() == nil {
 		t.Error("_log is nil, although a package initialization was done")
 	}
 
 	// None of those should cause a panic
-	Alert("test")
-	Alertf("test")
-	Critical("test")
-	Criticalf("test")
-	Debug("test")
-	Debugf("test")
-	Info("test")
-	Infof("test")
-	Notice("test")
-	Noticef("test")
-	Error("test")
-	Errorf("test")
-	Warning("test")
-	Warningf("test")
-	Emergency("test")
-	Emergencyf("test")
+	log.Alert("test")
+	log.Alertf("test")
+	log.Critical("test")
+	log.Criticalf("test")
+	log.Debug("test")
+	log.Debugf("test")
+	log.Info("test")
+	log.Infof("test")
+	log.Notice("test")
+	log.Noticef("test")
+	log.Error("test")
+	log.Errorf("test")
+	log.Warning("test")
+	log.Warningf("test")
+	log.Emergency("test")
+	log.Emergencyf("test")
 }
 
 func TestLogger(t *testing.T) {
-	logger := Logger()
+	logger := log.Logger()
 	assert.NotNil(t, logger)
 
 	var buf bytes.Buffer
-	Init(&buf, LevelDebug, true)
-	logger2 := Logger()
+	log.Init(&buf, log.LevelDebug, true)
+	logger2 := log.Logger()
 	assert.NotEqual(t, logger, logger2)
 }
 
@@ -50,13 +51,13 @@ func TestInitFile(t *testing.T) {
 	fname := fp.Name()
 	fp.Close()
 
-	err = InitFile(fname, LevelDebug, false)
+	err = log.InitFile(fname, log.LevelDebug, false)
 	assert.NoErr(t, err)
 
-	Init(os.Stdout, LevelDebug, false)
+	log.Init(os.Stdout, log.LevelDebug, false)
 	assert.NoErr(t, os.Remove(fname))
 
-	err = InitFile("", LevelDebug, false)
+	err = log.InitFile("", log.LevelDebug, false)
 	assert.Err(t, err)
 
 }
@@ -69,10 +70,10 @@ func TestGetLogLevel(t *testing.T) {
 	}
 
 	for idx, v := range levelsInt {
-		if v1, err := GetLogLevel(v); err != nil {
+		if v1, err := log.GetLogLevel(v); err != nil {
 			t.Error(err)
 		} else {
-			if v2, err := GetLogLevel(levelsTxt[idx]); err != nil {
+			if v2, err := log.GetLogLevel(levelsTxt[idx]); err != nil {
 				t.Error(err)
 			} else {
 				if v1 != v2 {
@@ -85,7 +86,7 @@ func TestGetLogLevel(t *testing.T) {
 
 	levelsInvalid := []string{"", "10", "SomeText"}
 	for _, v := range levelsInvalid {
-		if v1, err := GetLogLevel(""); err == nil || v1 != -1 {
+		if v1, err := log.GetLogLevel(""); err == nil || v1 != -1 {
 			t.Errorf("invalid level '%s' was accepted", v)
 		}
 	}
@@ -93,18 +94,18 @@ func TestGetLogLevel(t *testing.T) {
 
 func TestLog(t *testing.T) {
 	callbacks := map[string]func(...interface{}){
-		"DEBUG":     Debug,
-		"INFO":      Info,
-		"NOTICE":    Notice,
-		"WARNING":   Warning,
-		"ERROR":     Error,
-		"CRITICAL":  Critical,
-		"ALERT":     Alert,
-		"EMERGENCY": Emergency,
+		"DEBUG":     log.Debug,
+		"INFO":      log.Info,
+		"NOTICE":    log.Notice,
+		"WARNING":   log.Warning,
+		"ERROR":     log.Error,
+		"CRITICAL":  log.Critical,
+		"ALERT":     log.Alert,
+		"EMERGENCY": log.Emergency,
 	}
 
 	var buf bytes.Buffer
-	Init(&buf, LevelDebug, true)
+	log.Init(&buf, log.LevelDebug, true)
 
 	for prefix, cb := range callbacks {
 		cb("Test")
@@ -118,18 +119,18 @@ func TestLog(t *testing.T) {
 
 func TestLogf(t *testing.T) {
 	callbacks := map[string]func(f string, args ...interface{}){
-		"DEBUG":     Debugf,
-		"INFO":      Infof,
-		"NOTICE":    Noticef,
-		"WARNING":   Warningf,
-		"ERROR":     Errorf,
-		"CRITICAL":  Criticalf,
-		"ALERT":     Alertf,
-		"EMERGENCY": Emergencyf,
+		"DEBUG":     log.Debugf,
+		"INFO":      log.Infof,
+		"NOTICE":    log.Noticef,
+		"WARNING":   log.Warningf,
+		"ERROR":     log.Errorf,
+		"CRITICAL":  log.Criticalf,
+		"ALERT":     log.Alertf,
+		"EMERGENCY": log.Emergencyf,
 	}
 
 	var buf bytes.Buffer
-	Init(&buf, LevelDebug, true)
+	log.Init(&buf, log.LevelDebug, true)
 
 	fmtstring := "Formatted result: '%s'"
 	for prefix, cb := range callbacks {
@@ -144,13 +145,13 @@ func TestLogf(t *testing.T) {
 }
 
 func TestLogLevel(t *testing.T) {
-	levels := []Level{
-		LevelDebug, LevelInfo, LevelNotice, LevelWarning,
-		LevelError, LevelAlert, LevelCritical, LevelEmergency,
+	levels := []log.Level{
+		log.LevelDebug, log.LevelInfo, log.LevelNotice, log.LevelWarning,
+		log.LevelError, log.LevelAlert, log.LevelCritical, log.LevelEmergency,
 	}
 	for _, level := range levels {
 		var buf bytes.Buffer
-		Init(&buf, level, true)
-		assert.Equal(t, level, CurrentLevel())
+		log.Init(&buf, level, true)
+		assert.Equal(t, level, log.CurrentLevel())
 	}
 }

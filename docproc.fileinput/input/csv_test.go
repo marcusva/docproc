@@ -1,23 +1,24 @@
-package input
+package input_test
 
 import (
 	"github.com/marcusva/docproc/common/testing/assert"
 	"github.com/marcusva/docproc/common/testing/fuzz"
+	"github.com/marcusva/docproc/docproc.fileinput/input"
 	"io"
 	"os"
 	"testing"
 )
 
 func TestCSVTransformer(t *testing.T) {
-	tf, err := NewCSVTransformer(nil)
+	tf, err := input.NewCSVTransformer(nil)
 	assert.NoErr(t, err)
-	assert.Equal(t, tf.(*CSVTransformer).Delim, ',')
+	assert.Equal(t, tf.(*input.CSVTransformer).Delim, ',')
 
-	tf, err = NewCSVTransformer(map[string]string{"delim": ";"})
+	tf, err = input.NewCSVTransformer(map[string]string{"delim": ";"})
 	assert.NoErr(t, err)
-	assert.Equal(t, tf.(*CSVTransformer).Delim, ';')
+	assert.Equal(t, tf.(*input.CSVTransformer).Delim, ';')
 
-	_, err = NewCSVTransformer(map[string]string{"delim": "###"})
+	_, err = input.NewCSVTransformer(map[string]string{"delim": "###"})
 	assert.Err(t, err)
 }
 
@@ -26,9 +27,9 @@ func TestCSVTransform(t *testing.T) {
 	assert.FailOnErr(t, err)
 	defer fp.Close()
 
-	tf, err := NewCSVTransformer(nil)
+	tf, err := input.NewCSVTransformer(nil)
 	assert.NoErr(t, err)
-	tf.(*CSVTransformer).Delim = ';'
+	tf.(*input.CSVTransformer).Delim = ';'
 
 	msgs, err := tf.Transform(fp)
 	assert.NoErr(t, err)
@@ -44,9 +45,9 @@ func TestCSVTransform(t *testing.T) {
 }
 
 func TestCSVTransformFuzzed(t *testing.T) {
-	tf, err := NewCSVTransformer(nil)
+	tf, err := input.NewCSVTransformer(nil)
 	assert.NoErr(t, err)
-	tf.(*CSVTransformer).Delim = ';'
+	tf.(*input.CSVTransformer).Delim = ';'
 
 	for i := 0; i < 500; i++ {
 		csv, err := fuzz.CSV([]string{"string", "int", "string", "string", "float", "int"}, ';', true)
@@ -58,8 +59,8 @@ func TestCSVTransformFuzzed(t *testing.T) {
 }
 
 func BenchmarkCSVTransformLarge(b *testing.B) {
-	tf, _ := NewCSVTransformer(nil)
-	tf.(*CSVTransformer).Delim = ';'
+	tf, _ := input.NewCSVTransformer(nil)
+	tf.(*input.CSVTransformer).Delim = ';'
 
 	fuzz.SetLines(100000, 100000)
 	csv, _ := fuzz.CSV([]string{"string", "int", "string", "string", "float", "int"}, ';', true)
@@ -73,8 +74,8 @@ func BenchmarkCSVTransformLarge(b *testing.B) {
 }
 
 func BenchmarkCSVTransform(b *testing.B) {
-	tf, _ := NewCSVTransformer(nil)
-	tf.(*CSVTransformer).Delim = ';'
+	tf, _ := input.NewCSVTransformer(nil)
+	tf.(*input.CSVTransformer).Delim = ';'
 	for i := 0; i < b.N; i++ {
 		csv, _ := fuzz.CSV([]string{"string", "int", "string", "string", "float", "int"}, ';', true)
 		tf.Transform(csv)
