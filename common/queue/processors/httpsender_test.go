@@ -1,7 +1,8 @@
-package processors
+package processors_test
 
 import (
 	"github.com/marcusva/docproc/common/queue"
+	"github.com/marcusva/docproc/common/queue/processors"
 	"github.com/marcusva/docproc/common/testing/assert"
 	"io/ioutil"
 	"net/http"
@@ -24,33 +25,32 @@ const (
 )
 
 func TestNewHTTPSender(t *testing.T) {
-	_, err := NewHTTPSender(nil)
+	_, err := processors.NewHTTPSender(nil)
 	assert.Err(t, err)
 
 	params := map[string]string{}
-	_, err = NewHTTPSender(params)
+	_, err = processors.NewHTTPSender(params)
 	assert.Err(t, err)
 
 	params["address"] = "localhost"
-	_, err = NewHTTPSender(params)
+	_, err = processors.NewHTTPSender(params)
 	assert.Err(t, err)
 
 	params["read.from"] = "body"
-	_, err = NewHTTPSender(params)
+	_, err = processors.NewHTTPSender(params)
 	assert.NoErr(t, err)
 
 	params["timeout"] = "-1"
-	_, err = NewHTTPSender(params)
+	_, err = processors.NewHTTPSender(params)
 	assert.Err(t, err)
 
 	params["timeout"] = "123"
-	_, err = NewHTTPSender(params)
+	_, err = processors.NewHTTPSender(params)
 	assert.NoErr(t, err)
 
 	params["address"] = "::some##invalid?!!!\\data"
-	_, err = NewHTTPSender(params)
+	_, err = processors.NewHTTPSender(params)
 	assert.Err(t, err)
-
 }
 
 func TestHTTPSenderCreate(t *testing.T) {
@@ -60,7 +60,7 @@ func TestHTTPSenderCreate(t *testing.T) {
 		"read.from": "body",
 		"timeout":   "2",
 	}
-	proc, err := Create(params)
+	proc, err := processors.Create(params)
 	assert.FailOnErr(t, err)
 	assert.Equal(t, proc.Name(), "HTTPSender")
 }
@@ -71,7 +71,7 @@ func TestHTTPSenderName(t *testing.T) {
 		"read.from": "body",
 		"timeout":   "2",
 	}
-	sender, err := NewHTTPSender(params)
+	sender, err := processors.NewHTTPSender(params)
 	assert.FailOnErr(t, err)
 	assert.Equal(t, sender.Name(), "HTTPSender")
 }
@@ -101,7 +101,7 @@ func TestHTTPSenderProcess(t *testing.T) {
 		"read.from": "body",
 		"timeout":   "2",
 	}
-	sender, err := NewHTTPSender(params)
+	sender, err := processors.NewHTTPSender(params)
 	assert.FailOnErr(t, err)
 
 	msg, err := queue.MsgFromJSON([]byte(httpmessage))
@@ -121,7 +121,7 @@ func TestHTTPSenderProcessInvalid(t *testing.T) {
 		"read.from": "noexist",
 		"timeout":   "1",
 	}
-	sender, err := NewHTTPSender(params)
+	sender, err := processors.NewHTTPSender(params)
 	assert.FailOnErr(t, err)
 
 	msg, err := queue.MsgFromJSON([]byte(httpmessage))
@@ -130,7 +130,7 @@ func TestHTTPSenderProcessInvalid(t *testing.T) {
 	assert.Err(t, sender.Process(msg))
 
 	params["read.from"] = "body"
-	sender, err = NewHTTPSender(params)
+	sender, err = processors.NewHTTPSender(params)
 	assert.FailOnErr(t, err)
 	assert.Err(t, sender.Process(msg))
 

@@ -1,7 +1,8 @@
-package processors
+package processors_test
 
 import (
 	"github.com/marcusva/docproc/common/queue"
+	"github.com/marcusva/docproc/common/queue/processors"
 	"github.com/marcusva/docproc/common/testing/assert"
 	"strings"
 	"testing"
@@ -30,23 +31,23 @@ const (
 
 func TestNewTemplateTransformer(t *testing.T) {
 	params := map[string]string{}
-	_, err := NewTemplateTransformer(params)
+	_, err := processors.NewTemplateTransformer(params)
 	assert.Err(t, err)
 
 	params["templates"] = "test//*.tpl"
-	_, err = NewTemplateTransformer(params)
+	_, err = processors.NewTemplateTransformer(params)
 	assert.Err(t, err)
 
 	params["templateroot"] = "main"
-	_, err = NewTemplateTransformer(params)
+	_, err = processors.NewTemplateTransformer(params)
 	assert.Err(t, err)
 
 	params["store.in"] = "_output_"
-	_, err = NewTemplateTransformer(params)
+	_, err = processors.NewTemplateTransformer(params)
 	assert.FailOnErr(t, err)
 
 	params["templates"] = "invalid//*.tpl"
-	_, err = NewTemplateTransformer(params)
+	_, err = processors.NewTemplateTransformer(params)
 	assert.Err(t, err)
 }
 
@@ -57,7 +58,7 @@ func TestTemplateTransformerCreate(t *testing.T) {
 		"store.in":     "_xml_",
 		"templateroot": "main",
 	}
-	proc, err := Create(params)
+	proc, err := processors.Create(params)
 	assert.FailOnErr(t, err)
 	assert.Equal(t, proc.Name(), "TemplateTransformer")
 }
@@ -68,7 +69,7 @@ func TestTemplateTransformerProcess(t *testing.T) {
 		"store.in":     "_xml_",
 		"templateroot": "main",
 	}
-	lnt, err := NewTemplateTransformer(params)
+	lnt, err := processors.NewTemplateTransformer(params)
 	assert.FailOnErr(t, err)
 
 	msg, err := queue.MsgFromJSON([]byte(tplmessage))

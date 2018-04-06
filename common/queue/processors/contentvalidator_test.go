@@ -1,7 +1,8 @@
-package processors
+package processors_test
 
 import (
 	"github.com/marcusva/docproc/common/queue"
+	"github.com/marcusva/docproc/common/queue/processors"
 	"github.com/marcusva/docproc/common/testing/assert"
 	"testing"
 )
@@ -28,27 +29,27 @@ const (
 )
 
 func TestNewContentValidator(t *testing.T) {
-	_, err := NewContentValidator(nil)
+	_, err := processors.NewContentValidator(nil)
 	assert.Err(t, err)
 
 	params := map[string]string{}
-	_, err = NewContentValidator(params)
+	_, err = processors.NewContentValidator(params)
 	assert.Err(t, err)
 
 	params = map[string]string{"rules": "test/brokenrules.json"}
-	_, err = NewContentValidator(params)
+	_, err = processors.NewContentValidator(params)
 	assert.Err(t, err)
 
 	params = map[string]string{"rules": "test/invalid"}
-	_, err = NewContentValidator(params)
+	_, err = processors.NewContentValidator(params)
 	assert.Err(t, err)
 
 	params = map[string]string{"rules": "test/xml-template.tpl"}
-	_, err = NewContentValidator(params)
+	_, err = processors.NewContentValidator(params)
 	assert.Err(t, err)
 
 	params = map[string]string{"rules": "test/cvrules.json"}
-	_, err = NewContentValidator(params)
+	_, err = processors.NewContentValidator(params)
 	assert.NoErr(t, err)
 }
 
@@ -57,26 +58,26 @@ func TestContentValidatorCreate(t *testing.T) {
 		"type":  "ContentValidator",
 		"rules": "test/testrules.json",
 	}
-	proc, err := Create(params)
+	proc, err := processors.Create(params)
 	assert.FailOnErr(t, err)
 	assert.Equal(t, proc.Name(), "ContentValidator")
 }
 
 func TestContentValidatorName(t *testing.T) {
-	cv, err := NewContentValidator(map[string]string{"rules": "test/testrules.json"})
+	cv, err := processors.NewContentValidator(map[string]string{"rules": "test/testrules.json"})
 	assert.FailOnErr(t, err)
 	assert.Equal(t, cv.Name(), "ContentValidator")
 }
 
 func TestContentValidatorProcess(t *testing.T) {
-	cv, err := NewContentValidator(map[string]string{"rules": "test/testrules.json"})
+	cv, err := processors.NewContentValidator(map[string]string{"rules": "test/testrules.json"})
 	assert.FailOnErr(t, err)
 
 	msg, err := queue.MsgFromJSON([]byte(cvmessage))
 	assert.FailOnErr(t, err)
 	assert.Err(t, cv.Process(msg))
 
-	cv, err = NewContentValidator(map[string]string{"rules": "test/cvrules.json"})
+	cv, err = processors.NewContentValidator(map[string]string{"rules": "test/cvrules.json"})
 	assert.FailOnErr(t, err)
 
 	msg, err = queue.MsgFromJSON([]byte(cvmessage))

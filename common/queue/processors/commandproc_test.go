@@ -1,8 +1,9 @@
-package processors
+package processors_test
 
 import (
 	"encoding/base64"
 	"github.com/marcusva/docproc/common/queue"
+	"github.com/marcusva/docproc/common/queue/processors"
 	"github.com/marcusva/docproc/common/testing/assert"
 	"runtime"
 	"testing"
@@ -30,31 +31,31 @@ const (
 )
 
 func TestNewCommandProc(t *testing.T) {
-	_, err := NewCommandProc(nil)
+	_, err := processors.NewCommandProc(nil)
 	assert.Err(t, err)
 
 	params := map[string]string{}
-	_, err = NewCommandProc(params)
+	_, err = processors.NewCommandProc(params)
 	assert.Err(t, err)
 
 	params["read.from"] = "CITY"
-	_, err = NewCommandProc(params)
+	_, err = processors.NewCommandProc(params)
 	assert.Err(t, err)
 
 	params["store.in"] = "cmdfield"
-	_, err = NewCommandProc(params)
+	_, err = processors.NewCommandProc(params)
 	assert.Err(t, err)
 
 	params["exec"] = "cmd"
-	_, err = NewCommandProc(params)
+	_, err = processors.NewCommandProc(params)
 	assert.NoErr(t, err)
 
 	params["store.base64"] = "banana"
-	_, err = NewCommandProc(params)
+	_, err = processors.NewCommandProc(params)
 	assert.Err(t, err)
 
 	params["store.base64"] = "t"
-	_, err = NewCommandProc(params)
+	_, err = processors.NewCommandProc(params)
 	assert.NoErr(t, err)
 }
 
@@ -65,7 +66,7 @@ func TestCommandProcCreate(t *testing.T) {
 		"store.in":  "cmdfield",
 		"exec":      "cmd",
 	}
-	proc, err := Create(params)
+	proc, err := processors.Create(params)
 	assert.FailOnErr(t, err)
 	assert.Equal(t, proc.Name(), "CommandProc")
 }
@@ -76,7 +77,7 @@ func TestCommandProcName(t *testing.T) {
 		"store.in":  "cmdfield",
 		"exec":      "cmd",
 	}
-	cmd, err := NewCommandProc(params)
+	cmd, err := processors.NewCommandProc(params)
 	assert.FailOnErr(t, err)
 	assert.Equal(t, cmd.Name(), "CommandProc")
 }
@@ -92,7 +93,7 @@ func TestCommandProcProcess(t *testing.T) {
 	default:
 		params["exec"] = "cat"
 	}
-	cmd, err := NewCommandProc(params)
+	cmd, err := processors.NewCommandProc(params)
 	assert.FailOnErr(t, err)
 
 	msg, err := queue.MsgFromJSON([]byte(cmdmsg))
@@ -101,7 +102,7 @@ func TestCommandProcProcess(t *testing.T) {
 	assert.Equal(t, msg.Content["cmdfield"], "New York")
 
 	params["read.from"] = "unknown"
-	cmd, err = NewCommandProc(params)
+	cmd, err = processors.NewCommandProc(params)
 	assert.FailOnErr(t, err)
 	assert.Err(t, cmd.Process(msg))
 }
@@ -118,7 +119,7 @@ func TestCommandProcBase64(t *testing.T) {
 	default:
 		params["exec"] = "cat"
 	}
-	cmd, err := NewCommandProc(params)
+	cmd, err := processors.NewCommandProc(params)
 	assert.FailOnErr(t, err)
 
 	msg, err := queue.MsgFromJSON([]byte(cmdmsg))
@@ -135,7 +136,7 @@ func TestCommandProcProcessBroken(t *testing.T) {
 		"store.in":  "cmdfield",
 		"exec":      "invalidcmd",
 	}
-	cmd, err := NewCommandProc(params)
+	cmd, err := processors.NewCommandProc(params)
 	assert.FailOnErr(t, err)
 
 	msg, err := queue.MsgFromJSON([]byte(cmdmsg))

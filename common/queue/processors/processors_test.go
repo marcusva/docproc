@@ -1,20 +1,21 @@
-package processors
+package processors_test
 
 import (
+	"github.com/marcusva/docproc/common/queue/processors"
 	"github.com/marcusva/docproc/common/testing/assert"
 	"testing"
 )
 
 func TestProcessorsCreateInvalid(t *testing.T) {
-	_, err := Create(nil)
+	_, err := processors.Create(nil)
 	assert.Err(t, err)
 
 	params := map[string]string{}
-	_, err = Create(params)
+	_, err = processors.Create(params)
 	assert.Err(t, err)
 
 	params["type"] = "unknown"
-	_, err = Create(params)
+	_, err = processors.Create(params)
 	assert.Err(t, err)
 }
 
@@ -29,7 +30,7 @@ func TestProcessorsTypes(t *testing.T) {
 		"TemplateTransformer",
 		"ValueEnricher",
 	}
-	types := Types()
+	types := processors.Types()
 	for _, k := range known {
 		assert.ContainsS(t, types, k)
 	}

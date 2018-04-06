@@ -1,7 +1,8 @@
-package processors
+package processors_test
 
 import (
 	"github.com/marcusva/docproc/common/queue"
+	"github.com/marcusva/docproc/common/queue/processors"
 	"github.com/marcusva/docproc/common/testing/assert"
 	"testing"
 )
@@ -29,23 +30,23 @@ const (
 
 func TestNewValueRuleEnricher(t *testing.T) {
 	params := map[string]string{"norules": "1234"}
-	_, err := NewValueEnricher(params)
+	_, err := processors.NewValueEnricher(params)
 	assert.FailIf(t, err == nil, "NewValueEricher() must fail, if no 'rule' arg is provided")
 
 	params = map[string]string{"rules": "test/norules.json"}
-	_, err = NewValueEnricher(params)
+	_, err = processors.NewValueEnricher(params)
 	assert.FailIf(t, err == nil, "NewValueEricher() must fail, if there is no rules file")
 
 	params = map[string]string{"rules": "test/brokenrules.json"}
-	_, err = NewValueEnricher(params)
+	_, err = processors.NewValueEnricher(params)
 	assert.FailIf(t, err == nil, "NewValueEricher() must fail, if the rules are broken")
 
 	params = map[string]string{"rules": "test/xml-template.tpl"}
-	_, err = NewValueEnricher(params)
+	_, err = processors.NewValueEnricher(params)
 	assert.FailIf(t, err == nil, "NewValueEricher() must fail, if the rules file is invalid")
 
 	params = map[string]string{"rules": "test/testrules.json"}
-	_, err = NewValueEnricher(params)
+	_, err = processors.NewValueEnricher(params)
 	assert.FailOnErr(t, err)
 }
 
@@ -54,20 +55,20 @@ func TestValueEnricherCreate(t *testing.T) {
 		"type":  "ValueEnricher",
 		"rules": "test/testrules.json",
 	}
-	proc, err := Create(params)
+	proc, err := processors.Create(params)
 	assert.FailOnErr(t, err)
 	assert.Equal(t, proc.Name(), "ValueEnricher")
 }
 
 func TestValueEnricherName(t *testing.T) {
-	ve, err := NewValueEnricher(map[string]string{"rules": "test/testrules.json"})
+	ve, err := processors.NewValueEnricher(map[string]string{"rules": "test/testrules.json"})
 	assert.FailOnErr(t, err)
 	assert.Equal(t, ve.Name(), "ValueEnricher")
 }
 
 func TestValueEnricherProcess(t *testing.T) {
 	p := map[string]string{"rules": "test/testrules.json"}
-	ve, err := NewValueEnricher(p)
+	ve, err := processors.NewValueEnricher(p)
 	assert.FailOnErr(t, err)
 
 	msg, err := queue.MsgFromJSON([]byte(message))
@@ -92,7 +93,7 @@ func TestQueueProcessing(t *testing.T) {
 	assert.FailOnErr(t, err)
 
 	p := map[string]string{"rules": "test/testrules.json"}
-	ve, err := NewValueEnricher(p)
+	ve, err := processors.NewValueEnricher(p)
 	assert.FailOnErr(t, err)
 
 	writer := queue.NewWriter(wq, nil)
@@ -114,7 +115,7 @@ func TestQueueProcessing(t *testing.T) {
 
 func TestInvalidRules(t *testing.T) {
 	p := map[string]string{"rules": "test/invalidrules.json"}
-	ve, err := NewValueEnricher(p)
+	ve, err := processors.NewValueEnricher(p)
 	assert.FailOnErr(t, err)
 
 	msg, err := queue.MsgFromJSON([]byte(message))
