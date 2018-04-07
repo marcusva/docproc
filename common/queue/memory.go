@@ -18,7 +18,7 @@ var (
 )
 
 func init() {
-	Register("memory", NewMemRQ, NewMemWQ)
+	Register("memory", newMemRQ, newMemWQ)
 }
 
 // topic is a simple name/channel storage
@@ -83,8 +83,8 @@ func (wq *memWQ) Publish(msg *Message) error {
 	}
 }
 
-// NewMemWQ creates a new in-memory writable queue.
-func NewMemWQ(params map[string]string) (WriteQueue, error) {
+// newMemWQ creates a new in-memory writable queue.
+func newMemWQ(params map[string]string) (WriteQueue, error) {
 	name, ok := params["topic"]
 	if !ok {
 		return nil, errors.New("parameter 'topic' is missing")
@@ -164,8 +164,8 @@ func (rq *memRQ) Open(c Consumer) error {
 	return nil
 }
 
-// NewMemRQ creates a new in-memory readable queue.
-func NewMemRQ(params map[string]string) (ReadQueue, error) {
+// newMemRQ creates a new in-memory readable queue.
+func newMemRQ(params map[string]string) (ReadQueue, error) {
 	name, ok := params["topic"]
 	if !ok {
 		return nil, errors.New("parameter 'topic' is missing")

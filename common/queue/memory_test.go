@@ -23,7 +23,7 @@ func TestMemWQPublish(t *testing.T) {
 		"ID": 1,
 	})
 	params := map[string]string{"topic": "test"}
-	wq, err := queue.NewMemWQ(params)
+	wq, err := queue.CreateWQ("memory", params)
 	assert.FailOnErr(t, err)
 	assert.Err(t, wq.Publish(msg))
 	assert.NoErr(t, wq.Open())
@@ -38,7 +38,7 @@ func TestMemRQConsume(t *testing.T) {
 
 	}
 	params := map[string]string{"topic": "test"}
-	wq, err := queue.NewMemWQ(params)
+	wq, err := queue.CreateWQ("memory", params)
 	assert.FailOnErr(t, err)
 	assert.Err(t, wq.Publish(messages[0]))
 	assert.NoErr(t, wq.Open())
@@ -48,7 +48,7 @@ func TestMemRQConsume(t *testing.T) {
 	}
 
 	consumer := &memProc{Count: 0}
-	rq, err := queue.NewMemRQ(params)
+	rq, err := queue.CreateRQ("memory", params)
 	assert.FailOnErr(t, err)
 	assert.NoErr(t, rq.Open(consumer))
 
