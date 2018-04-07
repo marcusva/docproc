@@ -1,0 +1,8 @@
+[
+    {
+        "name": "Check for a customer number",
+        "path": "CUSTNO",
+        "op": "!=",
+        "value": ""
+    }
+]
