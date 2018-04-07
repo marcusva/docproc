@@ -10,19 +10,19 @@ import (
 // If an error queue is set on the Writer, messages, which fail on processing
 // will be stored within that queue.
 type Writer struct {
-	proc     ProcConsumer
-	queue    WriteQueue
-	errQueue WriteQueue
-	mu       sync.Mutex
+	processors []Processor
+	queue      WriteQueue
+	errQueue   WriteQueue
+	mu         sync.RWMutex
 }
 
 // NewWriter creates a new Writer
 func NewWriter(queue, errqueue WriteQueue) *Writer {
 	return &Writer{
-		proc:     NewSimpleConsumer(),
-		queue:    queue,
-		errQueue: errqueue,
-		mu:       sync.Mutex{},
+		processors: make([]Processor, 0),
+		queue:      queue,
+		errQueue:   errqueue,
+		mu:         sync.RWMutex{},
 	}
 }
 
@@ -61,7 +61,9 @@ func (qw *Writer) Close() error {
 // Add adds a Processor to the Writer's processing chain.
 // It will not check, if there is already a Processor of the same type.
 func (qw *Writer) Add(pp Processor) {
-	qw.proc.Add(pp)
+	qw.mu.Lock()
+	defer qw.mu.Unlock()
+	qw.processors = append(qw.processors, pp)
 }
 
 // Consume consumes a Message and executes the associated processors on it.
@@ -71,16 +73,18 @@ func (qw *Writer) Add(pp Processor) {
 // Writer, if set.
 func (qw *Writer) Consume(msg *Message) error {
 	log.Infof("Received message '%v'", msg.Metadata[MetaID])
-	qw.mu.Lock()
-	defer qw.mu.Unlock()
-	if err := qw.proc.Consume(msg); err != nil {
-		if qw.errQueue == nil {
+	qw.mu.RLock()
+	defer qw.mu.RUnlock()
+	for _, pp := range qw.processors {
+		if err := pp.Process(msg); err != nil {
+			if qw.errQueue == nil {
+				return err
+			}
+			if err2 := qw.errQueue.Publish(msg); err2 != nil {
+				log.Errorf("could not pass the message to the error queue: %v", err2)
+			}
 			return err
 		}
-		if err2 := qw.errQueue.Publish(msg); err2 != nil {
-			log.Errorf("could not pass the message to the error queue: %v", err2)
-		}
-		return err
 	}
 	if qw.queue == nil {
 		return nil
