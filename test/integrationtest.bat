@@ -35,7 +35,7 @@ REM %DOCKER% cp %CIP%.output_1:/app/output/. ./test/results
 IF %ERRORLEVEL% NEQ 0 (
     SET FAILED=1
     FOR %%A IN (%CIP%.fileinput_1 %CIP%.preproc_1 %CIP%.renderer_1 %CIP%.output_1) DO (
-        %DOCKER% logss %%A 1> test\%%A.log 2>&1
+        %DOCKER% logs %%A 1> test\%%A.log 2>&1
     )
 )
 
