@@ -77,13 +77,16 @@ func (qw *Writer) Consume(msg *Message) error {
 	defer qw.mu.RUnlock()
 	for _, pp := range qw.processors {
 		if err := pp.Process(msg); err != nil {
+			log.Error(err)
 			if qw.errQueue == nil {
 				return err
 			}
 			if err2 := qw.errQueue.Publish(msg); err2 != nil {
 				log.Errorf("could not pass the message to the error queue: %v", err2)
 			}
-			return err
+			// Messages going into the error queue are to be removed from
+			// the input queue.
+			return nil
 		}
 	}
 	if qw.queue == nil {
