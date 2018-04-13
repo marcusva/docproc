@@ -1,6 +1,8 @@
 package processors_test
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"github.com/marcusva/docproc/common/queue"
 	"github.com/marcusva/docproc/common/queue/processors"
 	"github.com/marcusva/docproc/common/testing/assert"
@@ -95,6 +97,48 @@ func TestHTTPSenderProcess(t *testing.T) {
 	})
 	server := httptest.NewServer(okHandler)
 	defer server.Close()
+
+	params := map[string]string{
+		"address":   server.URL,
+		"read.from": "body",
+		"timeout":   "2",
+	}
+	sender, err := processors.NewHTTPSender(params)
+	assert.FailOnErr(t, err)
+
+	msg, err := queue.MsgFromJSON([]byte(httpmessage))
+	assert.FailOnErr(t, err)
+	assert.FailOnErr(t, sender.Process(msg))
+}
+
+func TestHTTPSenderProcessHTTPS(t *testing.T) {
+	okHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Content-Type") != "text/plain" {
+			w.WriteHeader(500)
+			return
+		}
+		buf, err := ioutil.ReadAll(r.Body)
+		r.Body.Close()
+		if err != nil {
+			w.WriteHeader(500)
+			return
+		}
+		if string(buf) != "some content" {
+			w.WriteHeader(500)
+		}
+		w.WriteHeader(200)
+	})
+	server := httptest.NewTLSServer(okHandler)
+	defer server.Close()
+
+	cert, _ := x509.ParseCertificate(server.TLS.Certificates[0].Certificate[0])
+	certpool := x509.NewCertPool()
+	certpool.AddCert(cert)
+	http.DefaultTransport = &http.Transport{
+		TLSClientConfig: &tls.Config{
+			RootCAs: certpool,
+		},
+	}
 
 	params := map[string]string{
 		"address":   server.URL,
