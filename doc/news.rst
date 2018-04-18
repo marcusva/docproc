@@ -4,7 +4,7 @@ This describes the latest changes between the docproc releases.
 
 0.0.3
 -----
-Released on 2018-XX-XX.
+Released on 2018-04-18.
 
 * New ``store.base64`` flag for :ref:`CommandProc` to store binary command
   output in messages.
