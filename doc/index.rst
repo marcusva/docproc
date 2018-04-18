@@ -61,7 +61,8 @@ listeners is easily accomplished.
     installing
     applications
     inputhandlers
-    processors
+    processors/index
     rulesengine
     docker
+    software/index
     news
