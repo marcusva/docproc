@@ -2,6 +2,10 @@ Release News
 ============
 This describes the latest changes between the docproc releases.
 
+0.0.4
+-----
+Released on 2018-XX-XX.
+
 0.0.3
 -----
 Released on 2018-04-18.
