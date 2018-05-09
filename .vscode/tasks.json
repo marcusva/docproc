@@ -23,6 +23,8 @@
             "command": "go",
             "args": [
                 "test",
+                "-tags",
+                "beanstalk nats nsq",
                 "./common/..."
             ],
             "group": {
