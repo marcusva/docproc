@@ -14,8 +14,11 @@ import (
 )
 
 const (
-	MaxLinesCSV     = 2500
-	MinLinesCSV     = 0
+	// MaxLinesCSV is the default maximum amount of CSV lines to geenrate
+	MaxLinesCSV = 2500
+	// MinLinesCSV is the default minimum amount of CSV lines to geenrate
+	MinLinesCSV = 0
+	// MaxLenStringCSV is the default maximum length of a single CSV column
 	MaxLenStringCSV = 50
 )
 
