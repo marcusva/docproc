@@ -3,21 +3,21 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/beanstalkd/beanstalk"
+  packages = ["."]
+  revision = "e99e1a384e4ace0401329ea37f702a2904990f91"
+
+[[projects]]
+  branch = "master"
   name = "github.com/golang/snappy"
   packages = ["."]
-  revision = "553a641470496b2327abcac10b36396bd98e45c9"
+  revision = "2e65f85255dbc3072edf28d6b5b8efc472979f5a"
 
 [[projects]]
   name = "github.com/google/uuid"
   packages = ["."]
   revision = "064e2069ce9c359c118179501254f67d7d37ba24"
   version = "0.2"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/kr/beanstalk"
-  packages = ["."]
-  revision = "e99e1a384e4ace0401329ea37f702a2904990f91"
 
 [[projects]]
   name = "github.com/nats-io/go-nats"
@@ -44,6 +44,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "197646d6a5052685329a9c5297bc80bbb2d3f99b744bd78f5b946e09c8efb911"
+  inputs-digest = "1112d137b7b807af99e5ec9afaae7cfcbb7af48b54fe3a4208a907d42e666ad6"
   solver-name = "gps-cdcl"
   solver-version = 1

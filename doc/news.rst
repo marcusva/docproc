@@ -6,6 +6,8 @@ This describes the latest changes between the docproc releases.
 -----
 Released on 2018-XX-XX.
 
+* Updated beanstalkd dependency location
+
 0.0.3
 -----
 Released on 2018-04-18.

@@ -4,7 +4,7 @@ package queue
 
 import (
 	"errors"
-	"github.com/kr/beanstalk"
+	"github.com/beanstalkd/beanstalk"
 	"github.com/marcusva/docproc/common/log"
 	"time"
 )

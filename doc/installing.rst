@@ -50,7 +50,7 @@ also will need the following tools:
 docproc relies on a message queue implementation. It currently supports the
 following message queues:
 
-* beanstalk - http://kr.github.io/beanstalkd/
+* beanstalk - http://beanstalkd.github.io/beanstalkd/
 * NSQ - http://nsq.io/
 * NATS - https://nats.io/
 
