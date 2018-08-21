@@ -1,3 +1,6 @@
 {
-    "go.buildTags": "beanstalk nats nsq"
+    "go.buildTags": "beanstalk nats nsq",
+    "files.associations": {
+        "Dockerfile-*": "dockerfile"
+    }
 }
