@@ -11,4 +11,5 @@ are all handled by :ref:`proc`.
     :maxdepth: 1
 
     fileinput
+    webinput
     proc

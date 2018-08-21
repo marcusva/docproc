@@ -60,7 +60,6 @@ listeners is easily accomplished.
     quickstart
     installing
     applications
-    inputhandlers
     processors/index
     rulesengine
     docker

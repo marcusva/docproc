@@ -21,16 +21,16 @@ Example for Windows:
 
 .. code-block:: batch
 
-    > unzip docproc-0.0.1-windows-amd64.zip
-    > cd docproc-0.0.1-windows-amd64
+    > unzip docproc-0.0.4-windows-amd64.zip
+    > cd docproc-0.0.4-windows-amd64
     > copy docproc*.exe C:\docproc\bin
 
 Example for Linux:
 
 .. code-block:: console
 
-    $ unzip docproc-0.0.1-linux-amd64.zip
-    $ cd docproc-0.0.1-linux-amd64
+    $ unzip docproc-0.0.4-linux-amd64.zip
+    $ cd docproc-0.0.4-linux-amd64
     $ cp docproc*. /usr/local/bin
 
 Set up the configuration files as appropriate and you are good to go.
@@ -44,7 +44,7 @@ You can download source snapshots of docproc from
 https://github.com/marcusva/docproc/tags. Besides the source distribution, you
 also will need the following tools:
 
-* Golang 1.8 or newer (https://golang.org/)
+* Golang 1.9 or newer (https://golang.org/)
 * dep (https://golang.github.io/dep/)
 
 docproc relies on a message queue implementation. It currently supports the

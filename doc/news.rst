@@ -6,6 +6,8 @@ This describes the latest changes between the docproc releases.
 -----
 Released on 2018-XX-XX.
 
+* New ref:`webinput` application to handle raw JSON input via HTTP and file
+  uploads to forward to the ``fileinput`` applicaton
 * Updated beanstalkd dependency location
 
 0.0.3

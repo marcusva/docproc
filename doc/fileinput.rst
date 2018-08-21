@@ -136,7 +136,7 @@ File input handlers are activated in the ``[input]`` section and configured in
 an own, user-defined section. The ``[input]`` section tells docproc.fileinput,
 which other sections it shall read to configure the appropriate handlers.
 
-The currently supported handlers are explained in :ref:`inputhandlers`.
+The currently supported handlers are explained in file input handlers.
 
 handlers
     A comma-separated list of sections to use for configuring and activating
@@ -155,5 +155,66 @@ handlers
     [csv-in]
     ...
 
+File Input Handlers
+^^^^^^^^^^^^^^^^^^^
+
+:ref:`fileinput` comes with support for converting different file formats and
+file content into processable messages, which can be individually activated
+and configured.
+
+It currently supports the conversion of the following input formats:
+
+* SAP RDI spool files via the :ref:`rditransformer`
+* CSV data via the :ref:`csvtransformer`
+
+Each individual file handler shares a common set of configuration entries:
+
+.. code-block:: ini
+
+    [your-config]
+    format = <format-name>
+    folder.in = <directory to check>
+    pattern = <file pattern to check>
+    interval = <check interval>
+    transformer = <the relevant input transformer>
+    # additional, transformer-specific configuration entries
+
+format
+    The input file format. This is mainly used for informational purposes within
+    the message's metadata and does not have any effect on the message
+    processing.
+
+folder.in
+    The directory to watch for RDI files to be processed.
+
+pattern
+    The file pattern to use for identifying RDI files. This can be a wildcard
+    pattern, strict file name matching or regular expression that identifies
+    those files, that shall be picked up by the ``RDITransformer``.
+
+interval
+    The time interval in seconds to use for checking for new files. This must
+    be a positive integer.
+
+transformer
+    The input transformer to use. See below for a list of currently available
+    input transformers.
+
+Input Transformers
+------------------
+
+:ref:`rditransformer`
+    Processes SAP RDI spool files and transforms the contained documents into
+    messages.
+
+:ref:`csvtransformer`
+    Processes CSV files and transforms the contained rows into messages.
+
+.. toctree::
+    :hidden:
+    :maxdepth: 1
+
+    input/rditransformer
+    input/csvtransformer
 
 .. _RFC-5424: http://www.rfc-base.org/txt/rfc-5424.txt
