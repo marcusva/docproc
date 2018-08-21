@@ -25,6 +25,14 @@ services:
     command: /docproc.startup.sh
     depends_on:
       - nsqlookupd
+  docproc.webinput:
+    build:
+      context: .
+      dockerfile: ./scripts/dockerfiles/Dockerfile-docproc.webinput
+    image: docproc/webinput
+    command: /docproc.startup.sh
+    depends_on:
+      - nsqlookupd
   docproc.preproc:
     build:
       context: .

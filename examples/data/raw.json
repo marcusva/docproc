@@ -1,0 +1,13 @@
+{
+    "content": {
+        "CITY": "New York",
+        "CUSTNO": "122999",
+        "DATE": "2018-06-03",
+        "FIRSTNAME": "Marc",
+        "GROSS": "8474.44",
+        "LASTNAME": "Marcmarc",
+        "NET": "7583.00",
+        "STREET": "Sample Road 110",
+        "ZIP": "10039"
+    }
+}

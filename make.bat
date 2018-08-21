@@ -9,7 +9,7 @@
 )
 @SET ZIPPER="C:\Program Files\7-Zip\7z.exe"
 
-@SET APPS=docproc.fileinput;docproc.proc
+@SET APPS=docproc.fileinput;docproc.proc;docproc.webinput
 @SET DISTFILES=LICENSE;README.md
 @SET DDIRS=examples
 @SET DISTNAME=docproc-%VERSION%-%GOOS%-%GOARCH%

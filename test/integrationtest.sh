@@ -15,14 +15,20 @@ $DOCKER_COMPOSE -p $PNAME up -d
 
 echo "Creating queues manually to speed up testing..."
 $DOCKER exec -d $CIP.fileinput_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=input
+$DOCKER exec -d $CIP.webinput_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=input
 $DOCKER exec -d $CIP.preproc_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=preprocessed
 $DOCKER exec -d $CIP.renderer_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=rendered
 $DOCKER exec -d $CIP.output_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=output
 
+sleep 5
+
 echo "Starting tests..."
 $DOCKER cp examples/data/testrecords.csv $CIP.fileinput_1:/app/data
+$DOCKER cp examples/data/raw.json $CIP.webinput_1:/raw.json
+$DOCKER exec -d $CIP.webinput_1 curl -X POST -H "Content-Type: application/json" \
+    --data @/raw.json http:/localhost/receive
 
-sleep 10
+sleep 20
 
 # DO NOT USE: the following lines are to sync proper results with the test result dir
 # $DOCKER exec $CIP.output_1 ls -al /app/output

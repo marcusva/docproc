@@ -100,6 +100,39 @@
             "problemMatcher": [
                 "$go"
             ]
+        },
+        {
+            "label": "build docproc.webinput",
+            "command": "go",
+            "args": [
+                "build",
+                "-tags",
+                "beanstalk nats nsq",
+                "-v",
+                "./docproc.webinput"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$go"
+            ]
+        },
+        {
+            "label": "test docproc.webinput",
+            "command": "go",
+            "args": [
+                "test",
+                "./docproc.webinput/..."
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$go"
+            ]
         }
     ]
 }

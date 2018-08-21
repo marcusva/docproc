@@ -16,13 +16,23 @@ ECHO Starting docker environment...
 
 ECHO Creating queues manually to speed up testing...
 %DOCKER% exec -d %CIP%.fileinput_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=input
+%DOCKER% exec -d %CIP%.webinput_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=input
 %DOCKER% exec -d %CIP%.preproc_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=preprocessed
 %DOCKER% exec -d %CIP%.renderer_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=rendered
 
-ECHO Starting tests...
-%DOCKER% cp examples/data/testrecords.csv %CIP%.fileinput_1:/app/data
+REM Wait for all services to be started properly
+TIMEOUT /T 5
 
-TIMEOUT /T 10
+ECHO Starting tests...
+
+%DOCKER% cp examples/data/testrecords.csv %CIP%.fileinput_1:/app/data
+%DOCKER% cp examples/data/raw.json %CIP%.webinput_1:/raw.json
+%DOCKER% exec -d %CIP%.webinput_1 curl -X POST -H "Content-Type: application/json" ^
+    --data @/raw.json http:/localhost/receive
+
+REM TODO: Add fileupload test
+
+TIMEOUT /T 20
 
 REM DO NOT USE: the following lines are to sync proper results with the test result dir
 REM %DOCKER% exec %CIP%.output_1 ls -al /app/output
@@ -34,7 +44,7 @@ REM %DOCKER% cp %CIP%.output_1:/app/output/. ./test/results
 
 IF %ERRORLEVEL% NEQ 0 (
     SET FAILED=1
-    FOR %%A IN (%CIP%.fileinput_1 %CIP%.preproc_1 %CIP%.renderer_1 %CIP%.output_1) DO (
+    FOR %%A IN (%CIP%.fileinput_1 %CIP%.webinput_1 %CIP%.preproc_1 %CIP%.renderer_1 %CIP%.output_1) DO (
         %DOCKER% logs %%A 1> test\%%A.log 2>&1
     )
 )

@@ -92,6 +92,7 @@ func (qw *Writer) Consume(msg *Message) error {
 	if qw.queue == nil {
 		return nil
 	}
+	log.Debugf("publishing message '%s'...", msg.Metadata[MetaID])
 	err := qw.queue.Publish(msg)
 	if err != nil {
 		log.Errorf("could not pass the message to the output queue: %v", err)

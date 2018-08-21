@@ -7,7 +7,7 @@ GOOS != go env GOOS
 GOARCH != go env GOARCH
 EXT != if [ "$(GOOS)" = "windows" ]; then echo -n ".exe"; else echo -n ""; fi
 
-APPS := docproc.fileinput docproc.proc
+APPS := docproc.fileinput docproc.proc docproc.webinput
 DISTFILES := LICENSE README.md examples doc/_build/html
 DISTNAME := docproc-$(VERSION)-$(GOOS)-$(GOARCH)
 DISTDIR := dist/$(DISTNAME)
