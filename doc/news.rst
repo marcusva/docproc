@@ -2,9 +2,13 @@ Release News
 ============
 This describes the latest changes between the docproc releases.
 
+0.0.5
+-----
+Released on 2019-XX-XX.
+
 0.0.4
 -----
-Released on 2018-XX-XX.
+Released on 2018-12-22.
 
 * New ref:`webinput` application to handle raw JSON input via HTTP and file
   uploads to forward to the ``fileinput`` applicaton
