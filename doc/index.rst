@@ -35,13 +35,8 @@ or complete processing pipelines as required by your input and output scenarios.
 Features
 --------
 
-docproc provides a rich set of features to process content. Supported input
-formats are
-
-* CSV
-* SAP RDI spool files
-
-Content processors support
+docproc provides a rich set of features to process CSV, SAP RDI and JSON
+content, provided via file exchange or HTTP:
 
 * validation and content enrichment using a simple to maintain rules engine
 * text-driven transformation through golang's mighty templating packages, such
@@ -49,8 +44,8 @@ Content processors support
 * transforming content easily through external commands
 * HTTP transfer, message queue and file-based output
 
-Since docproc uses a simple JSON-based message format, applying your own
-transformation routines via message queue consumers, HTTP receivers for file
+Since docproc uses a simple JSON-based message format internally, applying your
+own transformation routines via message queue consumers, HTTP receivers or file
 listeners is easily accomplished.
 
 .. toctree::

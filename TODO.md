@@ -13,10 +13,6 @@
 
 * document rules engine properly (inline and usage)
 
-* add docproc.webinput for receiving input data ia HTTP
-  * single messages
-  * files to be routed into docproc.fileinput
-
 * implement concurrency on message consumption for the queue implementations -
   consume multiple messages in parallel via goroutines per application
   (configurable)
