@@ -2,7 +2,7 @@
 set -e
 
 CIP="docprocperf_docproc"
-PNAME="docproc-ci"
+PNAME="docprocperf"
 DOCKER=docker
 DOCKER_COMPOSE=docker-compose
 
