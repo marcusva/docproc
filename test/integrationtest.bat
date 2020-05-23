@@ -34,8 +34,9 @@ REM TODO: Add fileupload test
 
 TIMEOUT /T 20
 
-REM DO NOT USE: the following lines are to sync proper results with the test result dir
-REM %DOCKER% exec %CIP%.output_1 ls -al /app/output
+%DOCKER% exec %CIP%.output_1 ls -al /app/output
+
+REM DO NOT USE: the following line is to sync proper results with the test result dir
 REM %DOCKER% cp %CIP%.output_1:/app/output/. ./test/results
 
 %DOCKER% cp test/test-results.tar.gz %CIP%.output_1:/app

@@ -24,7 +24,6 @@
 
 :all
 @CALL :docs
-@CALL :vendor
 @CALL :build
 @GOTO :eof
 
@@ -38,11 +37,6 @@
 :docs
 @ECHO Building docs...
 @CD doc && CALL make html && CD ..
-@GOTO :eof
-
-:vendor
-@ECHO Fetching dependencies...
-%GOPATH%\bin\dep ensure -v
 @GOTO :eof
 
 :build

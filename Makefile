@@ -24,10 +24,7 @@ info:
 	@echo "Building docproc $(VERSION) for $(GOOS)/$(GOARCH)..."
 
 clean:
-	rm -rf dist doc/_build vendor
-
-vendor:
-	dep ensure -v
+	rm -rf dist doc/_build
 
 $(DISTDIR):
 	mkdir -p $(DISTDIR)
@@ -35,7 +32,7 @@ $(DISTDIR):
 $(DISTDIR)/%:
 	go build -tags "$(TAGS)" -ldflags "$(LDFLAGS)" -o $@$(EXT) ./$*
 
-$(APPS): vendor $(DISTDIR) $(APPS:%=$(DISTDIR)/%)
+$(APPS): $(DISTDIR) $(APPS:%=$(DISTDIR)/%)
 
 test:
 	go test -tags "$(TAGS)" -ldflags "$(LDFLAGS)" ./...

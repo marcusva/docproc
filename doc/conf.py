@@ -20,7 +20,7 @@ import os
 # -- Project information -----------------------------------------------------
 
 project = 'docproc'
-copyright = '2018, Marcus von Appen'
+copyright = '2018-2020, Marcus von Appen'
 author = 'Marcus von Appen'
 
 version = "unknown"

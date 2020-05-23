@@ -18,7 +18,6 @@ $DOCKER exec -d $CIP.fileinput_1 curl -X POST http://127.0.0.1:4151/topic/create
 $DOCKER exec -d $CIP.webinput_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=input
 $DOCKER exec -d $CIP.preproc_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=preprocessed
 $DOCKER exec -d $CIP.renderer_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=rendered
-$DOCKER exec -d $CIP.output_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=output
 
 sleep 5
 
@@ -30,8 +29,9 @@ $DOCKER exec -d $CIP.webinput_1 curl -X POST -H "Content-Type: application/json"
 
 sleep 20
 
+$DOCKER exec $CIP.output_1 ls -al /app/output
+
 # DO NOT USE: the following lines are to sync proper results with the test result dir
-# $DOCKER exec $CIP.output_1 ls -al /app/output
 # $DOCKER cp $CIP.output_1:/app/output/. ./test/results
 
 $DOCKER cp ./test/test-results.tar.gz $CIP.output_1:/app
