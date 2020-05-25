@@ -13,11 +13,6 @@ services:
     ports:
       - "4160"
       - "4161"
-    healthcheck:
-      test: curl http://localhost:4161/ping | grep OK || exit 1
-      start_period: 10s
-      interval: 1m
-      timeout: 5s
   nsqadmin:
     image: nsqio/nsq
     command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
@@ -36,11 +31,6 @@ services:
       - nsqlookupd
     volumes:
       - app-data:/app/data
-    healthcheck:
-      test: ps -ax | grep docproc || exit 1
-      start_period: 10s
-      interval: 1m
-      timeout: 2s
   docproc.webinput:
     build:
       context: ../..
@@ -51,11 +41,6 @@ services:
       - nsqlookupd
     volumes:
       - app-data:/app/data
-    healthcheck:
-      test: ps -ax | grep docproc || exit 1
-      start_period: 10s
-      interval: 1m
-      timeout: 2s
   docproc.preproc:
     build:
       context: ../..
@@ -64,11 +49,6 @@ services:
     command: /docproc.startup.sh
     depends_on:
       - nsqlookupd
-    healthcheck:
-      test: ps -ax | grep docproc || exit 1
-      start_period: 10s
-      interval: 1m
-      timeout: 2s
   docproc.renderer:
     build:
       context: ../..
@@ -77,11 +57,6 @@ services:
     command: /docproc.startup.sh
     depends_on:
       - nsqlookupd
-    healthcheck:
-      test: ps -ax | grep docproc || exit 1
-      start_period: 10s
-      interval: 1m
-      timeout: 2s
   docproc.output:
     build:
       context: ../..
@@ -92,11 +67,6 @@ services:
       - nsqlookupd
     volumes:
       - app-output:/app/output
-    healthcheck:
-      test: ps -ax | grep docproc || exit 1
-      start_period: 10s
-      interval: 1m
-      timeout: 2s
   integration-test:
     build:
       context: ../..
