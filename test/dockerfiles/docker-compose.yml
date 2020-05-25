@@ -1,0 +1,111 @@
+version: "3"
+volumes:
+  app-data:
+  app-output:
+
+services:
+  # message queue configuration
+  nsqlookupd:
+    image: nsqio/nsq
+    command: /nsqlookupd
+    logging:
+      driver: none
+    ports:
+      - "4160"
+      - "4161"
+    healthcheck:
+      test: curl http://localhost:4161/ping | grep OK || exit 1
+      start_period: 10s
+      interval: 1m
+      timeout: 5s
+  nsqadmin:
+    image: nsqio/nsq
+    command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
+    depends_on:
+      - nsqlookupd
+    ports:
+      - "4171:4171"
+  # docproc environment
+  docproc.fileinput:
+    build:
+      context: ../..
+      dockerfile: ./test/dockerfiles/Dockerfile-docproc.fileinput
+    image: docproc/fileinput
+    command: /docproc.startup.sh
+    depends_on:
+      - nsqlookupd
+    volumes:
+      - app-data:/app/data
+    healthcheck:
+      test: ps -ax | grep docproc || exit 1
+      start_period: 10s
+      interval: 1m
+      timeout: 2s
+  docproc.webinput:
+    build:
+      context: ../..
+      dockerfile: ./test/dockerfiles/Dockerfile-docproc.webinput
+    image: docproc/webinput
+    command: /docproc.startup.sh
+    depends_on:
+      - nsqlookupd
+    volumes:
+      - app-data:/app/data
+    healthcheck:
+      test: ps -ax | grep docproc || exit 1
+      start_period: 10s
+      interval: 1m
+      timeout: 2s
+  docproc.preproc:
+    build:
+      context: ../..
+      dockerfile: ./test/dockerfiles/Dockerfile-docproc.preproc
+    image: docproc/preproc
+    command: /docproc.startup.sh
+    depends_on:
+      - nsqlookupd
+    healthcheck:
+      test: ps -ax | grep docproc || exit 1
+      start_period: 10s
+      interval: 1m
+      timeout: 2s
+  docproc.renderer:
+    build:
+      context: ../..
+      dockerfile: ./test/dockerfiles/Dockerfile-docproc.renderer
+    image: docproc/renderer
+    command: /docproc.startup.sh
+    depends_on:
+      - nsqlookupd
+    healthcheck:
+      test: ps -ax | grep docproc || exit 1
+      start_period: 10s
+      interval: 1m
+      timeout: 2s
+  docproc.output:
+    build:
+      context: ../..
+      dockerfile: ./test/dockerfiles/Dockerfile-docproc.output
+    image: docproc/output
+    command: /docproc.startup.sh
+    depends_on:
+      - nsqlookupd
+    volumes:
+      - app-output:/app/output
+    healthcheck:
+      test: ps -ax | grep docproc || exit 1
+      start_period: 10s
+      interval: 1m
+      timeout: 2s
+  integration-test:
+    build:
+      context: ../..
+      dockerfile: ./test/dockerfiles/Dockerfile-integrationtest
+    depends_on:
+      - docproc.fileinput
+      - docproc.webinput
+      - docproc.preproc
+      - docproc.renderer
+      - docproc.output
+    volumes:
+      - app-output:/test/output

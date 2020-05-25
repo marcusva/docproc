@@ -1,0 +1,16 @@
+#### Image creation ####
+FROM alpine
+
+# curl is used for integration testing
+RUN apk add --update curl
+
+RUN mkdir -p /test/data
+WORKDIR /test
+
+COPY ./examples/data /test/data
+COPY ./test/test-results.tar.gz /test/test-results.tar.gz
+
+COPY ./test/integrationtest.sh /bin
+RUN chmod a+x /bin/integrationtest.sh
+
+ENTRYPOINT /bin/integrationtest.sh

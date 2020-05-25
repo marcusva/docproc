@@ -22,7 +22,7 @@ raw data and can be described as follows:
    Simple docproc processing layout
 
 To enable scalability, each of those functional steps can be handled by a
-separate application of docproc. The applications are connected by message
+separate application of docproc. The applications are connected via message
 queues, they read from and write to. This allows you to scale individual parts
 or complete processing pipelines as required by your input and output scenarios.
 
@@ -57,6 +57,5 @@ listeners is easily accomplished.
     applications
     processors/index
     rulesengine
-    docker
     software/index
     news

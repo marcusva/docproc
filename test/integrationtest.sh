@@ -1,52 +1,30 @@
 #!/bin/sh
 set -e
 
-CIP="docprocci_docproc"
-PNAME="docprocci"
-DOCKER=docker
-DOCKER_COMPOSE=docker-compose
-
-echo "Building docker environment..."
-$DOCKER build -t docproc/base .
-$DOCKER_COMPOSE -p $PNAME build
-
-echo "Starting docker environment..."
-$DOCKER_COMPOSE -p $PNAME up -d
-
-echo "Creating queues manually to speed up testing..."
-$DOCKER_COMPOSE exec -d $CIP.fileinput_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=input
-$DOCKER_COMPOSE exec -d $CIP.webinput_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=input
-$DOCKER_COMPOSE exec -d $CIP.preproc_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=preprocessed
-$DOCKER_COMPOSE exec -d $CIP.renderer_1 curl -X POST http://127.0.0.1:4151/topic/create?topic=rendered
-
-sleep 5
-
 echo "Starting tests..."
-$DOCKER_COMPOSE cp examples/data/testrecords.csv $CIP.fileinput_1:/app/data
-$DOCKER_COMPOSE cp examples/data/raw.json $CIP.webinput_1:/raw.json
-$DOCKER_COMPOSE exec -d $CIP.webinput_1 curl -X POST -H "Content-Type: application/json" \
-    --data @/raw.json http:/localhost/receive
 
-sleep 20
+curl -s -X POST -H "Content-Type: application/json" --data @/test/data/raw.json http://docproc.webinput:80/receive || (echo "Failed sending raw.json" && exit 1)
+curl -s -X POST -F "file=@/test/data/testrecords.csv" http://docproc.webinput:80/upload || (echo "Failed sending testrecords.csv" && exit 1)
 
-$DOCKER_COMPOSE exec $CIP.output_1 ls -al /app/output
+fincount=`curl -s -X GET http://docproc.renderer:4151/stats?format=json |sed -n  's/.*"finish_count":\(\d\),.*/\1/p'`
+loopcnt=1
+while [ $fincount -lt 5 ]; do
+    echo "Waiting for 5 messages to be finished, current count: $fincount, try: ($loopcnt / 30)"
+    sleep 1
+    fincount=`curl -s -X GET http://docproc.renderer:4151/stats?format=json |sed -n  's/.*"finish_count":\(\d\),.*/\1/p'`
+    loopcnt=`expr $loopcnt + 1`
+    if [ $loopcnt -ge 30 ]; then
+        echo "Timeout after 30 seconds..."
+        break
+    fi
+done
 
-# DO NOT USE: the following lines are to sync proper results with the test result dir
-# $DOCKER cp $CIP.output_1:/app/output/. ./test/results
+echo "Finished all messages, comparing output..."
 
-$DOCKER_COMPOSE cp ./test/test-results.tar.gz $CIP.output_1:/app
-$DOCKER_COMPOSE exec $CIP.output_1 tar -C /app -xzf test-results.tar.gz
-$DOCKER_COMPOSE exec -it $CIP.output_1 diff -Nur /app/output /app/test-results
+tar -C /test -xzf test-results.tar.gz
+diff -Nur /test/output /test/test-results
+
 exitcode=$?
-
-if [ $exitcode -ne 0 ]; then
-    for app in $CIP.fileinput_1 $CIP.preproc_1 $CIP.renderer_1 $CIP.output_1; do
-        $DOCKER_COMPOSE logs $app
-    done
-fi
-
-$DOCKER_COMPOSE -p $PNAME kill
-$DOCKER_COMPOSE -p $PNAME rm -f
 
 if [ $exitcode -ne 0 ]; then
     echo "Tests failed!"

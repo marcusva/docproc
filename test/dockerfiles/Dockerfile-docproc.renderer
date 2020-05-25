@@ -20,7 +20,7 @@ WORKDIR /app
 # ENV FOP_HOME=/app/fop-2.2/fop
 # ENV FOP_OPTS=-Djavax.xml.transform.TransformerFactory=net.sf.saxon.TransformerFactoryImpl
 
-COPY ./scripts/docproc.startup.sh /bin/docproc.startup.sh
+COPY ./test/docproc.startup.sh /bin/docproc.startup.sh
 RUN sed -i -e 's/\$APP\$/\/app\/bin\/docproc.proc/g' /bin/docproc.startup.sh
 RUN chmod a+x /bin/docproc.startup.sh
 
