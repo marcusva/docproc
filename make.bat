@@ -60,6 +60,7 @@ go test -tags "%TAGS%" -ldflags "%LDFLAGS%" ./...
 @GOTO :eof
 
 :integration-test
+docker -f ./test/dockerfiles/Dockerfile build && ^
 docker-compose -f ./test/dockerfiles/docker-compose.yml build && ^
 docker-compose -f ./test/dockerfiles/docker-compose.yml up --abort-on-container-exit && ^
 docker-compose -f ./test/dockerfiles/docker-compose.yml down -v
