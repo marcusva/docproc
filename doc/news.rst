@@ -4,7 +4,12 @@ This describes the latest changes between the docproc releases.
 
 0.0.5
 -----
-Released on 2019-XX-XX.
+Released on 2012-XX-XX.
+
+ * Removed NATS as supported message queue system
+ * Updated NSQ dependency to v1.2.0 and v1.0.8
+ * Improved integration tests
+
 
 0.0.4
 -----

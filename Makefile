@@ -14,7 +14,7 @@ DISTDIR := dist/$(DISTNAME)
 
 LDFLAGS := -X main.version=$(VERSION)
 STATICS != if [ "$(CGO_ENABLED)" = "0" ]; then echo -n "netgo"; else echo -n ""; fi
-TAGS := beanstalk nats nsq $(STATICS)
+TAGS := beanstalk nsq $(STATICS)
 
 .PHONY: clean install dist test $(APPS)
 

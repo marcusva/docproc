@@ -51,7 +51,6 @@ following message queues:
 
 * beanstalk - http://beanstalkd.github.io/beanstalkd/
 * NSQ - http://nsq.io/
-* NATS - https://nats.io/
 
 On Unix and Linux, unpack docproc-|version|.tar.gz into :envvar:`$GOPATH/src`, then
 run

@@ -18,19 +18,9 @@ docproc relies on open source third-party software packages:
 .. include:: ./snappy.LICENSE
    :literal:
 
-`github.com/beanstalkd/beanstalk <https://github.com/beanstalkd/beanstalk>`_:
+`github.com/beanstalkd/go-beanstalk <https://github.com/beanstalkd/go-beanstalk>`_:
 
 .. include:: ./beanstalk.License
-   :literal:
-
-`github.com/nats-io/go-nats <https://github.com/nats-io/go-nats>`_:
-
-.. include:: ./nats.LICENSE
-   :literal:
-
-`github.com/nats-io/nuid <https://github.com/nats-io/nuid>`_:
-
-.. include:: ./nuid.LICENSE
    :literal:
 
 `github.com/nsq/nsqio/go-nsq <https://github.com/nsq/nsqio/go-nsq>`_:

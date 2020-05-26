@@ -4,9 +4,10 @@ package queue
 
 import (
 	"errors"
+	"runtime"
+
 	"github.com/marcusva/docproc/common/log"
 	"github.com/nsqio/go-nsq"
-	"runtime"
 )
 
 func init() {

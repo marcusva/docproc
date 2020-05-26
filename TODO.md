@@ -1,15 +1,12 @@
 # TODOs
 
-* add test setups for nats and beanstalk
+* add test setups for beanstalk
 
 * failover for:
   - out-queue|error-queue being unreachable
     - do not wait for Writer.Consume() { ... Publish() } to fail
   - in-queue being unreachable
   - changed directory permissions in docproc.fileinput
-
-* nats: ensure that queue messages stay in the queue or get republished as
-  long as no consumer could successfully process them
 
 * document rules engine properly (inline and usage)
 

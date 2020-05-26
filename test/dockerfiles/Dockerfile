@@ -1,12 +1,12 @@
 #### Build stage ####
 FROM golang AS build
 
-RUN wget -q -O nsq.tgz https://github.com/nsqio/nsq/releases/download/v1.0.0-compat/nsq-1.0.0-compat.linux-amd64.go1.8.tar.gz \
+RUN wget -q -O nsq.tgz https://github.com/nsqio/nsq/releases/download/v1.2.0/nsq-1.2.0.linux-amd64.go1.12.9.tar.gz \
     && tar -xzf nsq.tgz \
-    && cp nsq-1.0.0-compat.linux-amd64.go1.8/bin/nsqd /usr/local/bin
+    && cp nsq-1.2.0.linux-amd64.go1.12.9/bin/nsqd /usr/local/bin
 
 # Build the docproc applications
-ARG TAGS="beanstalk nats nsq"
+ARG TAGS="beanstalk nsq"
 ENV SRC_DIR=/go/src/github.com/marcusva/docproc
 ADD . $SRC_DIR
 

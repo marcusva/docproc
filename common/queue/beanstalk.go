@@ -4,9 +4,10 @@ package queue
 
 import (
 	"errors"
-	"github.com/beanstalkd/beanstalk"
-	"github.com/marcusva/docproc/common/log"
 	"time"
+
+	"github.com/beanstalkd/go-beanstalk"
+	"github.com/marcusva/docproc/common/log"
 )
 
 func init() {

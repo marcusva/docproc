@@ -1,9 +1,10 @@
 package queue_test
 
 import (
+	"testing"
+
 	"github.com/marcusva/docproc/common/queue"
 	"github.com/marcusva/docproc/common/testing/assert"
-	"testing"
 )
 
 func TestPackage(t *testing.T) {
@@ -16,13 +17,11 @@ func TestPackage(t *testing.T) {
 func TestQueueTypes(t *testing.T) {
 	rqtypes := queue.ReadTypes()
 	assert.ContainsS(t, rqtypes, "memory")
-	assert.ContainsS(t, rqtypes, "nats")
 	assert.ContainsS(t, rqtypes, "nsq")
 	assert.ContainsS(t, rqtypes, "beanstalk")
 
 	wqtypes := queue.WriteTypes()
 	assert.ContainsS(t, wqtypes, "memory")
-	assert.ContainsS(t, wqtypes, "nats")
 	assert.ContainsS(t, wqtypes, "nsq")
 	assert.ContainsS(t, wqtypes, "beanstalk")
 }
@@ -41,10 +40,6 @@ func TestCreateQueue(t *testing.T) {
 	pmap := map[string]map[string]string{
 		"memory": {
 			"topic": "input",
-		},
-		"nats": {
-			"topic": "input",
-			"host":  "127.0.0.1:1234",
 		},
 		"nsq": {
 			"topic": "input",

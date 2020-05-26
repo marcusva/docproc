@@ -16,7 +16,7 @@
 @SET DISTDIR=dist\%DISTNAME%
 
 @SET LDFLAGS=-X main.version=%VERSION%
-@SET TAGS=beanstalk nats nsq
+@SET TAGS=beanstalk nsq
 @IF "%CGO_ENABLED%" == "0" SET TAGS=%TAGS% netgo
 
 @IF "%~1" == "" GOTO :all

@@ -97,7 +97,6 @@ type
     The message queue type to use. This can be one of
 
     * ``beanstalk``
-    * ``nats``
     * ``nsq``
 
 host
