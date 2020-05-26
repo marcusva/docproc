@@ -39,7 +39,8 @@ Follow its `installation instructions`_ to get it installed.
    for the now processed ``testrecords.csv.DONE`` file and the ``output``
    directory for a set of new HTML files.
 
-For a more sophisticated setup, take a look at the :ref:`docker-setup` section.
+For a more sophisticated setup, take a look at the docker configuration for the
+integration tests, which can be found in the test folder of the source distribution.
 
 .. _NATS: https://nats.io/
 .. _installation instructions: https://nats.io/documentation/tutorials/gnatsd-install/

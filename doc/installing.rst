@@ -21,16 +21,16 @@ Example for Windows:
 
 .. code-block:: batch
 
-    > unzip docproc-0.0.4-windows-amd64.zip
-    > cd docproc-0.0.4-windows-amd64
+    > unzip docproc-<version>-windows-amd64.zip
+    > cd docproc-<version>-windows-amd64
     > copy docproc*.exe C:\docproc\bin
 
 Example for Linux:
 
 .. code-block:: console
 
-    $ unzip docproc-0.0.4-linux-amd64.zip
-    $ cd docproc-0.0.4-linux-amd64
+    $ unzip docproc-<version>-linux-amd64.zip
+    $ cd docproc-<version>-linux-amd64
     $ cp docproc*. /usr/local/bin
 
 Set up the configuration files as appropriate and you are good to go.
@@ -44,8 +44,7 @@ You can download source snapshots of docproc from
 https://github.com/marcusva/docproc/tags. Besides the source distribution, you
 also will need the following tools:
 
-* Golang 1.9 or newer (https://golang.org/)
-* dep (https://golang.github.io/dep/)
+* Golang 1.13 or newer (https://golang.org/)
 
 docproc relies on a message queue implementation. It currently supports the
 following message queues:
@@ -54,26 +53,23 @@ following message queues:
 * NSQ - http://nsq.io/
 * NATS - https://nats.io/
 
-Unpack the source snapshot into your :envvar:`GOPATH`, run the :command:`dep`
-command and build docproc.
-
-On Unix and Linux, unpack docproc-|version|.tar.gz into :envvar:`GOPATH`, then
+On Unix and Linux, unpack docproc-|version|.tar.gz into :envvar:`$GOPATH/src`, then
 run
 
 .. code-block:: console
 
-    $ cd $GOPATH/github.com/marcusva/docproc
+    $ cd $GOPATH/src/github.com/marcusva/docproc
     $ make install
 
 This will install the docproc binaries into ``/usr/local/bin`` by default. You
 can change the :envvar:`PREFIX` as well as :envvar:`DESTDIR` for your own
 installation scheme.
 
-On Windows, unpack docproc-|version|.zip into :envvar:`GOPATH`, then run
+On Windows, unpack docproc-|version|.zip into :envvar:`%GOPATH%\\src`, then run
 
 .. code-block:: batch
 
-    > cd %GOPATH%/github.com/marcusva/docproc
+    > cd %GOPATH%/src/github.com/marcusva/docproc
     > make.bat
 
 Those commands will build docproc and put the binaries, documentation and

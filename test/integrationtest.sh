@@ -17,7 +17,7 @@ curl -s -X POST -F "file=@/test/data/testrecords.csv" http://docproc.webinput:80
 
 fincount=`find /test/output -type f | wc -l`
 loopcnt=1
-maxtries=30
+maxtries=60
 while [ $fincount -lt 5 ]; do
     echo "Waiting for 5 messages to be finished, current count: $fincount, try: $loopcnt / $maxtries"
     sleep 2

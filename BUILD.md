@@ -36,54 +36,6 @@ They can be added at build time via Go's `-tags` parameter:
 Other message queues can be easily supported by implementing the `ReadQueue`
 and `WriteQueue` interfaces of the `docproc/common/queue` package.
 
-# Build for Docker
+# Docker Builds
 
-1. Create the base image via docker
-2. Build the docproc images via docker-compose
-3. Run everything via docker-compose
-
-## Base Image
-
-The docproc base image contains all docproc applications as well as a
-[nsqd](http://nsq.io) binary to get docproc up and running for testing with a
-message queue system.
-
-Create the base image with the following instructions:
-
-    # docker build -t docproc/base .
-
-The base image is now registered as `docproc/base`.
-
-## Build docproc Images
-
-Create all docproc images with the following instruction:
-
-    # docker-compose build
-
-This creates the following set of docproc images:
-
-* `docproc/fileinput`
-* `docproc/preproc`
-* `docproc/renderer`
-* `docproc/postproc`
-* `docproc/output`
-
-Each image can be run individually. Each image runs a local nsqd server to be
-used by the individual docproc executable.
-
-## Run everything
-
-All services, including an nsqd, nsqlookupd and nsqadmin instance can be run via
-
-    # docker-compose up
-
-TODO: document ports and directories properly.
-
-### Testing Service concurrency
-
-Scale individual applications via the `--scale <service>=<num>` flag:
-
-    # docker-compose up --scale docproc.preproc=3
-
-will spawn three instances of the `docproc.preproc` service configured in the
-docker-compose configuration.
+You can find example setups for Docker in the test/dockerfiles directory.

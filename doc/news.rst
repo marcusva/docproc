@@ -10,8 +10,8 @@ Released on 2019-XX-XX.
 -----
 Released on 2018-12-22.
 
-* New ref:`webinput` application to handle raw JSON input via HTTP and file
-  uploads to forward to the ``fileinput`` applicaton
+* New :ref:`webinput` application to handle raw JSON input via HTTP and file
+  uploads to forward to the :ref:`fileinput` applicaton
 * Updated beanstalkd dependency location
 
 0.0.3
