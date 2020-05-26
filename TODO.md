@@ -1,7 +1,5 @@
 # TODOs
 
-* add test setups for beanstalk
-
 * failover for:
   - out-queue|error-queue being unreachable
     - do not wait for Writer.Consume() { ... Publish() } to fail
