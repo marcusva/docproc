@@ -123,9 +123,11 @@ func newBeanstalkRQ(params map[string]string) (ReadQueue, error) {
 
 func (rq *beanstalkRQ) watch() {
 	for rq.tubeset.Conn != nil {
-		id, data, err := rq.tubeset.Reserve(1 * time.Second)
+		id, data, err := rq.tubeset.Reserve(1 * time.Hour)
 		if err != nil {
-			log.Infof("error on querying the queue: %v\n", err)
+			if err != beanstalk.ErrTimeout {
+				log.Errorf("error on querying the queue: %v\n", err)
+			}
 			continue
 		}
 		msg, err := MsgFromJSON(data)
@@ -153,6 +155,7 @@ func (rq *beanstalkRQ) Open(consumer Consumer) error {
 	if err != nil {
 		return err
 	}
+	rq.consumer = consumer
 	rq.tubeset.Conn = conn
 	go rq.watch()
 	return nil
