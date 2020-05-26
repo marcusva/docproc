@@ -5,34 +5,22 @@ volumes:
 
 services:
   # message queue configuration
-  nsqlookupd:
-    image: nsqio/nsq
-    command: /nsqlookupd
-    logging:
-      driver: none
+  beanstalkd:
+    build:
+      context: ../..
+      dockerfile: ./test/dockerfiles/Dockerfile-beanstalkd
+    image: docproc/beanstalkd
     ports:
-      - "4160"
-      - "4161"
-    healthcheck:
-      test: curl http://localhost:4161/ping | grep OK || exit 1
-      interval: 1m
-      timeout: 5s
-      start_period: 10s
-  nsqadmin:
-    image: nsqio/nsq
-    command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
-    depends_on:
-      - nsqlookupd
-    ports:
-      - "4171:4171"
+      - "11300:11300"
   # docproc environment
   docproc.fileinput:
     build:
       context: ../..
       dockerfile: ./test/dockerfiles/Dockerfile-docproc.fileinput
     image: docproc/fileinput
+    command: /bin/docproc.startup.sh -c /app/docproc-fileinput.beanstalk.conf
     depends_on:
-      - nsqlookupd
+      - beanstalkd
     volumes:
       - app-data:/app/data
     healthcheck:
@@ -45,8 +33,9 @@ services:
       context: ../..
       dockerfile: ./test/dockerfiles/Dockerfile-docproc.webinput
     image: docproc/webinput
+    command: /bin/docproc.startup.sh -c /app/docproc-webinput.beanstalk.conf
     depends_on:
-      - nsqlookupd
+      - beanstalkd
     volumes:
       - app-data:/app/data
     healthcheck:
@@ -59,8 +48,9 @@ services:
       context: ../..
       dockerfile: ./test/dockerfiles/Dockerfile-docproc.preproc
     image: docproc/preproc
+    command: /bin/docproc.startup.sh -c /app/docproc-preproc.beanstalk.conf
     depends_on:
-      - nsqlookupd
+      - beanstalkd
     healthcheck:
       test: ps -ax | grep docproc || exit 1
       start_period: 10s
@@ -71,8 +61,9 @@ services:
       context: ../..
       dockerfile: ./test/dockerfiles/Dockerfile-docproc.renderer
     image: docproc/renderer
+    command: /bin/docproc.startup.sh -c /app/docproc-renderer.beanstalk.conf
     depends_on:
-      - nsqlookupd
+      - beanstalkd
     healthcheck:
       test: ps -ax | grep docproc || exit 1
       start_period: 10s
@@ -83,8 +74,9 @@ services:
       context: ../..
       dockerfile: ./test/dockerfiles/Dockerfile-docproc.output
     image: docproc/output
+    command: /bin/docproc.startup.sh -c /app/docproc-output.beanstalk.conf
     depends_on:
-      - nsqlookupd
+      - beanstalkd
     volumes:
       - app-output:/app/output
     healthcheck:
@@ -96,6 +88,7 @@ services:
     build:
       context: ../..
       dockerfile: ./test/dockerfiles/Dockerfile-integrationtest
+    command: /bin/integrationtest.sh beanstalk
     depends_on:
       - docproc.fileinput
       - docproc.webinput

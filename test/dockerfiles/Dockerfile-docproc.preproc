@@ -8,7 +8,8 @@ RUN chmod a+x /bin/docproc.startup.sh
 
 # Test data
 COPY ./examples/docproc-preproc.conf /app
+COPY ./examples/docproc-preproc.beanstalk.conf /app
 COPY ./examples/rules/preproc /app/rules/preproc
 COPY ./examples/templates/preproc /app/templates/preproc
 
-ENTRYPOINT /bin/docproc.startup.sh -c /app/docproc-preproc.conf
+CMD ["/bin/docproc.startup.sh", "-c", "/app/docproc-preproc.conf"]

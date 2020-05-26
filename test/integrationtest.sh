@@ -1,12 +1,20 @@
 #!/bin/sh
 set -e
 
-echo "Creating queues manually to speed up tests..."
+queue="nsq"
+if [ -n "$1" ]; then
+    queue="$1"
+fi
 
-curl -s -X POST http://docproc.fileinput:4151/topic/create?topic=input
-curl -s -X POST http://docproc.webinput:4151/topic/create?topic=input
-curl -s -X POST http://docproc.preproc:4151/topic/create?topic=preprocessed
-curl -s -X POST http://docproc.renderer:4151/topic/create?topic=rendered
+echo "Using $queue as queue provider..."
+
+if [ $queue = "nsq" ]; then
+    echo "Creating NSQ queues manually to speed up tests..."
+    curl -s -X POST http://docproc.fileinput:4151/topic/create?topic=input
+    curl -s -X POST http://docproc.webinput:4151/topic/create?topic=input
+    curl -s -X POST http://docproc.preproc:4151/topic/create?topic=preprocessed
+    curl -s -X POST http://docproc.renderer:4151/topic/create?topic=rendered
+fi
 
 echo "Starting tests in 10 seconds..."
 

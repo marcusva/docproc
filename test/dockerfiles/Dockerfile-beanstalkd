@@ -1,0 +1,6 @@
+FROM alpine
+
+RUN apk add --update beanstalkd
+
+EXPOSE 11300
+ENTRYPOINT /usr/bin/beanstalkd

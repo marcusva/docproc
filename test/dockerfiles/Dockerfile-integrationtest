@@ -13,4 +13,4 @@ COPY ./test/test-results.tar.gz /test/test-results.tar.gz
 COPY ./test/integrationtest.sh /bin
 RUN chmod a+x /bin/integrationtest.sh
 
-ENTRYPOINT /bin/integrationtest.sh
+CMD ["integrationtest.sh"]

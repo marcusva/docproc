@@ -59,10 +59,26 @@ FOR %%A IN (%APPS%) DO (
 go test -tags "%TAGS%" -ldflags "%LDFLAGS%" ./...
 @GOTO :eof
 
-:integration-test
-docker build -t docproc/base -f ./test/dockerfiles/Dockerfile . && ^
+:docker-image
+docker build -t docproc/base -f ./test/dockerfiles/Dockerfile .
+@GOTO :eof
+
+:nsq-test
 docker-compose -f ./test/dockerfiles/docker-compose.yml build && ^
 docker-compose -f ./test/dockerfiles/docker-compose.yml up --abort-on-container-exit && ^
 docker-compose -f ./test/dockerfiles/docker-compose.yml down -v
+@GOTO :eof
+
+:beanstalk-test
+docker-compose -f ./test/dockerfiles/docker-compose.beanstalk.yml build && ^
+docker-compose -f ./test/dockerfiles/docker-compose.beanstalk.yml up --abort-on-container-exit && ^
+docker-compose -f ./test/dockerfiles/docker-compose.beanstalk.yml down -v
+@GOTO :eof
+
+:integration-test
+@CALL :docker-image
+@CALL :nsq-test
+@CALL :beanstalk-test
+@GOTO :eof
 
 @ENDLOCAL
