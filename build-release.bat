@@ -2,6 +2,7 @@
 SETLOCAL
 SET PLATFORMS=windows;linux;freebsd;darwin;dragonfly
 SET CGO_ENABLED=0
+CALL make.bat docs
 FOR %%P IN (%PLATFORMS%) DO (
     ECHO Creating distfile for %%P...
     SET GOOS=%%P

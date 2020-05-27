@@ -23,7 +23,6 @@
 @GOTO :%~1
 
 :all
-@CALL :docs
 @CALL :build
 @GOTO :eof
 
