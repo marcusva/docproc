@@ -2,12 +2,13 @@ package input
 
 import (
 	"fmt"
-	"github.com/marcusva/docproc/common/queue"
-	"github.com/marcusva/docproc/common/service"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/marcusva/docproc/common/queue"
+	"github.com/marcusva/docproc/common/service"
 )
 
 const (

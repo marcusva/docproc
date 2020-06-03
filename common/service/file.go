@@ -2,10 +2,11 @@ package service
 
 import (
 	"fmt"
-	"github.com/marcusva/docproc/common/log"
-	"github.com/marcusva/docproc/common/path"
 	"path/filepath"
 	"time"
+
+	"github.com/marcusva/docproc/common/log"
+	"github.com/marcusva/docproc/common/path"
 )
 
 // FileProcessor processes a single file matching the pattern of the

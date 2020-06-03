@@ -6,8 +6,11 @@ This describes the latest changes between the docproc releases.
 -----
 Released on 2020-XX-XX.
 
- * Removed NATS as supported message queue system
+ * Removed NATS as supported message queue system due to license
+   incompatibilities
  * Updated NSQ dependency to v1.2.0 and v1.0.8
+ * New ``headers`` flag for :ref:`HTTPSender` to enable custom
+   HTTP headers to be set on a per-message basis
  * Improved integration tests
  * Fixed beanstalk consumer assignment bug
 

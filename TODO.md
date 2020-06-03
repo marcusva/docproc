@@ -8,12 +8,7 @@
 
 * document rules engine properly (inline and usage)
 
-* implement concurrency on message consumption for the queue implementations -
-  consume multiple messages in parallel via goroutines per application
-  (configurable)
-
 * mail processor
-* configurable headers for the HTTPSender
 
 * configurable status codes to accept as default on HTTPSender?
 * configurable http methods on HTTPSender?

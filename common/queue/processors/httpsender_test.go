@@ -3,14 +3,15 @@ package processors_test
 import (
 	"crypto/tls"
 	"crypto/x509"
-	"github.com/marcusva/docproc/common/queue"
-	"github.com/marcusva/docproc/common/queue/processors"
-	"github.com/marcusva/docproc/common/testing/assert"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/marcusva/docproc/common/queue"
+	"github.com/marcusva/docproc/common/queue/processors"
+	"github.com/marcusva/docproc/common/testing/assert"
 )
 
 const (
@@ -20,7 +21,11 @@ const (
 		"created": "2018-02-02T22:43:48.0220047+01:00"
 	},
 	"content": {
-		"body": "some content"
+		"body": "some content",
+		"http-headers": {
+			"Content-Type": "application/custom",
+			"Authorization": "Basic QWzzzz="
+		}
 	}
 }
 `
@@ -50,9 +55,14 @@ func TestNewHTTPSender(t *testing.T) {
 	_, err = processors.NewHTTPSender(params)
 	assert.NoErr(t, err)
 
+	params["headers"] = "http-headers"
+	_, err = processors.NewHTTPSender(params)
+	assert.NoErr(t, err)
+
 	params["address"] = "::some##invalid?!!!\\data"
 	_, err = processors.NewHTTPSender(params)
 	assert.Err(t, err)
+
 }
 
 func TestHTTPSenderCreate(t *testing.T) {
@@ -177,5 +187,43 @@ func TestHTTPSenderProcessInvalid(t *testing.T) {
 	sender, err = processors.NewHTTPSender(params)
 	assert.FailOnErr(t, err)
 	assert.Err(t, sender.Process(msg))
+}
 
+func TestHTTPSenderProcessCustomHeaders(t *testing.T) {
+	okHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Authorization") != "Basic QWzzzz=" {
+			w.WriteHeader(500)
+			return
+		}
+		if r.Header.Get("Content-Type") != "application/custom" {
+			w.WriteHeader(500)
+			return
+		}
+
+		buf, err := ioutil.ReadAll(r.Body)
+		r.Body.Close()
+		if err != nil {
+			w.WriteHeader(500)
+			return
+		}
+		if string(buf) != "some content" {
+			w.WriteHeader(500)
+		}
+		w.WriteHeader(200)
+	})
+	server := httptest.NewServer(okHandler)
+	defer server.Close()
+
+	params := map[string]string{
+		"address":   server.URL,
+		"read.from": "body",
+		"headers":   "http-headers",
+		"timeout":   "2",
+	}
+	sender, err := processors.NewHTTPSender(params)
+	assert.FailOnErr(t, err)
+
+	msg, err := queue.MsgFromJSON([]byte(httpmessage))
+	assert.FailOnErr(t, err)
+	assert.FailOnErr(t, sender.Process(msg))
 }

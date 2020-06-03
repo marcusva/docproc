@@ -23,7 +23,7 @@ type
     To configure a FileWriter, use ``FileWriter`` as ``type``.
 
 read.from
-    The path of the message's content save to the file.
+    The path of the message's content to save to the file.
 
 read.base64
     Indicates, if the message content path is base64-encoded and needs to

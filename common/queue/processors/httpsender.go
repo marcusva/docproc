@@ -3,13 +3,14 @@ package processors
 import (
 	"bytes"
 	"fmt"
-	"github.com/marcusva/docproc/common/data"
-	"github.com/marcusva/docproc/common/log"
-	"github.com/marcusva/docproc/common/queue"
 	"net/http"
 	"net/url"
 	"strconv"
 	"time"
+
+	"github.com/marcusva/docproc/common/data"
+	"github.com/marcusva/docproc/common/log"
+	"github.com/marcusva/docproc/common/queue"
 )
 
 const (
@@ -26,6 +27,7 @@ type HTTPSender struct {
 	address  string
 	url      *url.URL
 	readFrom string
+	headers  string
 	timeout  time.Duration
 }
 
@@ -55,9 +57,16 @@ func NewHTTPSender(params map[string]string) (queue.Processor, error) {
 			return nil, err
 		}
 	}
+
+	headers, ok := params["headers"]
+	if !ok {
+		headers = ""
+	}
+
 	return &HTTPSender{
 		address:  address,
 		readFrom: inputid,
+		headers:  headers,
 		timeout:  time.Duration(tm) * time.Second,
 	}, nil
 }
@@ -85,9 +94,20 @@ func (sender *HTTPSender) Process(msg *queue.Message) error {
 		return err
 	}
 	request.Header.Add("Content-Length", strconv.Itoa(len(bytebuf)))
-	// TODO: configurable header types
-	request.Header.Add("Content-Type", "text/plain")
 
+	// Add configured headers, if any.
+	if sender.headers != "" {
+		headers, ok := msg.Content[sender.headers].(map[string]interface{})
+		if !ok {
+			log.Errorf("message '%s' does not contain HTTP headers at '%s'", msg.Metadata[queue.MetaID], sender.headers)
+			return err
+		}
+		for k, v := range headers {
+			request.Header.Add(k, fmt.Sprint(v))
+		}
+	} else {
+		request.Header.Add("Content-Type", "text/plain")
+	}
 	client := &http.Client{}
 	client.Timeout = sender.timeout
 
